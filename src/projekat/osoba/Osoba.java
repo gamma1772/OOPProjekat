@@ -1,24 +1,75 @@
 package projekat.osoba;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+public abstract class Osoba implements IMogucnost{
 
-public abstract class Osoba {
-	private String ime, prezime, jmbg, brTelefona;
-	private final int godine;
-	private int pol;
-	private Date datumRodjenja;
-	private final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+	private boolean dodavanjeAdmina = false, dodavanjeKorisnika = false, dodavanjeKnjiga = false;
+	private boolean brisanjeAdmina = false, brisanjeKorisnika = false, brisanjeKnjiga = false;
+	private boolean pozajmljivanjeKnjiga = false, registracija = false;
 
-	public Osoba(String ime, String prezime, String jmbg, String brTelefona, Date datumRodjenja, int pol) {
-		this.ime = ime;
-		this.prezime = prezime;
-		this.jmbg = jmbg;
-		this.brTelefona = brTelefona;
-		this.godine = izracunajGodine();
-		this.datumRodjenja = datumRodjenja;
-		this.pol = pol;
+	public enum pol {
+		MUSKO, ZENSKO
+	}
+	protected String uuid, ime, prezime, korisnickoIme, sifra;
+	protected String jmbg, brTelefona;
+	protected int pol;
+	protected boolean isAdmin;
+
+	public abstract String generisiUUID();
+	public abstract String generisiSifruSaUUID(String sifra);
+
+	public void proveraDozvoli() {
+		System.out.println("Dozvole:\tDodavanje\tBrisanje\tRegistracija\tPozajmljivanje");
+		System.out.println("Admini:\t\t" + dodavanjeAdmina + "\t\t" + brisanjeAdmina + "\t\t" + "X"+ "\t\t\t\t" + "X");
+		System.out.println("Korisnici:\t" + dodavanjeKorisnika + "\t\t" + brisanjeKorisnika + "\t\t" + registracija + "\t\t\t" + "X");
+		System.out.println("Knjige:\t\t" + dodavanjeKnjiga + "\t\t" + brisanjeKnjiga + "\t\t" + "X" + "\t\t\t\t" + pozajmljivanjeKnjiga);
+	}
+
+	@Override
+	public boolean mozeDaDodajeNovogAdmina() {
+		return dodavanjeAdmina = true;
+	}
+
+	@Override
+	public boolean mozeDaDodajeNovogKorisnika() {
+		return dodavanjeKorisnika = true;
+	}
+
+	@Override
+	public boolean mozeDaDodajeNovuKnjigu() {
+		return dodavanjeKnjiga = true;
+	}
+
+	@Override
+	public boolean mozeDaSeRegistruje() {
+		return registracija = true;
+	}
+
+	@Override
+	public boolean mozeDaPozajmiKnjigu() {
+		return pozajmljivanjeKnjiga = true;
+	}
+
+	@Override
+	public boolean mozeDaBriseKorisnike() {
+		return brisanjeKorisnika = true;
+	}
+
+	@Override
+	public boolean mozeDaBriseAdministratore() {
+		return brisanjeAdmina = true;
+	}
+
+	@Override
+	public boolean mozeDaBriseKnjige() {
+		return brisanjeKnjiga = true;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getIme() {
@@ -37,6 +88,22 @@ public abstract class Osoba {
 		this.prezime = prezime;
 	}
 
+	public String getKorisnickoIme() {
+		return korisnickoIme;
+	}
+
+	public void setKorisnickoIme(String korisnickoIme) {
+		this.korisnickoIme = korisnickoIme;
+	}
+
+	public String getSifra() {
+		return sifra;
+	}
+
+	public void setSifra(String sifra) {
+		this.sifra = sifra;
+	}
+
 	public String getJmbg() {
 		return jmbg;
 	}
@@ -53,40 +120,32 @@ public abstract class Osoba {
 		this.brTelefona = brTelefona;
 	}
 
-	public int getGodine() {
-		return godine;
+	public int getPol() {
+		return pol;
 	}
 
-//	public void setGodine(int godine) {
-//		this.godine = godine;
-//	}
-
-	public Date getDatumRodjenja() {
-		return datumRodjenja;
+	public void setPol(int pol) {
+		this.pol = pol;
 	}
 
-	public void setDatumRodjenja(Date datumRodjenja) {
-		this.datumRodjenja = datumRodjenja;
+	public boolean isAdmin() {
+		return isAdmin;
 	}
 
-	/** Racuna broj godina osobe **/
-	private int izracunajGodine() {
-		int tempGodine = 0;
-		return tempGodine;
+	public void setAdmin(boolean admin) {
+		isAdmin = admin;
 	}
 
-	//Pretvara pol u string
-	private String convertPol() {
-		if (this.pol == 0) {
-			return "Musko";
-		}
-		else {
-			return "Zensko";
+	private String pretvoriPoluString() {
+		switch(getPol()) {
+			case 0: return "Musko";
+			case 1: return "Zensko";
+			default: return "Nepoznato";
 		}
 	}
 
 	@Override
 	public String toString() {
-		return "Ime: " + ime + " " + prezime + ", JMBG: " + jmbg  + ", Broj telefona: " + brTelefona + ", Godine: " + godine + ", Datum rodjenja: " + format.format(datumRodjenja) + ", Pol: " + convertPol();
+		return "UUID: " + getUuid()  + ", Ime: " + getIme() + " " + getPrezime() + ", Korisnicko Ime: " + getKorisnickoIme() + ", JMBG: " + getJmbg() + ", Broj telefona: " + getBrTelefona() + ", Pol: " + pretvoriPoluString();
 	}
 }
