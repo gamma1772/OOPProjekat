@@ -1,0 +1,14 @@
+package projekat.knjiga;
+
+public enum EnumKategorija {
+	KUHINJA,
+	HOBIJI,
+	PROGRAMIRANJE,
+	EKOLOGIJA,
+	FIKCIJA,
+	AKCIJA,
+	ROMANTIKA,
+	KLASICIZAM,
+	STRIP,
+	ENCIKLOPEDIJA
+}

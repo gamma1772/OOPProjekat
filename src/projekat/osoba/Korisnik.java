@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-public class Korisnik extends Osoba{
+public class Korisnik extends AbstractOsoba {
 
 	private static final Logger logger = new Logger("KORISNIK");
 

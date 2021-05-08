@@ -1,6 +1,6 @@
 package projekat.osoba;
 
-public abstract class Osoba implements IMogucnost{
+public abstract class AbstractOsoba implements IMogucnost{
 
 	//Dozvole
 	private boolean dodavanjeAdmina = false, dodavanjeKorisnika = false, dodavanjeKnjiga = false;
