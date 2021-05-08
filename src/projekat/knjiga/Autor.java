@@ -1,6 +1,10 @@
 package projekat.knjiga;
 
-public class Autor {
-	private int id;
-	private String imeAutora;
+import projekat.util.IJedinstveniIdentifikator;
+
+public class Autor extends AbstractAtribut {
+	public Autor(String imeAutora) {
+		this.setImeAtributa(imeAutora);
+		this.setId(IJedinstveniIdentifikator.generateUUID(9999));
+	}
 }

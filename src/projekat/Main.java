@@ -19,7 +19,9 @@ public class Main {
 
 
         while (brPokusaja < 3) {
-            System.out.print("Unesite korisnicko ime: "); scannerConsoleInput.nextLine();
+            String username, password;
+            System.out.print("Unesite korisnicko ime: "); username = scannerConsoleInput.nextLine();
+            System.out.print("Unesite korisnicko ime: "); password = scannerConsoleInput.nextLine();
             brPokusaja++;
         }
     }

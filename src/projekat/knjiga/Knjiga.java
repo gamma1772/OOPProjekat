@@ -5,10 +5,10 @@ public class Knjiga {
 	private int[] zanrovi;
 	private int godinaObjavljivanja, izdanje, brStrana, kategorija;
 
-	public Knjiga(String imeKnjige, String imePisca, String imeIzdavaca, String ISBN, int[] zanrovi, int kategorija, int godinaObjavljivanja, int izdanje, int brStrana) {
+	public Knjiga(String imeKnjige, Autor autor, Izdavac izdavac, String ISBN, int[] zanrovi, int kategorija, int godinaObjavljivanja, int izdanje, int brStrana) {
 		this.imeKnjige = imeKnjige;
-		this.imePisca = imePisca;
-		this.imeIzdavaca = imeIzdavaca;
+		this.imePisca = autor.getImeAtributa();
+		this.imeIzdavaca = izdavac.getImeAtributa();
 		this.ISBN = ISBN;
 		this.zanrovi = zanrovi;
 		this.kategorija = kategorija;

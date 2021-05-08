@@ -1,6 +1,10 @@
 package projekat.knjiga;
 
-public class Izdavac {
-	private int id;
-	private String imeIzdavaca;
+import projekat.util.IJedinstveniIdentifikator;
+
+public class Izdavac extends AbstractAtribut{
+	public Izdavac(String imeIzdavaca) {
+		this.imeAtributa = imeIzdavaca;
+		this.id = IJedinstveniIdentifikator.generateUUID(9999);
+	}
 }
