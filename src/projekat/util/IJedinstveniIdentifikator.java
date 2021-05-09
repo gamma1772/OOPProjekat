@@ -10,4 +10,6 @@ public interface IJedinstveniIdentifikator {
 		return random.nextInt(limiter);
 	}
 
+	String generateAdminUUID();
+	String generateClanUUID();
 }

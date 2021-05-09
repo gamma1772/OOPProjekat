@@ -4,6 +4,7 @@ import projekat.Main;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Lokalna klasa Logger, sluzi za izbacivanje poruka u terminal u slucaju da je debugMode = true,
@@ -19,48 +20,32 @@ public class Logger {
 		datumPoruke = new Date();
 	}
 
-	/**Generalna funkcija za poruku, proverava tip poruke, i u zavisnosti od tipa vraca formatiran string
-	 * Takodje izbacuje poruku u terminal
+	/**Proverava da li je debugMode aktivan ili ako je greska u pitanju, prikazuje pouku u terminalu.
+	 * U zavisnosti od tipa, prikazuje tip poruke u sledecem formatu:
+	 * (datum vreme) [IMELOGGERA][TIP]: poruka
+	 * Zatim vraca taj isti string za pisanje u fajl.
+	 * Ima mogucnost da koristi proizvoljan tip, ali mora da bude enumerator
 	 */
-	public String poruka(String poruka, int tip) {
-		String tipPoruke = "";
-		switch (tip) {
-			case 0:
-				tipPoruke = EnumTipovi.INFO.name();
-				break;
-			case 1:
-				tipPoruke = EnumTipovi.DEBUG.name();
-				break;
-			case 2:
-				tipPoruke = EnumTipovi.ERROR.name();
-				break;
-			case 3:
-				tipPoruke = EnumTipovi.MESSAGE.name();
-				break;
-			case 4:
-				tipPoruke = EnumTipovi.WARNING.name();
-				break;
-			default:
-				return "Nepoznat tip poruke";
-		}
+	public String poruka(String poruka, Enum tip) {
+		String tipPoruke = tip.name();
+		/* formatDatuma.format(datumPoruke) + String.format(" [%s]: ", loggerIme) + String.format("[%s] ", tipPoruke) + poruka*/
+		if (Main.debugMode || tipPoruke.toLowerCase().contains("error")) System.out.printf("%s [%s][%s]: %s%n", formatDatuma.format(datumPoruke), loggerIme, tipPoruke, poruka);
 
-		if (Main.debugMode || tip == 2) System.out.println(formatDatuma.format(datumPoruke) + String.format(" [%s]: ", loggerIme) + String.format("[%s] ", tipPoruke) + poruka);
-
-		return formatDatuma.format(datumPoruke) + String.format(" [%s]: ", loggerIme) + String.format("[%s] ", tipPoruke) + poruka;
+		return String.format("%s [%s][%s]: %s%n", formatDatuma.format(datumPoruke), loggerIme, tipPoruke, poruka);
 	}
 
 	//Sledece funkcije sluze za direktno upisivanje u log fajl, ali mogu da se koriste u kombinaciji sa println()
 
 	/**Osnovna fja za informacionu poruku*/
 	public String info(String poruka) {
-		return formatDatuma.format(datumPoruke) + String.format(" [%s]: ", loggerIme) + "[INFO] " + poruka;
+		return String.format("%s [%s][%s]: %s%n", formatDatuma.format(datumPoruke), loggerIme, "INFO", poruka);
 	}
 	/**Osnovna fja za poruku o izvrsavanju koda*/
 	public String debug(String poruka) {
-		return formatDatuma.format(datumPoruke) + String.format(" [%s]: ", loggerIme) + "[DEBUG] " + poruka;
+		return String.format("%s [%s][%s]: %s%n", formatDatuma.format(datumPoruke), loggerIme, "DEBUG", poruka);
 	}
 	/**Osnovna fja za poruku o gresci*/
 	public String error(String poruka) {
-		return formatDatuma.format(datumPoruke) + String.format(" [%s]: ", loggerIme) + "[ERROR] " + poruka;
+		return String.format("%s [%s][%s]: %s%n", formatDatuma.format(datumPoruke), loggerIme, "ERROR", poruka);
 	}
 }

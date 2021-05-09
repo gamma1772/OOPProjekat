@@ -1,6 +1,9 @@
 package projekat;
 
 import projekat.debug.Logger;
+import projekat.knjiga.EnumKategorija;
+import projekat.util.Login;
+import projekat.util.Registracija;
 
 import java.util.Scanner;
 
@@ -15,14 +18,21 @@ public class Main {
         System.out.println(logger.debug("Debug mode: " + debugMode));
 
         Scanner scannerConsoleInput = new Scanner(System.in);
-        int brPokusaja = 0;
+        int opcija = 0;
 
-
-        while (brPokusaja < 3) {
-            String username, password;
-            System.out.print("Unesite korisnicko ime: "); username = scannerConsoleInput.nextLine();
-            System.out.print("Unesite korisnicko ime: "); password = scannerConsoleInput.nextLine();
-            brPokusaja++;
+        while(opcija != 1 || opcija != 2) {
+            System.out.println("Odaberite opciju:\n1. Prijava\n2. Registracija");
+            System.out.println("Unos: "); opcija = scannerConsoleInput.nextInt();
+            switch (opcija) {
+                case 1:
+                    Login.ulogujKorisnika();
+                    break;
+                case 2:
+                    Registracija.registrujClana();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

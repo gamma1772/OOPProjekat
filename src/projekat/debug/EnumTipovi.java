@@ -6,4 +6,5 @@ public enum EnumTipovi {
 	ERROR,
 	MESSAGE,
 	WARNING,
+	LOGIN_FAIL;
 }
