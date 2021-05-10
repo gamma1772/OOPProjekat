@@ -11,11 +11,11 @@ import java.util.Scanner;
 public class Main {
 
     public static boolean debugMode; //U koliko je ovo true, sve poruke iz logger-a se pokazuju u konzoli;
-    private static final Logger logger = new Logger("MAIN");
+    private static final Logger LOGGER = new Logger("MAIN");
 
     public static void main(String[] args) {
         debugMode = args.length > 0 && args[0].equals("--debug");
-        System.out.println(logger.debug("Debug mode: " + debugMode));
+        System.out.println(LOGGER.debug("Debug mode: " + debugMode));
 
         Scanner scannerConsoleInput = new Scanner(System.in);
         int opcija = 0;
@@ -32,6 +32,9 @@ public class Main {
                     break;
                 default:
                     break;
+            }
+            if (opcija != 0) {
+                break;
             }
         }
     }

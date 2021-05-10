@@ -1,6 +1,6 @@
 package projekat.osoba;
 
-public abstract class Korisnik extends AbstractOsoba implements IMogucnost{
+public abstract class Korisnik implements IMogucnost{
 
 	//Dozvole korisnika
 	protected boolean dodavanjeAdmina = false, dodavanjeKorisnika = false, dodavanjeKnjiga = false;
@@ -8,21 +8,25 @@ public abstract class Korisnik extends AbstractOsoba implements IMogucnost{
 	protected boolean pozajmljivanjeKnjiga = false, registracija = false;
 
 	private String UUID;
+	protected String ime, prezime;
+	protected String jmbg, brTelefona;
+	protected int pol;
 	protected boolean isAdmin;
-	protected String username, password, email;
+	protected String username, email;
+	protected Sifra password;
 
-	public Korisnik(String ime, String prezime, String jmbg, String brTelefona, int pol, String username, String password, String email, boolean isAdmin) {
+	public Korisnik(String ime, String prezime, String jmbg, String brTelefona, int pol, String username, Sifra password, String email, boolean isAdmin) {
 
 		generisiUUID();
-		this.ime = ime;
-		this.prezime = prezime;
-		this.jmbg = jmbg;
-		this.brTelefona = brTelefona;
-		this.pol = pol;
+		this.setIme(ime);
+		this.setPrezime(prezime);
+		this.setJmbg(jmbg);
+		this.setBrTelefona(brTelefona);
+		this.setPol(pol);
 		this.isAdmin = isAdmin;
-		this.username = username;
-		generisiSifruSaUUID(password, getUUID());
-		this.email = email;
+		this.setUsername(username);
+		this.setPassword(password);
+		this.setEmail(email);
 	}
 
 	/**Stampa tablicu dozvola u terminal / konzolu*/
@@ -37,13 +41,8 @@ public abstract class Korisnik extends AbstractOsoba implements IMogucnost{
 		this.setUUID("");
 	}
 
-	public void generisiSifruSaUUID(String sifra, String UUID) {
-		this.setPassword("");
-	}
-
-	@Override
-	public String punoIme(String ime, String prezime) {
-		return null;
+	public String punoIme() {
+		return String.format("%s %s", getIme(), getPrezime());
 	}
 
 	@Override
@@ -102,11 +101,11 @@ public abstract class Korisnik extends AbstractOsoba implements IMogucnost{
 		this.username = username;
 	}
 
-	public String getPassword() {
+	public Sifra getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(Sifra password) {
 		this.password = password;
 	}
 
@@ -116,5 +115,59 @@ public abstract class Korisnik extends AbstractOsoba implements IMogucnost{
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getIme() {
+		return ime;
+	}
+
+	public void setIme(String ime) {
+		this.ime = ime;
+	}
+
+	public String getPrezime() {
+		return prezime;
+	}
+
+	public void setPrezime(String prezime) {
+		this.prezime = prezime;
+	}
+
+	public String getJmbg() {
+		return jmbg;
+	}
+
+	public void setJmbg(String jmbg) {
+		this.jmbg = jmbg;
+	}
+
+	public String getBrTelefona() {
+		return brTelefona;
+	}
+
+	public void setBrTelefona(String brTelefona) {
+		this.brTelefona = brTelefona;
+	}
+
+	public int getPol() {
+		return pol;
+	}
+
+	@Override
+	public boolean isAdmin() {
+		return true;
+	}
+
+	public void setPol(int pol) {
+		this.pol = pol;
+	}
+	/**Vraca string u zavisnosti od brojne vrednosti promenljive 'pol'.
+	 * U koliko vrednost nije 0 ili 1, vraca String "Nepoznato"*/
+	private String pretvoriPolUString(int pol) {
+		switch(pol) {
+			case 0: return "Musko";
+			case 1: return "Zensko";
+			default: return "Nepoznato";
+		}
 	}
 }

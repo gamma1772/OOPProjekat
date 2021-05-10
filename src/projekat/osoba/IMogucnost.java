@@ -4,12 +4,14 @@ package projekat.osoba;
  * */
 public interface IMogucnost {
 
-	public boolean mozeDaDodajeNovogAdmina();
-	public boolean mozeDaDodajeNovogKorisnika();
-	public boolean mozeDaDodajeNovuKnjigu();
-	public boolean mozeDaSeRegistruje();
-	public boolean mozeDaPozajmiKnjigu();
-	public boolean mozeDaBriseKorisnike();
-	public boolean mozeDaBriseAdministratore();
-	public boolean mozeDaBriseKnjige();
+	boolean isAdmin();
+
+	boolean mozeDaDodajeNovogAdmina();
+	boolean mozeDaDodajeNovogKorisnika();
+	boolean mozeDaDodajeNovuKnjigu();
+	boolean mozeDaSeRegistruje();
+	boolean mozeDaPozajmiKnjigu();
+	boolean mozeDaBriseKorisnike();
+	boolean mozeDaBriseAdministratore();
+	boolean mozeDaBriseKnjige();
 }
