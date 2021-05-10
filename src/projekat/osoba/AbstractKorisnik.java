@@ -167,7 +167,7 @@ public abstract class AbstractKorisnik implements Serializable {
 			this.registracija = false;
 		}
 
-		/*Sledece 'metode' se koriste za postavljanje vrednosti dozvola na true. Ove funkcije se mogu pozivati lancano*/
+		/*Sledece 'metode' se koriste za postavljanje vrednosti dozvola na true. Ovi konstruktori se mogu pozivati lancano*/
 		public Dozvole admin() { this.isAdmin = true; return this; }
 		public Dozvole dodavanjeAdmina() { this.dodavanjeAdmina = true; return this; }
 		public Dozvole dodavanjeKorisnika() { this.dodavanjeKorisnika = true; return this; }
