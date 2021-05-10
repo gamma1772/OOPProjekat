@@ -1,10 +1,12 @@
 package projekat.knjiga;
 
-import projekat.debug.Logger;
+import projekat.util.debug.Logger;
 
-public class Knjiga {
+import java.io.Serializable;
 
-	private static final Logger logger = new Logger("KNJIGA");
+public class Knjiga implements Serializable {
+
+	private transient static final Logger logger = new Logger("KNJIGA");
 
 	private String imeKnjige, ISBN;
 	private Autor autor;

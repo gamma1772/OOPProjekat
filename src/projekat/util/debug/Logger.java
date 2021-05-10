@@ -1,10 +1,9 @@
-package projekat.debug;
+package projekat.util.debug;
 
 import projekat.Main;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 /**
  * Lokalna klasa Logger, sluzi za izbacivanje poruka u terminal u slucaju da je debugMode = true,

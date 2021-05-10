@@ -1,7 +1,6 @@
 package projekat;
 
-import projekat.debug.Logger;
-import projekat.knjiga.EnumKategorija;
+import projekat.util.debug.Logger;
 import projekat.util.Login;
 import projekat.util.Registracija;
 

@@ -1,4 +1,4 @@
-package projekat.debug;
+package projekat.util.debug;
 
 public enum EnumTipovi {
 	INFO,

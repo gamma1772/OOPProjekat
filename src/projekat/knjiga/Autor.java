@@ -1,11 +1,13 @@
 package projekat.knjiga;
 
-import projekat.debug.Logger;
+import projekat.util.debug.Logger;
 import projekat.util.IJedinstveniIdentifikator;
 
-public class Autor {
+import java.io.Serializable;
 
-	private static final Logger logger = new Logger("AUTOR");
+public class Autor implements Serializable {
+
+	private transient static final Logger logger = new Logger("AUTOR");
 
 	private int id;
 	private String ime, prezime;

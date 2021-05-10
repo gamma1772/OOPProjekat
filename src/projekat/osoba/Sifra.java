@@ -1,16 +1,17 @@
 package projekat.osoba;
 
-import projekat.debug.Logger;
+import projekat.util.debug.Logger;
 
 import java.io.CharConversionException;
+import java.io.Serializable;
 
-public class Sifra {
+public class Sifra implements Serializable {
 	private String korisnickiUUID, sifra;
-	private int UUIDSum = 0;
-	private static final Logger LOGGER = new Logger("SIFRA");
+	private transient int UUIDSum = 0;
+	private transient static final Logger LOGGER = new Logger("SIFRA");
 
 	public Sifra(String korisnickiUUID, String sifra) {
-		this.korisnickiUUID = korisnickiUUID;
+		this.setKorisnickiUUID(korisnickiUUID);
 		this.UUIDSummary(korisnickiUUID);
 		this.setSifra(sifrujLozinku(sifra));
 	}
@@ -23,14 +24,17 @@ public class Sifra {
 		this.korisnickiUUID = korisnickiUUID;
 	}
 
-	public String getSifra() {
+	private String getSifra() {
 		return sifra;
 	}
 
-	public void setSifra(String sifra) {
+	private void setSifra(String sifra) {
 		this.sifra = sifra;
 	}
 
+	/**Racuna sumu karaktera stringa UUID. Pretvara String UUID u niz karaktera UUIDCharArray,
+	 * zatim brojnu vrednost svakog karaktera dodaje na promenljivu UUIDSum.
+	 * @param UUID Korisnicki jedinstveni identifikator*/
 	private void UUIDSummary(String UUID) {
 		char[] UUIDCharArray = UUID.toCharArray();
 		for (char c: UUIDCharArray) {
@@ -38,7 +42,16 @@ public class Sifra {
 		}
 	}
 
-	//TODO
+	/**Sifruje lozinku Cezarovim sifrovanjem. Odstup se racuna sumom vrednosti karaktera jedinstvenog identifikatora {@link Sifra#UUIDSummary(String)},
+	 * zatim se u zavisnosti od pozicije na ASCII tabeli, i brojem dostupnih karaktera tog tipa, vrednost osnovnog karaktera povecava za (x+n)%opseg,
+	 * gde je:
+	 * x - odstup;
+	 * n - ASCII vrednost prvog karaktera tog tipa (npr, ako je veliko slovo u putanju, n = 65);
+	 * opseg - broj karaktera tog tipa (npr za alfabet, opseg = 26);
+	 *
+	 * @param sifra Sifra koja treba da se sifruje;
+	 * @throws CharConversionException u slucaju da je karakter koji treba da se sifruje znak koji ne moze da se sifruje (svi znakovi osim velikih, malih slova, znakova interpunkcije i brojeva)
+	 * @return sifrovana lozinka*/
 	private String sifrujLozinku(String sifra) {
 		StringBuilder tempSifra = new StringBuilder();
 		char errorChar = ' ';
@@ -62,6 +75,7 @@ public class Sifra {
 			System.out.println(charConversionException.getMessage());
 			return "NULL";
 		}
+		LOGGER.info("Sifrovana lozinka za UUID " + korisnickiUUID);
 		return tempSifra.toString();
 	}
 	//TODO

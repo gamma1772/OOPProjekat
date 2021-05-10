@@ -7,6 +7,7 @@ public class Registracija implements IJedinstveniIdentifikator{
 	//private static boolean kompletnaRegistracija = false;
 	private static final Scanner registerScanner = new Scanner(System.in);
 
+	/**Sluzi za registrovanje clanova biblioteke. Sadrzi privremene promenljive koje se na kraju koriste za dodavanje novog clana.*/
 	public static void registrujClana() {
 		String ime = "", prezime = "", korIme = "", sifra = "", jmbg = "", brTelefona = "", email = "";
 		int pol = -1;

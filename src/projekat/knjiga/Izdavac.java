@@ -1,13 +1,15 @@
 package projekat.knjiga;
 
-import projekat.debug.Logger;
+import projekat.util.debug.Logger;
 import projekat.util.IJedinstveniIdentifikator;
 
-public class Izdavac {
+import java.io.Serializable;
+
+public class Izdavac implements Serializable {
 	private int id;
 	private String imeIzdavaca, zemljaPorekla;
 
-	private static final Logger logger = new Logger("IZDAVAC");
+	private transient static final Logger logger = new Logger("IZDAVAC");
 
 	public Izdavac(String imeIzdavaca, String zemljaPorekla) {
 		this.id	= IJedinstveniIdentifikator.generateUUID(9999);
