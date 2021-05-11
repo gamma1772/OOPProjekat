@@ -12,9 +12,9 @@ public class Knjiga implements Serializable {
 	private Autor autor;
 	private Izdavac izdavac;
 	private int[] zanrovi;
-	private int godinaObjavljivanja, izdanje, brStrana, kategorija;
+	private int godinaObjavljivanja, izdanje, brStrana, kategorija, kolicina;
 
-	public Knjiga(String imeKnjige, Autor autor, Izdavac izdavac, String ISBN, int[] zanrovi, int kategorija, int godinaObjavljivanja, int izdanje, int brStrana) {
+	public Knjiga(String imeKnjige, Autor autor, Izdavac izdavac, String ISBN, int[] zanrovi, int kategorija, int godinaObjavljivanja, int izdanje, int brStrana, int kolicina) {
 		this.setImeKnjige(imeKnjige);;
 		this.setAutor(autor);
 		this.setIzdavac(izdavac);
@@ -24,6 +24,15 @@ public class Knjiga implements Serializable {
 		this.setGodinaObjavljivanja(godinaObjavljivanja);
 		this.setIzdanje(izdanje);
 		this.setBrStrana(brStrana);
+		this.setKolicina(kolicina);
+	}
+
+	public int getKolicina() {
+		return kolicina;
+	}
+
+	public void setKolicina(int kolicina) {
+		this.kolicina = kolicina;
 	}
 
 	public String getImeKnjige() { return imeKnjige; }
