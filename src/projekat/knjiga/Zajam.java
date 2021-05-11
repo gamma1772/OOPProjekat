@@ -2,6 +2,7 @@ package projekat.knjiga;
 
 import projekat.osoba.AbstractKorisnik;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -9,12 +10,12 @@ public class Zajam {
 	private static final double MNOZILAC = 0.05D;
 	private double dug = 0.0D;
 	private Calendar datumPozajmljivanja, datumVracanja;
-	private Knjiga[] pozajmljeneKnjige;
+	private ArrayList<Knjiga> pozajmljeneKnjige; //Korisnik moze da pozajmi jednu ili vise knjiga
 	private AbstractKorisnik korisnik;
 
-	public Zajam(double dug, Knjiga[] pozajmljeneKnjige, AbstractKorisnik korisnik, Calendar datumPozajmljivanja, Calendar datumVracanja) {
+	public Zajam(double dug, ArrayList<Knjiga> pozajmljeneKnjige, AbstractKorisnik korisnik, Calendar datumPozajmljivanja, Calendar datumVracanja) {
 		this.setDug(dug);
-		this.setPozajmljeneKnjige(Zajam.this.pozajmljeneKnjige);
+		this.setPozajmljeneKnjige(pozajmljeneKnjige);
 		this.setKorisnik(korisnik);
 		this.setDatumPozajmljivanja(datumPozajmljivanja);
 		this.setDatumVracanja(datumVracanja);
@@ -28,11 +29,11 @@ public class Zajam {
 		this.dug = dug;
 	}
 
-	public Knjiga[] getPozajmljeneKnjige() {
+	public ArrayList<Knjiga> getPozajmljeneKnjige() {
 		return pozajmljeneKnjige;
 	}
 
-	public void setPozajmljeneKnjige(Knjiga[] pozajmljeneKnjige) {
+	public void setPozajmljeneKnjige(ArrayList<Knjiga> pozajmljeneKnjige) {
 		this.pozajmljeneKnjige = pozajmljeneKnjige;
 	}
 
@@ -72,7 +73,7 @@ public class Zajam {
 		calendar.setTime(new Date());
 		if (calendar.get(Calendar.DATE) > datumVracanja.get(Calendar.DATE)) {
 			while (calendar.get(Calendar.DATE) != datumVracanja.get(Calendar.DATE)) {
-				this.dug *= MNOZILAC * pozajmljeneKnjige.length;
+				this.dug = Math.abs(dug * MNOZILAC * pozajmljeneKnjige.size());
 			}
 		}
 		System.out.println("Dug: " + dug);
