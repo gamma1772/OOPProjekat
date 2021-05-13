@@ -11,14 +11,19 @@ public class Zajam {
 	private double dug = 0.0D;
 	private Calendar datumPozajmljivanja, datumVracanja;
 	private ArrayList<Knjiga> pozajmljeneKnjige; //Korisnik moze da pozajmi jednu ili vise knjiga
-	private AbstractKorisnik korisnik;
 
-	public Zajam(double dug, ArrayList<Knjiga> pozajmljeneKnjige, AbstractKorisnik korisnik, Calendar datumPozajmljivanja, Calendar datumVracanja) {
+	public Zajam(double dug, ArrayList<Knjiga> pozajmljeneKnjige, Calendar datumPozajmljivanja, Calendar datumVracanja) {
 		this.setDug(dug);
 		this.setPozajmljeneKnjige(pozajmljeneKnjige);
-		this.setKorisnik(korisnik);
 		this.setDatumPozajmljivanja(datumPozajmljivanja);
 		this.setDatumVracanja(datumVracanja);
+	}
+
+	public Zajam() {
+		this.setDug(0.0);
+		this.datumPozajmljivanja = Calendar.getInstance();
+		this.datumVracanja = Calendar.getInstance();
+		this.pozajmljeneKnjige = new ArrayList<>();
 	}
 
 	public double getDug() {
@@ -35,14 +40,6 @@ public class Zajam {
 
 	public void setPozajmljeneKnjige(ArrayList<Knjiga> pozajmljeneKnjige) {
 		this.pozajmljeneKnjige = pozajmljeneKnjige;
-	}
-
-	public AbstractKorisnik getKorisnik() {
-		return korisnik;
-	}
-
-	public void setKorisnik(AbstractKorisnik korisnik) {
-		this.korisnik = korisnik;
 	}
 
 	public Calendar getDatumPozajmljivanja() {

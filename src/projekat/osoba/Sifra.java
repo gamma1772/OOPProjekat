@@ -7,8 +7,8 @@ import java.io.Serializable;
 
 public class Sifra implements Serializable {
 	private String korisnickiUUID, sifra;
-	private transient int UUIDSum = 0;
-	private transient static final Logger LOGGER = new Logger("SIFRA");
+	private static int UUIDSum = 0;
+	private static final Logger LOGGER = new Logger("SIFRA");
 
 	public Sifra(String korisnickiUUID, String sifra) {
 		this.setKorisnickiUUID(korisnickiUUID);
@@ -24,11 +24,11 @@ public class Sifra implements Serializable {
 		this.korisnickiUUID = korisnickiUUID;
 	}
 
-	private String getSifra() {
+	public String getSifra() {
 		return sifra;
 	}
 
-	private void setSifra(String sifra) {
+	public void setSifra(String sifra) {
 		this.sifra = sifra;
 	}
 
@@ -51,7 +51,7 @@ public class Sifra implements Serializable {
 	 *
 	 * @param sifra Sifra koja treba da se sifruje;
 	 * @throws CharConversionException u slucaju da je karakter koji treba da se sifruje znak koji ne moze da se sifruje (svi znakovi osim velikih, malih slova, znakova interpunkcije i brojeva)
-	 * @return sifrovana lozinka*/
+	 * @return sifrovana lozinka (String)*/
 	private String sifrujLozinku(String sifra) {
 		StringBuilder tempSifra = new StringBuilder();
 		char errorChar = ' ';
@@ -78,8 +78,23 @@ public class Sifra implements Serializable {
 		LOGGER.info("Sifrovana lozinka za UUID " + korisnickiUUID);
 		return tempSifra.toString();
 	}
-	//TODO
+	/**Desifruje lozinku koja je sifrovana Cezarovim sifrovanjem. Princip je isti kao i kod sifrovanja,
+	 * samo sto se od ASCII vrednosti oduzima opseg karaktera.
+	 * @param sifra Sifra koja treba da se desifruje
+	 * @return Desifrovana sifra (String)*/
 	public static String desifrujLozinku(String sifra) {
-		return "";
+		StringBuilder desifrovanaSifra = new StringBuilder();
+
+		for (int i = 0; i < sifra.length(); i++) {
+			if (Character.isUpperCase(sifra.charAt(i))) {
+				desifrovanaSifra.append((char)(((int) sifra.charAt(i) + UUIDSum - (65 - 26) % 26 + 65)));
+			} else if (Character.isLowerCase(sifra.charAt(i))) {
+				desifrovanaSifra.append((char)(((int) sifra.charAt(i) + UUIDSum - (97 - 26) % 26 + 97)));
+			} else if (Character.isDigit(sifra.charAt(i))) {
+				desifrovanaSifra.append((char)(((int) sifra.charAt(i) + UUIDSum - (48 - 10) % 10 + 48)));
+			}
+		}
+
+		return desifrovanaSifra.toString();
 	}
 }

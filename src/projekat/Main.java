@@ -17,14 +17,26 @@ public class Main {
         System.out.println(LOGGER.debug("Debug mode: " + debugMode));
 
         Scanner scannerConsoleInput = new Scanner(System.in);
-        int opcija = 0;
-
+        int opcija = 0, brPokusaja = 0;
+        String username = "", password = "";
         while(opcija != 1 || opcija != 2) {
             System.out.println("Odaberite opciju:\n1. Prijava\n2. Registracija");
             System.out.println("Unos: "); opcija = scannerConsoleInput.nextInt();
+            scannerConsoleInput.nextLine();
             switch (opcija) {
                 case 1:
-                    Login.ulogujKorisnika();
+                    while (brPokusaja < 3) {
+                        System.out.println("Unesite korisnicko ime: "); username = scannerConsoleInput.nextLine();
+                        System.out.println("Unesite sifru: "); password = scannerConsoleInput.nextLine();
+                        new Login(username, password);
+                        brPokusaja++;
+                    }
+                    if (brPokusaja == 3) {
+                        LOGGER.error("Previse pokusaja prijavljivanja. Username: " + username);
+                        LOGGER.info("Program se zatvara");
+                        Logger.out();
+                        System.exit(1);
+                    }
                     break;
                 case 2:
                     Registracija.registrujClana();
