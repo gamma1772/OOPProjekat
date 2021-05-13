@@ -14,6 +14,10 @@ public class Clan extends AbstractKorisnik {
 		this.zajam = new Zajam();
 	}
 
+	public Clan() {
+
+	}
+
 	public Zajam getZajam() {
 		return zajam;
 	}

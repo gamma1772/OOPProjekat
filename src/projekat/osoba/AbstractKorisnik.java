@@ -1,6 +1,9 @@
 package projekat.osoba;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
 public abstract class AbstractKorisnik implements Serializable {
 	private String UUID;
@@ -38,11 +41,27 @@ public abstract class AbstractKorisnik implements Serializable {
 		this.setPassword(password);
 	}
 
+	public AbstractKorisnik() {
+		generisiUUID();
+		this.setDozvole(null);
+		this.setIme(null);
+		this.setPrezime(null);
+		this.setPassword(null);
+		this.setUsername(null);
+		this.setJmbg(null);
+		this.setBrTelefona(null);
+		this.setPol(-1);
+		this.setEmail(null);
+	}
+
 	/**Stampa tablicu dozvola u terminal / konzolu*/
 //
 
 	public void generisiUUID() {
-		this.setUUID("");
+		Date datum = new Date();
+		SimpleDateFormat format = new SimpleDateFormat("ddMMyyyyHHmmss");
+		Random random = new Random();
+		this.setUUID(String.format("%s-%05d", format.format(datum), random.nextInt(99999)));
 	}
 
 	public String punoIme() {
@@ -145,7 +164,7 @@ public abstract class AbstractKorisnik implements Serializable {
 	}
 
 	/**Unutrasnja klasa Dozvole, sluzi za postavljanje mogucnosti i dozvola korisnika. Omogucava lancano pozivanje funkcija za postavljanje dozvola*/
-	public static class Dozvole implements IMogucnost{
+	public static class Dozvole implements IMogucnost, Serializable{
 
 		protected boolean isAdmin;
 
@@ -177,6 +196,16 @@ public abstract class AbstractKorisnik implements Serializable {
 		public Dozvole brisanjeKnjiga() { this.brisanjeKnjiga = true; return this; }
 		public Dozvole pozajmljivanjeKnjiga() { this.pozajmljivanjeKnjiga = true; return this; }
 		public Dozvole registracija() { this.registracija = true; return this; }
+
+		public Dozvole standardClan() {
+			this.isAdmin = false;
+			this.dodavanjeAdmina = false; this.dodavanjeKorisnika = false; this.dodavanjeKnjiga = false;
+			this.brisanjeAdmina = false; this.brisanjeKorisnika = false; this.brisanjeKnjiga = false;
+			this.pozajmljivanjeKnjiga = true;
+			this.registracija = true;
+
+			return this;
+		}
 
 		/**Prikazuje tabelu dozvola u terminal*/
 		public void proveraMogucnosti() {

@@ -5,16 +5,30 @@ import projekat.util.debug.Logger;
 import projekat.osoba.AbstractKorisnik;
 import projekat.osoba.Sifra;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Login {
 	private static final Scanner scannerConsoleInput = new Scanner(System.in);
-	private static final Logger logger = new Logger("LOGIN");
+	private static final Logger LOGGER = new Logger("LOGIN");
 	private  String username, password;
 	private  AbstractKorisnik ulogovanKorisnik;
 
-	private static ArrayList<AbstractKorisnik> korisnici = new ArrayList<>();
+	private boolean status;
+
+	private static ArrayList<AbstractKorisnik> korisnici;
+
+	static {
+		try {
+			korisnici = DataManager.deserializeKorisnici();
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private static ArrayList<Sifra> sifre = new ArrayList<>();
 
 	public Login(String username, String password) {
@@ -37,6 +51,7 @@ public class Login {
 				}
 				else {
 					System.out.println("Netacno korisnicko ime ili lozinka.");
+					status = false;
 					break;
 				}
 			}
@@ -54,7 +69,8 @@ public class Login {
 			}
 			if (tacnost) {
 				ulogovanKorisnik = privremenKorisnik;
-				logger.info("Ulogovan korisnik ciji je UUID " + ulogovanKorisnik.getUUID());
+				status = true;
+				LOGGER.info("Ulogovan korisnik ciji je UUID " + ulogovanKorisnik.getUUID());
 			}
 			brPokusaja++;
 		}
@@ -67,4 +83,9 @@ public class Login {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public boolean getStatus() {
+		return status;
+	}
+
 }

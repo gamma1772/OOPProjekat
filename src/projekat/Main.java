@@ -18,7 +18,7 @@ public class Main {
 
         Scanner scannerConsoleInput = new Scanner(System.in);
         int opcija = 0, brPokusaja = 0;
-        String username = "", password = "";
+        String username = null, password;
         while(opcija != 1 || opcija != 2) {
             System.out.println("Odaberite opciju:\n1. Prijava\n2. Registracija");
             System.out.println("Unos: "); opcija = scannerConsoleInput.nextInt();
@@ -26,10 +26,12 @@ public class Main {
             switch (opcija) {
                 case 1:
                     while (brPokusaja < 3) {
+                        brPokusaja++;
                         System.out.println("Unesite korisnicko ime: "); username = scannerConsoleInput.nextLine();
                         System.out.println("Unesite sifru: "); password = scannerConsoleInput.nextLine();
-                        new Login(username, password);
-                        brPokusaja++;
+                        if (new Login(username, password).getStatus()) {
+                            break;
+                        }
                     }
                     if (brPokusaja == 3) {
                         LOGGER.error("Previse pokusaja prijavljivanja. Username: " + username);
@@ -45,6 +47,7 @@ public class Main {
                     break;
             }
             if (opcija != 0) {
+                Logger.out();
                 break;
             }
         }

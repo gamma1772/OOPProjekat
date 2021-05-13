@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public class Knjiga implements Serializable {
 
-	private transient static final Logger logger = new Logger("KNJIGA");
+	private transient static final Logger LOGGER = new Logger("KNJIGA");
 
 	private String imeKnjige, ISBN;
 	private Autor autor;

@@ -79,6 +79,15 @@ public class DataManager {
 		fos.close();
 	}
 
+	public static ArrayList<AbstractKorisnik> deserializeKorisnici() throws IOException, ClassNotFoundException {
+		ArrayList<AbstractKorisnik> tempLista;
+		fis = createInputStream(FOLDER, KORISNICI);
+		ois = new ObjectInputStream(fis);
+		tempLista = (ArrayList<AbstractKorisnik>) ois.readObject();
+
+		return tempLista;
+	}
+
 	/**Kreira izlazni tok za serijalizcaju podataka. Ako ne postoji folder, kreira ga.
 	 * @param folder Direktorijum gde treba da se sacuvaju podaci
 	 * @param data Ime datoteke gde treba da se sacuvaju podaci
@@ -112,7 +121,7 @@ public class DataManager {
 			return new FileInputStream(folder + data);
 		} catch (FileNotFoundException exception) {
 			exception.printStackTrace();
-			LOGGER.error(String.format("Fajl '%s' ne postoji\n%s", data, exception));
+			LOGGER.error(String.format("createInputStream(String folder, String data) zahteva da postoji fajl '%s' i direktorijum '%s'\n%s", data, folder, exception));
 			return null;
 		}
 	}

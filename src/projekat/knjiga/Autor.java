@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public class Autor implements Serializable {
 
-	private transient static final Logger logger = new Logger("AUTOR");
+	private transient static final Logger LOGGER = new Logger("AUTOR");
 
 	private int id;
 	private String ime, prezime;
