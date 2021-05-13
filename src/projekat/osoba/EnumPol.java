@@ -1,6 +1,16 @@
 package projekat.osoba;
 
 public enum EnumPol {
-	MUSKO,
-	ZENSKO
+	MUSKO(0),
+	ZENSKO(1);
+
+	private int rbr;
+
+	EnumPol(int rbr) {
+		this.rbr = rbr;
+	}
+
+	public int getNum() {
+		return this.rbr;
+	}
 }

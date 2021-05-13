@@ -16,6 +16,11 @@ public class Sifra implements Serializable {
 		this.setSifra(sifrujLozinku(sifra));
 	}
 
+	public Sifra() {
+		this.korisnickiUUID = "";
+		this.sifra = "";
+	}
+
 	public String getKorisnickiUUID() {
 		return korisnickiUUID;
 	}

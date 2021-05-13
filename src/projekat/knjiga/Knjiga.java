@@ -1,30 +1,49 @@
 package projekat.knjiga;
 
+import projekat.util.IUUID;
 import projekat.util.debug.Logger;
 
 import java.io.Serializable;
+import java.util.Random;
 
-public class Knjiga implements Serializable {
+public class Knjiga implements Serializable, IUUID {
 
 	private transient static final Logger LOGGER = new Logger("KNJIGA");
 
+	private String id;
 	private String imeKnjige, ISBN;
 	private Autor autor;
 	private Izdavac izdavac;
 	private int[] zanrovi;
 	private int godinaObjavljivanja, izdanje, brStrana, kategorija, kolicina;
 
-	public Knjiga(String imeKnjige, Autor autor, Izdavac izdavac, String ISBN, int[] zanrovi, int kategorija, int godinaObjavljivanja, int izdanje, int brStrana, int kolicina) {
-		this.setImeKnjige(imeKnjige);;
-		this.setAutor(autor);
-		this.setIzdavac(izdavac);
-		this.setISBN(ISBN);
-		this.setZanrovi(zanrovi);
-		this.setKategorija(kategorija);
-		this.setGodinaObjavljivanja(godinaObjavljivanja);
-		this.setIzdanje(izdanje);
-		this.setBrStrana(brStrana);
-		this.setKolicina(kolicina);
+	public Knjiga(String id, String imeKnjige, String ISBN, Autor autor, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
+		this.id = id;
+		this.imeKnjige = imeKnjige;
+		this.ISBN = ISBN;
+		this.autor = autor;
+		this.izdavac = izdavac;
+		this.zanrovi = zanrovi;
+		this.godinaObjavljivanja = godinaObjavljivanja;
+		this.izdanje = izdanje;
+		this.brStrana = brStrana;
+		this.kategorija = kategorija;
+		this.kolicina = kolicina;
+	}
+
+	public Knjiga(String imeKnjige, String ISBN, Autor autor, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
+		this.imeKnjige = imeKnjige;
+		this.ISBN = ISBN;
+		this.autor = autor;
+		this.izdavac = izdavac;
+		this.zanrovi = zanrovi;
+		this.godinaObjavljivanja = godinaObjavljivanja;
+		this.izdanje = izdanje;
+		this.brStrana = brStrana;
+		this.kategorija = kategorija;
+		this.kolicina = kolicina;
+		this.id = generateUUID();
+		LOGGER.info("Generisan UUID " + id);
 	}
 
 	public int getKolicina() {
@@ -116,5 +135,16 @@ public class Knjiga implements Serializable {
 	public String toString() {
 		return String.format("Naslov: %s, Autor: %s, Izdavac: %s, Godina izdavanja: %d, Izdanje: %d, Broj Strana: %d, ISBN: %s, Kategorija: %s, Zanrovi: %s",
   			   getImeKnjige(), getAutor().getFullName(), getIzdavac().toSimpleString(), getGodinaObjavljivanja(), getIzdanje(), getBrStrana(), getISBN(), EnumKategorija.getKategorija(getKategorija()).name().toLowerCase(), zanroviConcat());
+	}
+
+	@Override
+	public String generateUUID() {
+		Random random = new Random();
+		int count = 0;
+		for (char c : ISBN.toCharArray()) {
+			count += (int)c;
+		}
+
+		return String.format("%A7d-%07d", count, random.nextInt());
 	}
 }

@@ -1,30 +1,38 @@
 package projekat.knjiga;
 
 import projekat.util.debug.Logger;
-import projekat.util.IJedinstveniIdentifikator;
+import projekat.util.IUUID;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
-public class Izdavac implements Serializable {
-	private int id;
+public class Izdavac implements Serializable, IUUID {
+	private String id;
 	private String imeIzdavaca, zemljaPorekla;
 
 	private transient static final Logger logger = new Logger("IZDAVAC");
 
 	public Izdavac(String imeIzdavaca, String zemljaPorekla) {
-		this.id	= IJedinstveniIdentifikator.generateUUID(9999);
+		this.id = generateUUID();
 		this.setImeIzdavaca(imeIzdavaca);
 		this.setZemljaPorekla(zemljaPorekla);
 	}
 
 	/**Konstruktor u slucaju da je zemlja izdavaca nepoznata*/
 	public Izdavac(String imeIzdavaca) {
-		this.id	= IJedinstveniIdentifikator.generateUUID(9999);
+		this.id = generateUUID();
 		this.setImeIzdavaca(imeIzdavaca);
 		this.setZemljaPorekla("Nepoznato");
 	}
 
-	public int getId() {
+	public Izdavac() {
+		this.setImeIzdavaca("");
+		this.setZemljaPorekla("");
+	}
+
+	public String getId() {
 		return id;
 	}
 
@@ -52,5 +60,12 @@ public class Izdavac implements Serializable {
 	/**Vraca pojednostavljen String izdavaca.*/
 	public String toSimpleString() {
 		return String.format("%s, %s", getImeIzdavaca(), getZemljaPorekla());
+	}
+
+	@Override
+	public String generateUUID() {
+		SimpleDateFormat sdf = new SimpleDateFormat("UmmssSS");
+		Random random = new Random();
+		return String.format("%09d-%s", random.nextInt(), sdf.format(new Date()));
 	}
 }

@@ -1,16 +1,16 @@
-package projekat.util;
+package projekat.sistem;
 
 import projekat.osoba.AbstractKorisnik;
-import projekat.osoba.AbstractKorisnik.Dozvole;
 import projekat.osoba.Clan;
 import projekat.osoba.Sifra;
+import projekat.util.fajl.DataManager;
 import projekat.util.debug.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Registracija implements IJedinstveniIdentifikator{
+public class Registracija {
 
 	private static final Logger LOGGER = new Logger("REGISTRACIJA");
 	//private static boolean kompletnaRegistracija = false;
@@ -25,7 +25,7 @@ public class Registracija implements IJedinstveniIdentifikator{
 	/**Sluzi za registrovanje clanova biblioteke. Sadrzi privremene promenljive koje se na kraju koriste za dodavanje novog clana.*/
 	public static void registrujClana() {
 		Clan noviClan = new Clan();
-		String ime = "", prezime = "", korIme = "", sifra = "", jmbg = "", brTelefona = "", email = "";
+		String ime = "", prezime = "", korIme = "", adresa = "", brTelefona = "", email = "";
 		int pol = -1;
 		//kompletnaRegistracija = true;
 		do {
@@ -44,9 +44,9 @@ public class Registracija implements IJedinstveniIdentifikator{
 				brTelefona = registerScanner.nextLine();
 			}
 
-			if (jmbg.equals("")) {
-				System.out.println("Unesite JMBG: ");
-				jmbg = registerScanner.nextLine();
+			if (adresa.equals("")) {
+				System.out.println("Unesite Adresu: ");
+				adresa = registerScanner.nextLine();
 			}
 
 			if (email.equals("")) {
@@ -59,11 +59,6 @@ public class Registracija implements IJedinstveniIdentifikator{
 				korIme = registerScanner.nextLine();
 			}
 
-			if (sifra.equals("")) {
-				System.out.println("Unesite Sifru: ");
-				sifra = registerScanner.nextLine();
-			}
-
 			if (pol == -1) {
 				while (pol != 0 && pol != 1) {
 					System.out.println("Odaberite pol: ");
@@ -74,20 +69,8 @@ public class Registracija implements IJedinstveniIdentifikator{
 					if (pol == 2) pol = 1;
 				}
 			}
-		} while (!proveraUpisa(ime, prezime, korIme, sifra, jmbg, brTelefona, email) || pol == -1);
-		noviClan.setIme(ime);
-		noviClan.setPrezime(prezime);
-		noviClan.setUsername(korIme);
-		noviClan.setPassword(new Sifra(noviClan.getUUID(), sifra));
-		noviClan.setJmbg(jmbg);
-		noviClan.setBrTelefona(brTelefona);
-		noviClan.setEmail(email);
-		noviClan.setPol(pol);
-		noviClan.setZajam(null); //Pocetna vrednost zajma je null. Kada korisnik prvi put pozajmi knjigu, pravi se novi zajam.
-		noviClan.setDozvole(new Dozvole().standardClan()); //Postavlja dozvole korisnika na standardan sablon
+		} while (!proveraUpisa(ime, prezime, korIme, adresa, brTelefona, email) || pol == -1);
 
-		korisnici.add(noviClan);
-		sifre.add(noviClan.getPassword());
 		try {
 			DataManager.serializeKorisnike(korisnici);
 			DataManager.serializeSifre(sifre);
@@ -100,16 +83,6 @@ public class Registracija implements IJedinstveniIdentifikator{
 
 	public static void registrujAdmina() {
 
-	}
-
-	@Override
-	public String generateAdminUUID() {
-		return null;
-	}
-
-	@Override
-	public String generateClanUUID() {
-		return null;
 	}
 
 	/**Preliminarna provera da li su informacije pravilno unesene u formu. Prihvata proizvoljan broj String argumenata,

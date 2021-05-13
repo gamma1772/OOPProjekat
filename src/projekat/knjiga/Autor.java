@@ -1,24 +1,27 @@
 package projekat.knjiga;
 
 import projekat.util.debug.Logger;
-import projekat.util.IJedinstveniIdentifikator;
+import projekat.util.IUUID;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
-public class Autor implements Serializable {
+public class Autor implements Serializable, IUUID {
 
 	private transient static final Logger LOGGER = new Logger("AUTOR");
 
-	private int id;
+	private String id;
 	private String ime, prezime;
 
 	public Autor(String ime, String prezime) {
-		this.id = IJedinstveniIdentifikator.generateUUID(9999);
 		this.setIme(ime);
 		this.setPrezime(prezime);
+		this.id = generateUUID();
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -46,5 +49,12 @@ public class Autor implements Serializable {
 	@Override
 	public String toString() {
 		return String.format("Ime: %s %s, ID: %d", getIme(), getPrezime(), getId());
+	}
+
+	@Override
+	public String generateUUID() {
+		SimpleDateFormat sdf = new SimpleDateFormat("mmssSS");
+		Random random = new Random();
+		return String.format("%05d-%s", random.nextInt(), sdf.format(new Date()));
 	}
 }

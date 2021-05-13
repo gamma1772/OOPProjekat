@@ -1,6 +1,6 @@
-package projekat.util;
+package projekat.sistem;
 
-import projekat.util.debug.EnumTipovi;
+import projekat.util.fajl.DataManager;
 import projekat.util.debug.Logger;
 import projekat.osoba.AbstractKorisnik;
 import projekat.osoba.Sifra;
@@ -13,7 +13,7 @@ public class Login {
 	private static final Scanner scannerConsoleInput = new Scanner(System.in);
 	private static final Logger LOGGER = new Logger("LOGIN");
 	private  String username, password;
-	private  AbstractKorisnik ulogovanKorisnik;
+	private  AbstractKorisnik loggedKorisnik;
 
 	private boolean status;
 
@@ -68,9 +68,9 @@ public class Login {
 				}
 			}
 			if (tacnost) {
-				ulogovanKorisnik = privremenKorisnik;
+				loggedKorisnik = privremenKorisnik;
 				status = true;
-				LOGGER.info("Ulogovan korisnik ciji je UUID " + ulogovanKorisnik.getUUID());
+				LOGGER.info("Ulogovan korisnik ciji je UUID " + loggedKorisnik.getUUID());
 			}
 			brPokusaja++;
 		}

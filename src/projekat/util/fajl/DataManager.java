@@ -1,9 +1,10 @@
-package projekat.util;
+package projekat.util.fajl;
 
 import projekat.knjiga.Autor;
 import projekat.knjiga.Izdavac;
 import projekat.knjiga.Knjiga;
 import projekat.osoba.AbstractKorisnik;
+import projekat.osoba.AbstractOsoba;
 import projekat.osoba.Sifra;
 import projekat.util.debug.Logger;
 
@@ -17,6 +18,7 @@ public class DataManager {
 	private static final String SIFRE = "sifre.ser";
 	private static final String KNJIGE = "knjige.ser";
 	private static final String KORISNICI = "korisnici.ser";
+	private static final String CLANOVI = "clanovi.ser";
 	private static final String AUTORI = "autori.ser";
 	private static final String IZDAVACI = "izdavaci.ser";
 
@@ -38,7 +40,7 @@ public class DataManager {
 		oos.close();
 		fos.close();
 	}
-	/**Serijalizuje listu sifri u data/korisnici.ser, {@link DataManager#KORISNICI}
+	/**Serijalizuje listu korisnika (administratora) u data/korisnici.ser, {@link DataManager#KORISNICI}
 	 * @param korisnici Lista svih korisnika
 	 * @throws IOException u koliko je upisivanje objekta neuspesno*/
 	public static void serializeKorisnike(ArrayList<AbstractKorisnik> korisnici) throws IOException {
@@ -48,7 +50,7 @@ public class DataManager {
 		oos.close();
 		fos.close();
 	}
-	/**Serijalizuje listu sifri u data/knjige.ser, {@link DataManager#KNJIGE}
+	/**Serijalizuje listu knjiga u data/knjige.ser, {@link DataManager#KNJIGE}
 	 * @param knjige Lista svih knjiga
 	 * @throws IOException u koliko je upisivanje objekta neuspesno*/
 	public static void serializeKnjige(ArrayList<Knjiga> knjige) throws IOException {
@@ -58,7 +60,7 @@ public class DataManager {
 		oos.close();
 		fos.close();
 	}
-	/**Serijalizuje listu sifri u data/autori.ser, {@link DataManager#AUTORI}
+	/**Serijalizuje listu autora u data/autori.ser, {@link DataManager#AUTORI}
 	 * @param autori Lista svih autora
 	 * @throws IOException u koliko je upisivanje objekta neuspesno*/
 	public static void serializeAutore(ArrayList<Autor> autori) throws IOException {
@@ -68,7 +70,17 @@ public class DataManager {
 		oos.close();
 		fos.close();
 	}
-	/**Serijalizuje listu sifri u data/izdavaci.ser, {@link DataManager#IZDAVACI}
+	/**Serijalizuje listu clanova u data/autori.ser, {@link DataManager#AUTORI}
+	 * @param clanovi Lista svih autora
+	 * @throws IOException u koliko je upisivanje objekta neuspesno*/
+	public static void serializeClanove(ArrayList<AbstractOsoba> clanovi) throws IOException {
+		fos = createOutputStream(FOLDER, CLANOVI);
+		oos = new ObjectOutputStream(fos);
+		oos.writeObject(clanovi);
+		oos.close();
+		fos.close();
+	}
+	/**Serijalizuje listu izdavaca u data/izdavaci.ser, {@link DataManager#IZDAVACI}
 	 * @param izdavaci Lista svih izdavaca
 	 * @throws IOException u koliko je upisivanje objekta neuspesno*/
 	public static void serializeIzdavace(ArrayList<Izdavac> izdavaci) throws IOException {

@@ -1,8 +1,9 @@
 package projekat;
 
+import projekat.sistem.PravilaBiblioteke;
 import projekat.util.debug.Logger;
-import projekat.util.Login;
-import projekat.util.Registracija;
+import projekat.sistem.Login;
+import projekat.sistem.Registracija;
 
 import java.util.Scanner;
 
@@ -11,10 +12,12 @@ public class Main {
 
     public static boolean debugMode; //U koliko je ovo true, sve poruke iz logger-a se pokazuju u konzoli;
     private static final Logger LOGGER = new Logger("MAIN");
-
+    public static PravilaBiblioteke pravila;
     public static void main(String[] args) {
         debugMode = args.length > 0 && args[0].equals("--debug");
         System.out.println(LOGGER.debug("Debug mode: " + debugMode));
+
+        pravila = new PravilaBiblioteke();
 
         Scanner scannerConsoleInput = new Scanner(System.in);
         int opcija = 0, brPokusaja = 0;

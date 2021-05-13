@@ -1,25 +1,27 @@
-package projekat.knjiga;
+package projekat.osoba;
 
+import projekat.Main;
+import projekat.knjiga.Knjiga;
 import projekat.osoba.AbstractKorisnik;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Zajam {
-	private static final double MNOZILAC = 0.05D;
+public class Pozajmljivanje {
+	private static final double MNOZILAC = Main.pravila.multiplier();
 	private double dug = 0.0D;
 	private Calendar datumPozajmljivanja, datumVracanja;
 	private ArrayList<Knjiga> pozajmljeneKnjige; //Korisnik moze da pozajmi jednu ili vise knjiga
 
-	public Zajam(double dug, ArrayList<Knjiga> pozajmljeneKnjige, Calendar datumPozajmljivanja, Calendar datumVracanja) {
+	public Pozajmljivanje(double dug, ArrayList<Knjiga> pozajmljeneKnjige, Calendar datumPozajmljivanja, Calendar datumVracanja) {
 		this.setDug(dug);
 		this.setPozajmljeneKnjige(pozajmljeneKnjige);
 		this.setDatumPozajmljivanja(datumPozajmljivanja);
 		this.setDatumVracanja(datumVracanja);
 	}
 
-	public Zajam() {
+	public Pozajmljivanje() {
 		this.setDug(0.0);
 		this.datumPozajmljivanja = Calendar.getInstance();
 		this.datumVracanja = Calendar.getInstance();
@@ -61,7 +63,7 @@ public class Zajam {
 	public void produziZajam() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
-		calendar.add(Calendar.DATE, 17);
+		calendar.add(Calendar.DATE, Main.pravila.maxPeriod());
 		this.datumVracanja = calendar;
 	}
 
