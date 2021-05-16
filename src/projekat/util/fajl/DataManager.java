@@ -145,19 +145,15 @@ public class DataManager {
 			if ((folder = new File(FOLDER)).exists()) {
 				for ( File fajl : folder.listFiles() ) {
 					String temp = fajl.getName();
-					if(fajl.delete()) {
-						LOGGER.info(String.format("Obrisan fajl '%s'", temp));
-					}
-					else {
-						LOGGER.poruka(String.format("Nemoguce obrisati fajl '%s'", temp), EnumTipovi.ERROR);
+					if (!temp.contains("pravila")) {
+						if(fajl.delete()) {
+							LOGGER.info(String.format("Obrisan fajl '%s'", temp));
+						}
+						else {
+							LOGGER.poruka(String.format("Nemoguce obrisati fajl '%s'", temp), EnumTipovi.ERROR);
+						}
 					}
 				}
-			}
-			if(folder.delete()) {
-				LOGGER.info("Obrisan folder 'data'");
-			}
-			else {
-				LOGGER.poruka("Neuspesno brisanje foldera 'data'", EnumTipovi.ERROR);
 			}
 		}
 	}

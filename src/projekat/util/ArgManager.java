@@ -11,7 +11,7 @@ public class ArgManager {
 
 	private static final Logger LOGGER = new Logger("ARGUMENT-MANAGEMENT");
 
-	private String[] args;
+	private final String[] args;
 
 	public ArgManager(String[] args) {
 		this.args = args;
@@ -20,13 +20,13 @@ public class ArgManager {
 
 	public static void displayHelp() {
 		System.out.println("Dostupne komande: ");
-		for (EnumArguments argument : EnumArguments.getMap().values()) {
+		for (EnumArguments argument : EnumArguments.values()) {
 			String arg = argument.getArgument();
 			String desc;
-			if ((desc = argument.getDescription()) == null || (desc = argument.getDescription()).equals("")) {
+			if ((desc = argument.getDescription()) == null || desc.equals("")) {
 				desc = "Opis argumenta nije dostupan.";
 			}
-			System.out.printf("\t%s\t%s%n", argument.getArgument(), argument.getDescription());
+			System.out.printf("\t%-15s\t- %s%n", arg, desc);
 		}
 	}
 
@@ -38,6 +38,7 @@ public class ArgManager {
 		else if (args[0].equals(RESET.getArgument()) && args[1].equals("da")) {
 			Main.pravila = new PravilaBiblioteke();
 			DataManager.resetSystem(args[1].equals("da"));
+			LOGGER.info("Sistem resetovan");
 			System.out.println("Resetovanje sistema uspesno. Pokrenite program sa argumentom '--setup' da bi ste podesili program."); System.exit(100);
 		}
 	}
