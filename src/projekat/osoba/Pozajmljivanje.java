@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Pozajmljivanje {
-	private static final double MNOZILAC = Main.pravila.multiplier();
+	private static final double MNOZILAC = Main.pravila.getMultiplier();
 	private double dug = 0.0D;
 	private Calendar datumPozajmljivanja, datumVracanja;
 	private ArrayList<Knjiga> pozajmljeneKnjige; //Korisnik moze da pozajmi jednu ili vise knjiga
@@ -63,7 +63,7 @@ public class Pozajmljivanje {
 	public void produziZajam() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
-		calendar.add(Calendar.DATE, Main.pravila.maxPeriod());
+		calendar.add(Calendar.DATE, Main.pravila.getMaxPeriod());
 		this.datumVracanja = calendar;
 	}
 

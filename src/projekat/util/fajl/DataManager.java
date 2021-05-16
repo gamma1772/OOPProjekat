@@ -6,6 +6,7 @@ import projekat.knjiga.Knjiga;
 import projekat.osoba.AbstractKorisnik;
 import projekat.osoba.AbstractOsoba;
 import projekat.osoba.Sifra;
+import projekat.util.debug.EnumTipovi;
 import projekat.util.debug.Logger;
 
 import java.io.*;
@@ -135,6 +136,29 @@ public class DataManager {
 			exception.printStackTrace();
 			LOGGER.error(String.format("createInputStream(String folder, String data) zahteva da postoji fajl '%s' i direktorijum '%s'\n%s", data, folder, exception));
 			return null;
+		}
+	}
+
+	public static void resetSystem(boolean potvrda) {
+		File folder;
+		if (potvrda) {
+			if ((folder = new File(FOLDER)).exists()) {
+				for ( File fajl : folder.listFiles() ) {
+					String temp = fajl.getName();
+					if(fajl.delete()) {
+						LOGGER.info(String.format("Obrisan fajl '%s'", temp));
+					}
+					else {
+						LOGGER.poruka(String.format("Nemoguce obrisati fajl '%s'", temp), EnumTipovi.ERROR);
+					}
+				}
+			}
+			if(folder.delete()) {
+				LOGGER.info("Obrisan folder 'data'");
+			}
+			else {
+				LOGGER.poruka("Neuspesno brisanje foldera 'data'", EnumTipovi.ERROR);
+			}
 		}
 	}
 }

@@ -10,14 +10,14 @@ public interface IPravila {
 	boolean DEFAULT_LOAN_BEFORE_RETURNING_PREVIOUS = false;
 
 	/**Maksimalan period za koji knjiga moze biti pozajmljena*/
-	int maxPeriod();
+	int getMaxPeriod();
 	/**Koliko puta moze maksimalno da se produzi pozajmljivanje knjige*/
-	int maxReloan();
+	int getMaxReloan();
 	/**Broj sa kojim se mnozi dug */
-	double multiplier();
+	double getMultiplier();
 	/**Da li moze da se pozajmi jedna ili vise knjiga u jednom terminu?*/
-	boolean loanMultipleAtOnce();
+	boolean getLoanMultipleAtOnce();
 	/**Da li moraju da se vrate prethodno pozajmljene knjige pre nego sto se pozajmi sledeca?*/
-	boolean loanBeforeReturningPrevious();
+	boolean getLoanBeforeReturningPrevious();
 
 }
