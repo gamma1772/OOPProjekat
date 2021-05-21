@@ -139,6 +139,8 @@ public class DataManager {
 		}
 	}
 
+	/**Brise sve fajlove iz 'data' foldera
+	 * @param potvrda Potvrda da li da se brisu svi fajlovi.*/
 	public static void resetSystem(boolean potvrda) {
 		File folder;
 		if (potvrda) {
