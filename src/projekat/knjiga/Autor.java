@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-public class Autor implements Serializable, IUUID {
+public class Autor implements /*Serializable,*/ IUUID {
 
 	private transient static final Logger LOGGER = new Logger("AUTOR");
 
@@ -19,6 +19,12 @@ public class Autor implements Serializable, IUUID {
 		this.setIme(ime);
 		this.setPrezime(prezime);
 		this.id = generateUUID();
+	}
+
+	public Autor() {
+		this.ime = "";
+		this.prezime = "";
+		this.id = "";
 	}
 
 	public String getId() {

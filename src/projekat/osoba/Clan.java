@@ -1,18 +1,19 @@
 package projekat.osoba;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
 public class Clan extends AbstractOsoba {
-	private Pozajmljivanje pozajmljivanje;
+	private ArrayList<Pozajmljivanje> pozajmljivanje;
 
-	public Clan(String UUID, String ime, String prezime, String adresa, String brTelefona, int pol, String email, Pozajmljivanje pozajmljivanje) {
+	public Clan(String UUID, String ime, String prezime, String adresa, String brTelefona, int pol, String email, ArrayList<Pozajmljivanje> pozajmljivanje) {
 		super(UUID, ime, prezime, adresa, brTelefona, email, pol);
 		this.setPozajmljivanje(pozajmljivanje);
 	}
 
-	public Clan(String ime, String prezime, String adresa, String brTelefona, int pol, String email, Pozajmljivanje pozajmljivanje) {
+	public Clan(String ime, String prezime, String adresa, String brTelefona, int pol, String email, ArrayList<Pozajmljivanje> pozajmljivanje) {
 		super(ime, prezime, adresa, brTelefona, email, pol);
 		this.UUID = generateUUID();
 		this.setPozajmljivanje(pozajmljivanje);
@@ -21,18 +22,18 @@ public class Clan extends AbstractOsoba {
 	public Clan(String UUID, String ime, String prezime, String adresa, String brTelefona, int pol, String email) {
 		super(UUID, ime, prezime, adresa, brTelefona, email, pol);
 		this.UUID = generateUUID();
-		this.pozajmljivanje = new Pozajmljivanje();
+		this.pozajmljivanje = new ArrayList<>();
 	}
 
 	public Clan(String ime, String prezime, String adresa, String brTelefona, int pol, String email) {
 		super(ime, prezime, adresa, brTelefona, email, pol);
 		this.UUID = generateUUID();
-		this.pozajmljivanje = new Pozajmljivanje();
+		this.pozajmljivanje = new ArrayList<>();
 	}
 
 	public Clan() {
 		this.UUID = generateUUID();
-		this.pozajmljivanje = new Pozajmljivanje();
+		this.pozajmljivanje = new ArrayList<>();
 	}
 
 	@Override
@@ -45,11 +46,11 @@ public class Clan extends AbstractOsoba {
 		return String.format("Ime: %s, Prezime: ");
 	}
 
-	public Pozajmljivanje getPozajmljivanje() {
+	public ArrayList<Pozajmljivanje> getPozajmljivanje() {
 		return pozajmljivanje;
 	}
 
-	public void setPozajmljivanje(Pozajmljivanje pozajmljivanje) {
+	public void setPozajmljivanje(ArrayList<Pozajmljivanje> pozajmljivanje) {
 		this.pozajmljivanje = pozajmljivanje;
 	}
 
@@ -58,5 +59,9 @@ public class Clan extends AbstractOsoba {
 		SimpleDateFormat format = new SimpleDateFormat("ddMMHHmmss");
 		Random random = new Random();
 		return String.format("%s-%04d", format.format(new Date()), random.nextInt(9999));
+	}
+
+	public String toSerializableString() {
+		return String.format("%s~%s~%s~%s~%s~%d~%s", getUUID(), getIme(), getPrezime(), getAdresa(), getBrTelefona(), getPol(), getEmail());
 	}
 }

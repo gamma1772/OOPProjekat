@@ -2,7 +2,7 @@ package projekat.sistem;
 
 import java.io.Serializable;
 
-public class PravilaBiblioteke implements IPravila, Serializable {
+public class PravilaBiblioteke implements IPravila /*, Serializable*/ {
 
 	private int maxPeriod, maxReloan;
 	private double multiplier;

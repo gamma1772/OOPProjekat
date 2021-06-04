@@ -4,9 +4,10 @@ import projekat.util.IUUID;
 import projekat.util.debug.Logger;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Random;
 
-public class Knjiga implements Serializable, IUUID {
+public class Knjiga implements /*Serializable,*/ IUUID {
 
 	private transient static final Logger LOGGER = new Logger("KNJIGA");
 
@@ -44,6 +45,19 @@ public class Knjiga implements Serializable, IUUID {
 		this.kolicina = kolicina;
 		this.id = generateUUID();
 		LOGGER.info("Generisan UUID " + id);
+	}
+
+	public Knjiga() {
+		this.imeKnjige = "";
+		this.ISBN = "";
+		this.autor = new Autor();
+		this.izdavac = new Izdavac();
+		this.zanrovi = null;
+		this.godinaObjavljivanja = 0;
+		this.izdanje = 0;
+		this.brStrana = 0;
+		this.kategorija = 0;
+		this.kolicina = 0;
 	}
 
 	public int getKolicina() {

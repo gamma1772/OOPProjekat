@@ -3,9 +3,7 @@ package projekat.util.fajl;
 import projekat.knjiga.Autor;
 import projekat.knjiga.Izdavac;
 import projekat.knjiga.Knjiga;
-import projekat.osoba.AbstractKorisnik;
-import projekat.osoba.AbstractOsoba;
-import projekat.osoba.Sifra;
+import projekat.osoba.*;
 import projekat.util.debug.EnumTipovi;
 import projekat.util.debug.Logger;
 
@@ -30,6 +28,34 @@ public class DataManager {
 
 	private static FileOutputStream fos;
 	private static ObjectOutputStream oos;
+
+	public static void snimiKorisnike(ArrayList<AbstractKorisnik> korisnici) {
+
+	}
+
+	public static void snimiSifre(ArrayList<Sifra> sifre) {
+
+	}
+
+	public static void snimiKnjige(ArrayList<Knjiga> knjige) {
+
+	}
+
+	public static void snimiAutore(ArrayList<Autor> autori) {
+
+	}
+
+	public static void snimiIzdavace(ArrayList<Izdavac> izdavaci) {
+
+	}
+
+	public static void snimiClanove(ArrayList<Clan> clanovi) {
+
+	}
+
+	public static void snimiPozajmljivanja(ArrayList<Pozajmljivanje> pozajmljivanja) {
+
+	}
 
 	/**Serijalizuje listu sifri u data/sifre.ser, {@link DataManager#SIFRE}
 	 * @param sifre Lista svih sifara
@@ -107,7 +133,7 @@ public class DataManager {
 	 * @throws FileNotFoundException ako fajl 'data' ne postoji
 	 * @return new FileOutputStream(); null ako fajl ne postoji */
 
-	private static FileOutputStream createOutputStream(String folder, String data) {
+	private static FileOutputStream createOutputStream(String folder, String data) throws FileNotFoundException {
 		File file = new File(folder);
 		if (!file.exists()) {
 			LOGGER.info(String.format("Kreiranje foldera '%s'", folder));
@@ -115,28 +141,17 @@ public class DataManager {
 				LOGGER.info(String.format("Kreiran folder '%s'", folder));
 			}
 		}
-		try {
-			LOGGER.info(String.format("Kreiranje izlaznog toka '%s'", data));
-			return new FileOutputStream(folder + data);
-		} catch (FileNotFoundException exception) {
-			exception.printStackTrace();
-			return null;
-		}
+		LOGGER.info(String.format("Kreiranje izlaznog toka '%s'", data));
+		return new FileOutputStream(folder + data);
 	}
 	/**Kreira ulazni tok za deserijalizcaju podataka. Zahteva da postoji folder
 	 * @param folder Direktorijum gde se cuvaju podaci
 	 * @param data Ime datoteke u kojoj se cuvaju podaci
 	 * @throws FileNotFoundException ako fajl ili folder ne postoje
 	 * @return new FileInputStream(); null ako fajl ili folder ne postoje */
-	private static FileInputStream createInputStream(String folder, String data) {
-		try {
-			LOGGER.info(String.format("Kreiranje ulaznog toka '%s'", data));
-			return new FileInputStream(folder + data);
-		} catch (FileNotFoundException exception) {
-			exception.printStackTrace();
-			LOGGER.error(String.format("createInputStream(String folder, String data) zahteva da postoji fajl '%s' i direktorijum '%s'\n%s", data, folder, exception));
-			return null;
-		}
+	private static FileInputStream createInputStream(String folder, String data) throws FileNotFoundException {
+		LOGGER.info(String.format("Kreiranje ulaznog toka '%s'", data));
+		return new FileInputStream(folder + data);
 	}
 
 	/**Brise sve fajlove iz 'data' foldera
