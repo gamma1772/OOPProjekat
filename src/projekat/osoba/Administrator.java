@@ -36,4 +36,9 @@ public class Administrator extends AbstractKorisnik {
 		Random random = new Random();
 		return String.format("%s-%05d", format.format(new Date()), random.nextInt(99999));
 	}
+
+	public String toStringSerializable() {
+		return String.format("%s~%s~%s~%s~%s~%s~%d~%s",
+				getUUID(), getIme(), getPrezime(), getAdresa(), getBrTelefona(), getEmail(), getPol(), getUsername());
+	}
 }

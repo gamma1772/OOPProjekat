@@ -102,4 +102,8 @@ public class Sifra implements Serializable {
 
 		return desifrovanaSifra.toString();
 	}
+
+	public String toStringSerializable() {
+		return String.format("%s~%s", getKorisnickiUUID(), getSifra());
+	}
 }

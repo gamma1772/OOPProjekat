@@ -14,6 +14,12 @@ public class Izdavac implements Serializable, IUUID {
 
 	private transient static final Logger logger = new Logger("IZDAVAC");
 
+	public Izdavac(String ID, String imeIzdavaca, String zemljaPorekla) {
+		this.setId(ID);
+		this.setImeIzdavaca(imeIzdavaca);
+		this.setZemljaPorekla(zemljaPorekla);
+	}
+
 	public Izdavac(String imeIzdavaca, String zemljaPorekla) {
 		this.id = generateUUID();
 		this.setImeIzdavaca(imeIzdavaca);
@@ -44,6 +50,8 @@ public class Izdavac implements Serializable, IUUID {
 		return zemljaPorekla;
 	}
 
+	public void setId(String id) { this.id = id; }
+
 	public void setImeIzdavaca(String imeIzdavaca) {
 		this.imeIzdavaca = imeIzdavaca;
 	}
@@ -68,4 +76,9 @@ public class Izdavac implements Serializable, IUUID {
 		Random random = new Random();
 		return String.format("%09d-%s", random.nextInt(), sdf.format(new Date()));
 	}
+
+	public String toStringSerializable() {
+		return String.format("%s~%s~%s", getId(), getImeIzdavaca(), getZemljaPorekla());
+	}
+
 }

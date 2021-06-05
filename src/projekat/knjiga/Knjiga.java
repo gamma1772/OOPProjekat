@@ -136,6 +136,14 @@ public class Knjiga implements /*Serializable,*/ IUUID {
 		this.kategorija = kategorija;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	/** Smesta sve zanrove knjige u jedan String. koristi se u toString metodi. */
 	private String zanroviConcat() {
 		StringBuilder zanrString = new StringBuilder();
@@ -145,10 +153,12 @@ public class Knjiga implements /*Serializable,*/ IUUID {
 		return zanrString.toString().trim();
 	}
 
-	@Override
-	public String toString() {
-		return String.format("Naslov: %s, Autor: %s, Izdavac: %s, Godina izdavanja: %d, Izdanje: %d, Broj Strana: %d, ISBN: %s, Kategorija: %s, Zanrovi: %s",
-  			   getImeKnjige(), getAutor().getFullName(), getIzdavac().toSimpleString(), getGodinaObjavljivanja(), getIzdanje(), getBrStrana(), getISBN(), EnumKategorija.getKategorija(getKategorija()).name().toLowerCase(), zanroviConcat());
+	private String zanroviConcatSerializable() {
+		StringBuilder zanrString = new StringBuilder();
+		for (int zanr : getZanrovi()) {
+			zanrString.append(EnumZanr.getZanr(zanr).name().toLowerCase()).append(";");
+		}
+		return zanrString.toString();
 	}
 
 	@Override
@@ -158,7 +168,17 @@ public class Knjiga implements /*Serializable,*/ IUUID {
 		for (char c : ISBN.toCharArray()) {
 			count += (int)c;
 		}
-
 		return String.format("%A7d-%07d", count, random.nextInt());
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Naslov: %s, Autor: %s, Izdavac: %s, Godina izdavanja: %d, Izdanje: %d, Broj Strana: %d, ISBN: %s, Kategorija: %s, Zanrovi: %s",
+				getImeKnjige(), getAutor().getFullName(), getIzdavac().toSimpleString(), getGodinaObjavljivanja(), getIzdanje(), getBrStrana(), getISBN(), EnumKategorija.getKategorija(getKategorija()).name().toLowerCase(), zanroviConcat());
+	}
+
+	public String toStringSerializable() {
+		return String.format("%s~%s~%s~%s~%d~%d~%d~%s~%s~%d~(%s)",
+				getId(), getImeKnjige(), getAutor().getId(), getIzdavac().getId(), getGodinaObjavljivanja(), getIzdanje(), getBrStrana(), getISBN(), getKategorija(), getKolicina(), zanroviConcatSerializable());
 	}
 }

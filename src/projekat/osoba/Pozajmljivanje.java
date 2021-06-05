@@ -91,13 +91,13 @@ public class Pozajmljivanje {
 			for (int i = 0; i < Math.abs(ChronoUnit.DAYS.between(calendar.toInstant(), datumPozajmljivanja.toInstant())); i++) {
 				this.dug *= MNOZILAC;
 			}
-			this.dug = Math.abs(ChronoUnit.DAYS.between(calendar.toInstant(), datumPozajmljivanja.toInstant()) * MNOZILAC);
+			//this.dug = Math.abs(ChronoUnit.DAYS.between(calendar.toInstant(), datumVracanja.toInstant()) * MNOZILAC); //Koristi se ChronoUnit klasa da se odredi raznak izmedju danasnjeg dana i datuma vracanja
 		}
-		System.out.println("Dug: " + dug);
+		//System.out.println("Dug: " + dug);
 	}
 
-	public String toSerializableString() {
+	public String toStringSerializable() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		return String.format("%s~%.2f~(%s)~%s~%s~%s", getClanUUID(), getDug(), getPozajmljenaKnjiga(), dateFormat.format(getDatumPozajmljivanja().toString()), dateFormat.format(getDatumVracanja()), isRazreseno());
+		return String.format("%s~%.2f~%s~%s~%s~%s", getClanUUID(), getDug(), getPozajmljenaKnjiga(), dateFormat.format(getDatumPozajmljivanja().toString()), dateFormat.format(getDatumVracanja()), isRazreseno());
 	}
 }

@@ -26,7 +26,7 @@ public abstract class AbstractKorisnik extends AbstractOsoba implements Serializ
 	}
 
 	public AbstractKorisnik() {
-		this.dozvole = new Dozvole();
+		this.dozvole = new Dozvole("");
 		this.username = "";
 		this.password = new Sifra();
 	}
@@ -56,7 +56,8 @@ public abstract class AbstractKorisnik extends AbstractOsoba implements Serializ
 	}
 
 	/**Unutrasnja klasa Dozvole, sluzi za postavljanje mogucnosti i dozvola korisnika. Omogucava lancano pozivanje funkcija za postavljanje dozvola*/
-	public static class Dozvole implements IMogucnost, Serializable{
+	public static class Dozvole implements IMogucnost/*, Serializable*/{
+		private String userUUID;
 
 		protected boolean isAdmin;
 
@@ -67,7 +68,8 @@ public abstract class AbstractKorisnik extends AbstractOsoba implements Serializ
 		private boolean canAlterRules;
 
 		/**Osnovni konstruktor. Postavlja sve vrednosti na false*/
-		public Dozvole() {
+		public Dozvole(String userUUID) {
+			this.userUUID = userUUID;
 			this.isAdmin = false;
 			this.canAddAdmins = false;
 			this.canAddMembers = false;
@@ -118,5 +120,9 @@ public abstract class AbstractKorisnik extends AbstractOsoba implements Serializ
 		public boolean canDeleteAdmins() { return canDeleteAdmins; }
 		@Override
 		public boolean canDeleteBooks() { return canDeleteBooks; }
+
+		public String toStringSerializable() {
+			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b", userUUID, isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteBooks(), canDeleteAdmins(), canDeleteBooks());
+		}
 	}
 }

@@ -100,4 +100,8 @@ public class PravilaBiblioteke implements IPravila /*, Serializable*/ {
 	public boolean getLoanBeforeReturningPrevious() {
 		return loanBeforeReturningPrevious;
 	}
+
+	public String toStringSerializable() {
+		return String.format("%d~%d~%.2f~%b~%b", getMaxPeriod(), getMaxReloan(), getMultiplier(), getLoanMultipleAtOnce(), getLoanBeforeReturningPrevious());
+	}
 }

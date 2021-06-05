@@ -43,7 +43,7 @@ public class Clan extends AbstractOsoba {
 
 	@Override
 	public String toPrettyString() {
-		return String.format("Ime: %s, Prezime: ");
+		return String.format("Ime: %s, Prezime: %s", getIme(), getPrezime());
 	}
 
 	public ArrayList<Pozajmljivanje> getPozajmljivanje() {
@@ -61,7 +61,7 @@ public class Clan extends AbstractOsoba {
 		return String.format("%s-%04d", format.format(new Date()), random.nextInt(9999));
 	}
 
-	public String toSerializableString() {
+	public String toStringSerializable() {
 		return String.format("%s~%s~%s~%s~%s~%d~%s", getUUID(), getIme(), getPrezime(), getAdresa(), getBrTelefona(), getPol(), getEmail());
 	}
 }

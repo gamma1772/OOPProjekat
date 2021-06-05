@@ -53,14 +53,18 @@ public class Autor implements /*Serializable,*/ IUUID {
 	}
 
 	@Override
-	public String toString() {
-		return String.format("Ime: %s %s, ID: %d", getIme(), getPrezime(), getId());
-	}
-
-	@Override
 	public String generateUUID() {
 		SimpleDateFormat sdf = new SimpleDateFormat("mmssSS");
 		Random random = new Random();
 		return String.format("%05d-%s", random.nextInt(), sdf.format(new Date()));
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Ime: %s, ID: %s", getFullName(), getId());
+	}
+
+	public String toStringSerializable() {
+		return String.format("%s~%s~%s", getId(), getIme(), getPrezime());
 	}
 }
