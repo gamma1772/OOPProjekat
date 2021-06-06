@@ -19,45 +19,46 @@ public class Knjiga implements /*Serializable,*/ IUUID {
 	private int godinaObjavljivanja, izdanje, brStrana, kategorija, kolicina;
 
 	public Knjiga(String id, String imeKnjige, String ISBN, Autor autor, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
-		this.id = id;
-		this.imeKnjige = imeKnjige;
-		this.ISBN = ISBN;
-		this.autor = autor;
-		this.izdavac = izdavac;
-		this.zanrovi = zanrovi;
-		this.godinaObjavljivanja = godinaObjavljivanja;
-		this.izdanje = izdanje;
-		this.brStrana = brStrana;
-		this.kategorija = kategorija;
-		this.kolicina = kolicina;
+		this.setId(id);
+		this.setImeKnjige(imeKnjige);
+		this.setISBN(ISBN);
+		this.setAutor(autor);
+		this.setIzdavac(izdavac);
+		this.setZanrovi(zanrovi);
+		this.setGodinaObjavljivanja(godinaObjavljivanja);
+		this.setIzdanje(izdanje);
+		this.setBrStrana(brStrana);
+		this.setKategorija(kategorija);
+		this.setKolicina(kolicina);
 	}
 
 	public Knjiga(String imeKnjige, String ISBN, Autor autor, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
-		this.imeKnjige = imeKnjige;
-		this.ISBN = ISBN;
-		this.autor = autor;
-		this.izdavac = izdavac;
-		this.zanrovi = zanrovi;
-		this.godinaObjavljivanja = godinaObjavljivanja;
-		this.izdanje = izdanje;
-		this.brStrana = brStrana;
-		this.kategorija = kategorija;
-		this.kolicina = kolicina;
-		this.id = generateUUID();
+		this.setId(generateUUID());
+		this.setImeKnjige(imeKnjige);
+		this.setISBN(ISBN);
+		this.setAutor(autor);
+		this.setIzdavac(izdavac);
+		this.setZanrovi(zanrovi);
+		this.setGodinaObjavljivanja(godinaObjavljivanja);
+		this.setIzdanje(izdanje);
+		this.setBrStrana(brStrana);
+		this.setKategorija(kategorija);
+		this.setKolicina(kolicina);
 		LOGGER.info("Generisan UUID " + id);
 	}
 
 	public Knjiga() {
-		this.imeKnjige = "";
-		this.ISBN = "";
-		this.autor = new Autor();
-		this.izdavac = new Izdavac();
-		this.zanrovi = null;
-		this.godinaObjavljivanja = 0;
-		this.izdanje = 0;
-		this.brStrana = 0;
-		this.kategorija = 0;
-		this.kolicina = 0;
+		this.setId("");
+		this.setImeKnjige("");
+		this.setISBN("");
+		this.setAutor(new Autor());
+		this.setIzdavac(new Izdavac());
+		this.setZanrovi(null);
+		this.setGodinaObjavljivanja(0);
+		this.setIzdanje(0);
+		this.setBrStrana(0);
+		this.setKategorija(0);
+		this.setKolicina(0);
 	}
 
 	public int getKolicina() {

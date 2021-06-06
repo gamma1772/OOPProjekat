@@ -12,13 +12,14 @@ public class Sifra implements Serializable {
 
 	public Sifra(String korisnickiUUID, String sifra) {
 		this.setKorisnickiUUID(korisnickiUUID);
-		this.UUIDSummary(korisnickiUUID);
+		this.UUIDSummary(korisnickiUUID); // Potrebno za sifrovanje lozinke
 		this.setSifra(sifrujLozinku(sifra));
 	}
 
+	/*Poziva se samo kada je potrebna deserijalizacija, jer tada ne treba da se racuna zbir karaktera IDa*/
 	public Sifra() {
-		this.korisnickiUUID = "";
-		this.sifra = "";
+		this.setKorisnickiUUID("");
+		this.setSifra("");
 	}
 
 	public String getKorisnickiUUID() {

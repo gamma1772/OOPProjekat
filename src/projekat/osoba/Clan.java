@@ -15,25 +15,26 @@ public class Clan extends AbstractOsoba {
 
 	public Clan(String ime, String prezime, String adresa, String brTelefona, int pol, String email, ArrayList<Pozajmljivanje> pozajmljivanje) {
 		super(ime, prezime, adresa, brTelefona, email, pol);
-		this.UUID = generateUUID();
+		this.setUUID(generateUUID());
 		this.setPozajmljivanje(pozajmljivanje);
 	}
 
 	public Clan(String UUID, String ime, String prezime, String adresa, String brTelefona, int pol, String email) {
 		super(UUID, ime, prezime, adresa, brTelefona, email, pol);
-		this.UUID = generateUUID();
-		this.pozajmljivanje = new ArrayList<>();
+		this.setUUID(UUID);
+		this.setPozajmljivanje(new ArrayList<>());
 	}
 
 	public Clan(String ime, String prezime, String adresa, String brTelefona, int pol, String email) {
 		super(ime, prezime, adresa, brTelefona, email, pol);
-		this.UUID = generateUUID();
-		this.pozajmljivanje = new ArrayList<>();
+		this.setUUID(generateUUID());
+		this.setPozajmljivanje(new ArrayList<>());
 	}
 
 	public Clan() {
-		this.UUID = generateUUID();
-		this.pozajmljivanje = new ArrayList<>();
+		super("", "", "", "", "", 0);
+		this.setUUID("");
+		this.setPozajmljivanje(new ArrayList<>());
 	}
 
 	@Override

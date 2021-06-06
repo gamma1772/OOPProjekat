@@ -30,10 +30,12 @@ public class Pozajmljivanje {
 	}
 
 	public Pozajmljivanje() {
-		this.dug = 0;
-		this.datumPozajmljivanja = Calendar.getInstance();
-		this.datumVracanja = Calendar.getInstance();
-		this.pozajmljenaKnjiga = new Knjiga();
+		this.setClanUUID("");
+		this.setDug(0);
+		this.setDatumPozajmljivanja(Calendar.getInstance());
+		this.setDatumVracanja(Calendar.getInstance());
+		this.setPozajmljenaKnjiga(new Knjiga());
+		this.setRazreseno(false);
 	}
 
 	public boolean isRazreseno() { return razreseno; }

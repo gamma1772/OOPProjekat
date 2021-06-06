@@ -22,13 +22,17 @@ public class Autor implements /*Serializable,*/ IUUID {
 	}
 
 	public Autor() {
-		this.ime = "";
-		this.prezime = "";
-		this.id = "";
+		this.setIme("");
+		this.setPrezime("");
+		this.setId("");
 	}
 
 	public String getId() {
 		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getIme() {

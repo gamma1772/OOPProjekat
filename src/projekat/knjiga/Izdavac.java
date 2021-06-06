@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-public class Izdavac implements Serializable, IUUID {
+public class Izdavac implements /*Serializable,*/ IUUID {
 	private String id;
 	private String imeIzdavaca, zemljaPorekla;
 
@@ -21,19 +21,20 @@ public class Izdavac implements Serializable, IUUID {
 	}
 
 	public Izdavac(String imeIzdavaca, String zemljaPorekla) {
-		this.id = generateUUID();
+		this.setId(generateUUID());
 		this.setImeIzdavaca(imeIzdavaca);
 		this.setZemljaPorekla(zemljaPorekla);
 	}
 
 	/**Konstruktor u slucaju da je zemlja izdavaca nepoznata*/
 	public Izdavac(String imeIzdavaca) {
-		this.id = generateUUID();
+		this.setId(generateUUID());
 		this.setImeIzdavaca(imeIzdavaca);
 		this.setZemljaPorekla("Nepoznato");
 	}
 
 	public Izdavac() {
+		this.setId("");
 		this.setImeIzdavaca("");
 		this.setZemljaPorekla("");
 	}
@@ -61,24 +62,19 @@ public class Izdavac implements Serializable, IUUID {
 	}
 
 	@Override
-	public String toString() {
-		return String.format("Izdavac: %s, Zemlja porekla: %s, ID: %d", getImeIzdavaca(), getZemljaPorekla(), getId());
-	}
-
-	/**Vraca pojednostavljen String izdavaca.*/
-	public String toSimpleString() {
-		return String.format("%s, %s", getImeIzdavaca(), getZemljaPorekla());
-	}
-
-	@Override
 	public String generateUUID() {
 		SimpleDateFormat sdf = new SimpleDateFormat("UmmssSS");
 		Random random = new Random();
 		return String.format("%09d-%s", random.nextInt(), sdf.format(new Date()));
 	}
 
-	public String toStringSerializable() {
-		return String.format("%s~%s~%s", getId(), getImeIzdavaca(), getZemljaPorekla());
+	@Override
+	public String toString() { return String.format("Izdavac: %s, Zemlja porekla: %s, ID: %s", getImeIzdavaca(), getZemljaPorekla(), getId()); }
+
+	/**Vraca pojednostavljen String izdavaca.*/
+	public String toSimpleString() {
+		return String.format("%s, %s", getImeIzdavaca(), getZemljaPorekla());
 	}
 
+	public String toStringSerializable() { return String.format("%s~%s~%s", getId(), getImeIzdavaca(), getZemljaPorekla()); }
 }

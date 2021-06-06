@@ -14,21 +14,21 @@ public abstract class AbstractKorisnik extends AbstractOsoba implements Serializ
 
 	public AbstractKorisnik(String UUID, String ime, String prezime, String adresa, String brTelefona, String email, int pol, String username, Sifra password, Dozvole dozvole) {
 		super(UUID, ime, prezime, adresa, brTelefona, email, pol);
-		this.dozvole = dozvole;
-		this.username = username;
-		this.password = password;
+		this.setDozvole(dozvole);
+		this.setUsername(username);
+		this.setPassword(password);
 	}
 	public AbstractKorisnik(String ime, String prezime, String adresa, String brTelefona, String email, int pol, String username, Sifra password, Dozvole dozvole) {
 		super(ime, prezime, adresa, brTelefona, email, pol);
-		this.dozvole = dozvole;
-		this.username = username;
-		this.password = password;
+		this.setDozvole(dozvole);
+		this.setUsername(username);
+		this.setPassword(password);
 	}
 
 	public AbstractKorisnik() {
-		this.dozvole = new Dozvole("");
-		this.username = "";
-		this.password = new Sifra();
+		this.setDozvole(new Dozvole(""));
+		this.setUsername("");
+		this.setPassword(new Sifra());
 	}
 
 	public Dozvole getDozvole() {

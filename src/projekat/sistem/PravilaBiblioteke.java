@@ -15,21 +15,21 @@ public class PravilaBiblioteke implements IPravila /*, Serializable*/ {
 	 * @param loanMultipleAtOnce Da li moze da se pozajmi vise knjiga od jednom
 	 * @param loanBeforeReturningPrevious Da li moze da se pozajmi knjiga pre nego sto se vrate prethodne*/
 	public PravilaBiblioteke(int maxPeriod, int maxReloan, double multiplier, boolean loanMultipleAtOnce, boolean loanBeforeReturningPrevious) {
-		this.maxPeriod = maxPeriod;
-		this.maxReloan = maxReloan;
-		this.multiplier = multiplier;
-		this.loanMultipleAtOnce = loanMultipleAtOnce;
-		this.loanBeforeReturningPrevious = loanBeforeReturningPrevious;
+		this.setMaxPeriod(maxPeriod);
+		this.setMaxReloan(maxReloan);
+		this.setMultiplier(multiplier);
+		this.setLoanMultipleAtOnce(loanMultipleAtOnce);
+		this.setLoanBeforeReturningPrevious(loanBeforeReturningPrevious);
 	}
 
 	/**Poziva se pri pokretanju programa u slucaju da se program pokrece prvi put ili da fajl sa podacima ne postoji.
 	 * Postavlja sve vrednosti na podrazumevane.*/
 	public PravilaBiblioteke() {
-		this.maxPeriod = DEFAULT_MAX_PERIOD;
-		this.maxReloan = DEFAULT_MAX_RELOAN;
-		this.multiplier = DEFAULT_MULTIPLIER;
-		this.loanMultipleAtOnce = DEFAULT_LOAN_MULTIPLE;
-		this.loanBeforeReturningPrevious = DEFAULT_LOAN_BEFORE_RETURNING_PREVIOUS;
+		this.setMaxPeriod(DEFAULT_MAX_PERIOD);
+		this.setMaxReloan(DEFAULT_MAX_RELOAN);
+		this.setMultiplier(DEFAULT_MULTIPLIER);
+		this.setLoanMultipleAtOnce(DEFAULT_LOAN_MULTIPLE);
+		this.setLoanBeforeReturningPrevious(DEFAULT_LOAN_BEFORE_RETURNING_PREVIOUS);
 	}
 
 	//Lancane metode

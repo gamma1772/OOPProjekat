@@ -9,29 +9,32 @@ public abstract class AbstractOsoba implements IUUID{
 	protected int pol;
 
 	public AbstractOsoba(String UUID, String ime, String prezime, String adresa, String brTelefona, String email, int pol) {
-		this.UUID = UUID;
-		this.ime = ime;
-		this.prezime = prezime;
-		this.adresa = adresa;
-		this.brTelefona = brTelefona;
-		this.email = email;
-		this.pol = pol;
+		this.setUUID(UUID);
+		this.setIme(ime);
+		this.setPrezime(prezime);
+		this.setAdresa(adresa);
+		this.setBrTelefona(brTelefona);
+		this.setEmail(email);
+		this.setPol(pol);
 	}
 
 	public AbstractOsoba(String ime, String prezime, String adresa, String brTelefona, String email, int pol) {
-		this.ime = ime;
-		this.prezime = prezime;
-		this.adresa = adresa;
-		this.brTelefona = brTelefona;
-		this.email = email;
-		this.pol = pol;
+		this.setIme(ime);
+		this.setPrezime(prezime);
+		this.setAdresa(adresa);
+		this.setBrTelefona(brTelefona);
+		this.setEmail(email);
+		this.setPol(pol);
 	}
 
 	public AbstractOsoba() {
-		this.UUID = "";
-		this.ime = ""; this.prezime = "";
-		this.adresa = ""; this.brTelefona = ""; this.email = "";
-		this.pol = -1;
+		this.setUUID("");
+		this.setIme("");
+		this.setPrezime("");
+		this.setAdresa("");
+		this.setBrTelefona("");
+		this.setEmail("");
+		this.setPol(0);
 	}
 
 	public abstract String getPunoIme();
