@@ -12,6 +12,7 @@ import java.util.Date;
  * Lokalna klasa Logger, sluzi za izbacivanje poruka u terminal u slucaju da je debugMode = true,
  * ili ako je u pitanju greska.
  * */
+@Deprecated
 public class Logger {
 	private static final String output = "logs//log";
 	private final String loggerIme;
@@ -22,6 +23,10 @@ public class Logger {
 	private static final StringBuilder localBuffer = new StringBuilder();
 
 	public Logger(String loggerIme) {
+		this.loggerIme = loggerIme;
+	}
+
+	public Logger(String loggerIme, String sub) {
 		this.loggerIme = loggerIme;
 	}
 

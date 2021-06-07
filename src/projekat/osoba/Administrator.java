@@ -1,5 +1,8 @@
 package projekat.osoba;
 
+import projekat.util.serijalizacija.DataManager;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -74,12 +77,25 @@ public class Administrator extends AbstractOsoba {
 				getPunoIme(), getEmail(), getBrTelefona(), getAdresa(), super.pretvoriPolUString(getPol()), getUsername(), getUUID());
 	}
 
+	@Override
 	public String toStringSerializable() {
 		return String.format("%s~%s~%s~%s~%s~%s~%d~%s",
 				getUUID(), getIme(), getPrezime(), getAdresa(), getBrTelefona(), getEmail(), getPol(), getUsername());
 	}
 
+	@Override
+	public String serializedFileName() {
+		return "administrator.tdb";
+	}
 
+	@Override
+	public void serialize() {
+		try {
+			DataManager.serializeString(toStringSerializable(), serializedFileName());
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
+	}
 
 	/*===================================================================
 	 * 						  D O Z V O L E
@@ -99,7 +115,7 @@ public class Administrator extends AbstractOsoba {
 
 		/**Osnovni konstruktor. Postavlja sve vrednosti na false*/
 		public Dozvole(String userUUID) {
-			this.userUUID = userUUID;
+			this.setUserUUID(userUUID);
 			this.isAdmin = false;
 			this.canAddAdmins = false;
 			this.canAddMembers = false;
@@ -125,6 +141,7 @@ public class Administrator extends AbstractOsoba {
 		public Dozvole masterRule() { this.masterRule = true; return this; }
 
 		/**Prikazuje tabelu dozvola u terminal*/
+		//TODO: Novi format.
 		public void proveraMogucnosti() {
 			System.out.println("Dozvole:\tDodavanje\tBrisanje\tRegistracija\tPozajmljivanje");
 			System.out.println("Admini:\t\t" + canAddAdmins + "\t\t" + canDeleteAdmins + "\t\t" + "X" + "\t\t\t\t" + "X");
@@ -151,8 +168,16 @@ public class Administrator extends AbstractOsoba {
 		@Override
 		public boolean canDeleteBooks() { return canDeleteBooks; }
 
+		public String getUserUUID() {
+			return userUUID;
+		}
+
+		public void setUserUUID(String userUUID) {
+			this.userUUID = userUUID;
+		}
+
 		public String toStringSerializable() {
-			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b", userUUID, isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteBooks(), canDeleteAdmins(), canDeleteBooks());
+			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b", getUserUUID(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteBooks(), canDeleteAdmins(), canDeleteBooks());
 		}
 	}
 }

@@ -3,7 +3,7 @@ package projekat.util;
 import projekat.Main;
 import projekat.sistem.PravilaBiblioteke;
 import projekat.util.debug.Logger;
-import projekat.util.fajl.DataManager;
+import projekat.util.serijalizacija.DataManager;
 
 import static projekat.util.EnumArguments.*;
 

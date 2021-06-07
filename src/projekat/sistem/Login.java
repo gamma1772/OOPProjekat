@@ -1,13 +1,10 @@
 package projekat.sistem;
 
 import projekat.osoba.Administrator;
-import projekat.util.fajl.DataManager;
 import projekat.util.debug.Logger;
-import projekat.osoba.AbstractKorisnik;
 import projekat.osoba.Sifra;
 
 import javax.security.auth.login.CredentialException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -22,8 +19,13 @@ public class Login {
 		String korIme, sifra;
 
 		Administrator a = null;
-		System.out.println("Unesite Korisnicko ime: "); korIme = scannerConsoleInput.nextLine();
-		System.out.println("Unesite lozinku: "); sifra = scannerConsoleInput.nextLine();
+		System.out.print("Unesite Korisnicko ime: "); korIme = scannerConsoleInput.nextLine();
+		System.out.print("Unesite lozinku: "); sifra = scannerConsoleInput.nextLine();
+
+//		for (int i = 0; i < 50; i++) {
+//			System.out.println("\n");
+//		}
+
 
 		for (Administrator administrator : administratori) {
 			if (administrator.getUsername().equals(korIme)) {

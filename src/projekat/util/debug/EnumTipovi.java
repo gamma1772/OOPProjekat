@@ -1,5 +1,6 @@
 package projekat.util.debug;
 
+@Deprecated
 public enum EnumTipovi {
 	INFO,
 	DEBUG,

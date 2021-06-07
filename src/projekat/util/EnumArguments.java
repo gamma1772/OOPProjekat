@@ -14,9 +14,15 @@ public enum EnumArguments {
 	SYSTEM_SETUP("--setup", "Pokrece program u rezimu za prvo podezavanje. Moze samo da se pokrene ako ne postoji ni jedan korisnik"),
 	HELP("--help", "Prikazuje ovaj ekran");
 
-	private String argument, description;
-	EnumArguments(String argument) { this.argument = argument;}
-	EnumArguments(String argument, String description) { this.argument = argument; this.description = description; }
+	private final String argument;
+	private final String description;
+
+	EnumArguments(String argument) {
+		this.argument = argument;
+		this.description = null;}
+	EnumArguments(String argument, String description) {
+		this.argument = argument;
+		this.description = description; }
 
 	public String getArgument() {
 		return this.argument;

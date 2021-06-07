@@ -3,13 +3,14 @@ package projekat.sistem;
 import projekat.osoba.AbstractKorisnik;
 import projekat.osoba.Clan;
 import projekat.osoba.Sifra;
-import projekat.util.fajl.DataManager;
+import projekat.util.serijalizacija.DataManager;
 import projekat.util.debug.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+@Deprecated
 public class Registracija {
 
 	private static final Logger LOGGER = new Logger("REGISTRACIJA");

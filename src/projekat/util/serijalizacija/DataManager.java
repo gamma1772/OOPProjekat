@@ -1,4 +1,4 @@
-package projekat.util.fajl;
+package projekat.util.serijalizacija;
 
 import projekat.knjiga.Autor;
 import projekat.knjiga.Izdavac;
@@ -29,32 +29,41 @@ public class DataManager {
 	private static FileOutputStream fos;
 	private static ObjectOutputStream oos;
 
-	public static void snimiKorisnike(ArrayList<AbstractKorisnik> korisnici) {
+	private static BufferedReader br;
+	private static BufferedWriter bw;
 
+	/**Vrsi upisivanje Stringa u fajl. String sadrzi podatke objekta koji treba da se "Serijalizuje".
+	 * @param object Objekat koji je formatiran pomocu toStringSerializable()
+	 * @param fileName Ime fajla gde treba da se cuva objekat.
+	 * @throws IOException u koliko upisivanje objekta nije uspelo*/
+	public static void serializeString(String object, String fileName) throws IOException {
+		if (new File(fileName).exists()) {
+			bw = new BufferedWriter(new FileWriter(FOLDER + fileName, true));
+		}
+		else {
+			bw = new BufferedWriter(new FileWriter(FOLDER + fileName));
+		}
+
+		bw.write(object + '\n');
+
+		bw.flush();
+		bw.close();
 	}
 
-	public static void snimiSifre(ArrayList<Sifra> sifre) {
+	public static void serializeString(ArrayList<String> objects, String fileName, boolean append) throws IOException {
+		if (append) {
+			bw = new BufferedWriter(new FileWriter(FOLDER + fileName, true));
+		}
+		else {
+			bw = new BufferedWriter(new FileWriter(FOLDER + fileName));
+		}
 
-	}
+		for (String object : objects) {
+			bw.write(object + '\n');
+		}
 
-	public static void snimiKnjige(ArrayList<Knjiga> knjige) {
-
-	}
-
-	public static void snimiAutore(ArrayList<Autor> autori) {
-
-	}
-
-	public static void snimiIzdavace(ArrayList<Izdavac> izdavaci) {
-
-	}
-
-	public static void snimiClanove(ArrayList<Clan> clanovi) {
-
-	}
-
-	public static void snimiPozajmljivanja(ArrayList<Pozajmljivanje> pozajmljivanja) {
-
+		bw.flush();
+		bw.close();
 	}
 
 	/**Serijalizuje listu sifri u data/sifre.ser, {@link DataManager#SIFRE}
@@ -118,11 +127,11 @@ public class DataManager {
 		fos.close();
 	}
 
-	public static ArrayList<AbstractKorisnik> deserializeKorisnici() throws IOException, ClassNotFoundException {
-		ArrayList<AbstractKorisnik> tempLista;
+	public static ArrayList<Administrator> deserializeKorisnici() throws IOException, ClassNotFoundException {
+		ArrayList<Administrator> tempLista;
 		fis = createInputStream(FOLDER, KORISNICI);
 		ois = new ObjectInputStream(fis);
-		tempLista = (ArrayList<AbstractKorisnik>) ois.readObject();
+		tempLista = (ArrayList<Administrator>) ois.readObject();
 
 		return tempLista;
 	}
@@ -132,7 +141,6 @@ public class DataManager {
 	 * @param data Ime datoteke gde treba da se sacuvaju podaci
 	 * @throws FileNotFoundException ako fajl 'data' ne postoji
 	 * @return new FileOutputStream(); null ako fajl ne postoji */
-
 	private static FileOutputStream createOutputStream(String folder, String data) throws FileNotFoundException {
 		File file = new File(folder);
 		if (!file.exists()) {
@@ -144,6 +152,7 @@ public class DataManager {
 		LOGGER.info(String.format("Kreiranje izlaznog toka '%s'", data));
 		return new FileOutputStream(folder + data);
 	}
+
 	/**Kreira ulazni tok za deserijalizcaju podataka. Zahteva da postoji folder
 	 * @param folder Direktorijum gde se cuvaju podaci
 	 * @param data Ime datoteke u kojoj se cuvaju podaci

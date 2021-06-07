@@ -1,8 +1,9 @@
 package projekat.osoba;
 
 import projekat.util.IUUID;
+import projekat.util.serijalizacija.ISerijalizacija;
 
-public abstract class AbstractOsoba implements IUUID{
+public abstract class AbstractOsoba implements IUUID, ISerijalizacija {
 	protected String UUID;
 	protected String ime, prezime;
 	protected String adresa, brTelefona, email;
@@ -106,5 +107,15 @@ public abstract class AbstractOsoba implements IUUID{
 			case 1: return "Zensko";
 			default: return null;
 		}
+	}
+
+	@Override
+	public String toStringSerializable() {
+		return null;
+	}
+
+	@Override
+	public String serializedFileName() {
+		return null;
 	}
 }

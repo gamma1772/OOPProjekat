@@ -19,7 +19,10 @@ public class Main {
     public static PravilaBiblioteke pravila;
     public static void main(String[] args) {
 
-        new ArgManager(args); //Pokretanje provere argumenata, pokrece se jednom pri pokretanju programa.
+        if (args.length > 0) {
+            new ArgManager(args); //Pokretanje provere argumenata, pokrece se jednom pri pokretanju programa.
+
+        }
 
         int brPokusaja = 0;
 
@@ -32,7 +35,6 @@ public class Main {
             }
             brPokusaja++;
         }
-
 
 
 //        Scanner scannerConsoleInput = new Scanner(System.in);

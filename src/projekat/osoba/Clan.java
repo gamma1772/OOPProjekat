@@ -1,11 +1,14 @@
 package projekat.osoba;
 
+import projekat.util.IUUID;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
 public class Clan extends AbstractOsoba {
+
 	private ArrayList<Pozajmljivanje> pozajmljivanje;
 
 	public Clan(String UUID, String ime, String prezime, String adresa, String brTelefona, int pol, String email, ArrayList<Pozajmljivanje> pozajmljivanje) {
@@ -64,5 +67,15 @@ public class Clan extends AbstractOsoba {
 
 	public String toStringSerializable() {
 		return String.format("%s~%s~%s~%s~%s~%d~%s", getUUID(), getIme(), getPrezime(), getAdresa(), getBrTelefona(), getPol(), getEmail());
+	}
+
+	@Override
+	public String serializedFileName() {
+		return "clan.tdb";
+	}
+
+	@Override
+	public void serialize() {
+
 	}
 }
