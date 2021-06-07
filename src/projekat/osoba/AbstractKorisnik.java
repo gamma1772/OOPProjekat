@@ -5,11 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-public abstract class AbstractKorisnik extends AbstractOsoba implements Serializable {
+@Deprecated
+public abstract class AbstractKorisnik extends AbstractOsoba /*implements Serializable*/ {
 
 	protected Dozvole dozvole;
 	protected String username;
-	protected transient Sifra password;
+	protected Sifra password;
 
 
 	public AbstractKorisnik(String UUID, String ime, String prezime, String adresa, String brTelefona, String email, int pol, String username, Sifra password, Dozvole dozvole) {
