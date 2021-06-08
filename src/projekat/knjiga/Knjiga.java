@@ -1,15 +1,12 @@
 package projekat.knjiga;
 
 import projekat.util.IUUID;
-import projekat.util.debug.Logger;
+import projekat.util.serijalizacija.ISerijalizacija;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Random;
 
-public class Knjiga implements /*Serializable,*/ IUUID {
+public class Knjiga implements IUUID, ISerijalizacija {
 
-	private transient static final Logger LOGGER = new Logger("KNJIGA");
 
 	private String id;
 	private String imeKnjige, ISBN;
@@ -44,7 +41,6 @@ public class Knjiga implements /*Serializable,*/ IUUID {
 		this.setBrStrana(brStrana);
 		this.setKategorija(kategorija);
 		this.setKolicina(kolicina);
-		LOGGER.info("Generisan UUID " + id);
 	}
 
 	public Knjiga() {
@@ -181,5 +177,15 @@ public class Knjiga implements /*Serializable,*/ IUUID {
 	public String toStringSerializable() {
 		return String.format("%s~%s~%s~%s~%d~%d~%d~%s~%s~%d~(%s)",
 				getId(), getImeKnjige(), getAutor().getId(), getIzdavac().getId(), getGodinaObjavljivanja(), getIzdanje(), getBrStrana(), getISBN(), getKategorija(), getKolicina(), zanroviConcatSerializable());
+	}
+
+	@Override
+	public String serializedFileName() {
+		return null;
+	}
+
+	@Override
+	public void serialize() {
+
 	}
 }

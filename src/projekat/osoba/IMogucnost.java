@@ -13,6 +13,7 @@ public interface IMogucnost {
 	boolean canAddBooks();
 
 	boolean hasMasterRule();
+	boolean canAlterRules();
 
 	/*Provera da li korisnik moze da brise nove admine, clanove ili knjige*/
 	boolean canDeleteMembers();
@@ -20,4 +21,6 @@ public interface IMogucnost {
 	boolean canDeleteBooks();
 
 	boolean canLoanBooks();
+
+
 }

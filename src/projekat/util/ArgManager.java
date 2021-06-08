@@ -2,14 +2,12 @@ package projekat.util;
 
 import projekat.Main;
 import projekat.sistem.PravilaBiblioteke;
-import projekat.util.debug.Logger;
 import projekat.util.serijalizacija.DataManager;
 
 import static projekat.util.EnumArguments.*;
 
 public class ArgManager {
 
-	private static final Logger LOGGER = new Logger("ARGUMENT-MANAGEMENT");
 
 	private final String[] args;
 
@@ -32,14 +30,18 @@ public class ArgManager {
 
 	public void test() {
 		if (args[0].equals(HELP.getArgument())) { displayHelp(); System.exit(0);}
-		else if (args[0].equals(DEBUG.getArgument())) { Main.debugMode = true; System.out.println(LOGGER.debug("Debug mode: " + Main.debugMode)); }
+		else if (args[0].equals(DEBUG.getArgument())) { Main.debugMode = true;}
 
 		//TODO: Login potvrda
 		else if (args[0].equals(RESET.getArgument()) && args[1].equals("da")) {
 			Main.pravila = new PravilaBiblioteke();
 			DataManager.resetSystem(args[1].equals("da"));
-			LOGGER.info("Sistem resetovan");
 			System.out.println("Resetovanje sistema uspesno. Pokrenite program sa argumentom '--setup' da bi ste podesili program."); System.exit(100);
+		}
+
+		//TODO: Provera da li sistem sadrzi podatke
+		else if (args[0].equals(SYSTEM_SETUP.getArgument())) {
+
 		}
 	}
 }

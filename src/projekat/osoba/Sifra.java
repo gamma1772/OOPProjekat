@@ -1,14 +1,14 @@
 package projekat.osoba;
 
-import projekat.util.debug.Logger;
+import projekat.util.serijalizacija.ISerijalizacija;
 
 import java.io.CharConversionException;
 import java.io.Serializable;
+import java.util.ArrayList;
 
-public class Sifra implements Serializable {
+public class Sifra implements Serializable, ISerijalizacija {
 	private String korisnickiUUID, sifra;
 	private static int UUIDSum = 0;
-	private static final Logger LOGGER = new Logger("SIFRA");
 
 	public Sifra(String korisnickiUUID, String sifra) {
 		this.setKorisnickiUUID(korisnickiUUID);
@@ -77,11 +77,11 @@ public class Sifra implements Serializable {
 			}
 		}
 		catch (CharConversionException charConversionException) {
-			LOGGER.error("Greska u sifrovanju. Pokusaj sifrovanja nedozvoljenog karaktera: '" + errorChar + "'");
+			//LOGGER.error("Greska u sifrovanju. Pokusaj sifrovanja nedozvoljenog karaktera: '" + errorChar + "'");
 			System.out.println(charConversionException.getMessage());
 			return "NULL";
 		}
-		LOGGER.info("Sifrovana lozinka za UUID " + korisnickiUUID);
+		//LOGGER.info("Sifrovana lozinka za UUID " + korisnickiUUID);
 		return tempSifra.toString();
 	}
 	/**Desifruje lozinku koja je sifrovana Cezarovim sifrovanjem. Princip je isti kao i kod sifrovanja,
@@ -106,5 +106,15 @@ public class Sifra implements Serializable {
 
 	public String toStringSerializable() {
 		return String.format("%s~%s", getKorisnickiUUID(), getSifra());
+	}
+
+	@Override
+	public String serializedFileName() {
+		return "sifra.tdb";
+	}
+
+	@Override
+	public void serialize() {
+
 	}
 }

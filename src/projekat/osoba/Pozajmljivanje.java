@@ -2,15 +2,14 @@ package projekat.osoba;
 
 import projekat.Main;
 import projekat.knjiga.Knjiga;
-import projekat.osoba.AbstractKorisnik;
+import projekat.util.serijalizacija.ISerijalizacija;
 
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Pozajmljivanje {
+public class Pozajmljivanje implements ISerijalizacija {
 	private static final double MNOZILAC = Main.pravila.getMultiplier();
 	private String clanUUID;
 	private double dug = 0.0D;
@@ -101,5 +100,15 @@ public class Pozajmljivanje {
 	public String toStringSerializable() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		return String.format("%s~%.2f~%s~%s~%s~%s", getClanUUID(), getDug(), getPozajmljenaKnjiga(), dateFormat.format(getDatumPozajmljivanja().toString()), dateFormat.format(getDatumVracanja()), isRazreseno());
+	}
+
+	@Override
+	public String serializedFileName() {
+		return null;
+	}
+
+	@Override
+	public void serialize() {
+
 	}
 }

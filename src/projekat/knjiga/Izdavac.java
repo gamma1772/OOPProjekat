@@ -1,18 +1,16 @@
 package projekat.knjiga;
 
-import projekat.util.debug.Logger;
 import projekat.util.IUUID;
+import projekat.util.serijalizacija.ISerijalizacija;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-public class Izdavac implements /*Serializable,*/ IUUID {
+public class Izdavac implements IUUID, ISerijalizacija {
 	private String id;
 	private String imeIzdavaca, zemljaPorekla;
 
-	private transient static final Logger logger = new Logger("IZDAVAC");
 
 	public Izdavac(String ID, String imeIzdavaca, String zemljaPorekla) {
 		this.setId(ID);
@@ -77,4 +75,14 @@ public class Izdavac implements /*Serializable,*/ IUUID {
 	}
 
 	public String toStringSerializable() { return String.format("%s~%s~%s", getId(), getImeIzdavaca(), getZemljaPorekla()); }
+
+	@Override
+	public String serializedFileName() {
+		return null;
+	}
+
+	@Override
+	public void serialize() {
+
+	}
 }

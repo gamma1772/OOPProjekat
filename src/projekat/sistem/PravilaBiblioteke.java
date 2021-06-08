@@ -1,8 +1,8 @@
 package projekat.sistem;
 
-import java.io.Serializable;
+import projekat.util.serijalizacija.ISerijalizacija;
 
-public class PravilaBiblioteke implements IPravila /*, Serializable*/ {
+public class PravilaBiblioteke implements IPravila, ISerijalizacija {
 
 	private int maxPeriod, maxReloan;
 	private double multiplier;
@@ -104,4 +104,16 @@ public class PravilaBiblioteke implements IPravila /*, Serializable*/ {
 	public String toStringSerializable() {
 		return String.format("%d~%d~%.2f~%b~%b", getMaxPeriod(), getMaxReloan(), getMultiplier(), getLoanMultipleAtOnce(), getLoanBeforeReturningPrevious());
 	}
+
+	@Override
+	public String serializedFileName() {
+		return null;
+	}
+
+	@Override
+	public void serialize() {
+
+	}
+
+
 }

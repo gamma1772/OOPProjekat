@@ -1,7 +1,6 @@
 package projekat.sistem;
 
 import projekat.osoba.Administrator;
-import projekat.util.debug.Logger;
 import projekat.osoba.Sifra;
 
 import javax.security.auth.login.CredentialException;
@@ -10,7 +9,6 @@ import java.util.Scanner;
 
 public class Login {
 	private static final Scanner scannerConsoleInput = new Scanner(System.in);
-	private static final Logger LOGGER = new Logger("LOGIN");
 
 	private static ArrayList<Administrator> administratori;
 
@@ -27,16 +25,23 @@ public class Login {
 //		}
 
 
-		for (Administrator administrator : administratori) {
-			if (administrator.getUsername().equals(korIme)) {
-				if (Sifra.desifrujLozinku(administrator.getPassword().getSifra()).equals(sifra)) {
-					a = administrator;
-				}
-				else {
-					throw new CredentialException("Lozinka neispravna");
+		if (administratori != null) {
+			for (Administrator administrator : administratori) {
+				if (administrator.getUsername().equals(korIme)) {
+					if (Sifra.desifrujLozinku(administrator.getPassword().getSifra()).equals(sifra)) {
+						a = administrator;
+					}
+					else {
+						throw new CredentialException("Lozinka neispravna");
+					}
 				}
 			}
 		}
+		else {
+			System.out.println("Lista administratora ne postoji. Pokrenite program sa opcijom '--setup'");
+			System.exit(2);
+		}
+
 
 		if (a == null) {
 			throw new CredentialException("Neispravno korisnicko ime");

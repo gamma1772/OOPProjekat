@@ -1,12 +1,18 @@
 package projekat;
 
+import projekat.knjiga.Autor;
+import projekat.knjiga.Izdavac;
+import projekat.knjiga.Knjiga;
 import projekat.osoba.Administrator;
+import projekat.osoba.Clan;
+import projekat.osoba.Pozajmljivanje;
+import projekat.osoba.Sifra;
 import projekat.sistem.PravilaBiblioteke;
 import projekat.util.ArgManager;
-import projekat.util.debug.Logger;
 import projekat.sistem.Login;
 
 import javax.security.auth.login.CredentialException;
+import java.util.ArrayList;
 
 
 /* @author markonrt8519 */
@@ -14,9 +20,17 @@ public class Main {
 
     public static boolean debugMode = false; //U koliko je ovo true, sve poruke iz logger-a se pokazuju u konzoli;
 
-    private static final Logger LOGGER = new Logger("MAIN");
     private static Administrator prijavljenAdmin;
     public static PravilaBiblioteke pravila;
+
+    private static ArrayList<Administrator> admini;
+    private static ArrayList<Clan> clanovi;
+    private static ArrayList<Sifra> sifre;
+    private static ArrayList<Autor> autori;
+    private static ArrayList<Izdavac> izdavaci;
+    private static ArrayList<Knjiga> knjige;
+    private static ArrayList<Pozajmljivanje> pozajmljivanja;
+
     public static void main(String[] args) {
 
         if (args.length > 0) {
@@ -31,7 +45,8 @@ public class Main {
             try {
                 prijavljenAdmin = Login.login();
             } catch (CredentialException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
+                prijavljenAdmin = null;
             }
             brPokusaja++;
         }
@@ -72,7 +87,5 @@ public class Main {
 //                break;
 //            }
 //        }
-
-
     }
 }

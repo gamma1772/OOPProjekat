@@ -1,6 +1,7 @@
 package projekat.osoba;
 
 import projekat.util.serijalizacija.DataManager;
+import projekat.util.serijalizacija.ISerijalizacija;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -102,7 +103,7 @@ public class Administrator extends AbstractOsoba {
 	 *===================================================================*/
 
 	/**Unutrasnja klasa Dozvole, sluzi za postavljanje mogucnosti i dozvola korisnika. Omogucava lancano pozivanje funkcija za postavljanje dozvola*/
-	public static class Dozvole implements IMogucnost/*, Serializable*/{
+	public static class Dozvole implements IMogucnost, ISerijalizacija {
 		private String userUUID;
 
 		protected boolean isAdmin;
@@ -116,6 +117,20 @@ public class Administrator extends AbstractOsoba {
 		/**Osnovni konstruktor. Postavlja sve vrednosti na false*/
 		public Dozvole(String userUUID) {
 			this.setUserUUID(userUUID);
+			this.isAdmin = false;
+			this.canAddAdmins = false;
+			this.canAddMembers = false;
+			this.canAddBooks = false;
+			this.canDeleteAdmins = false;
+			this.canDeleteMembers = false;
+			this.canDeleteBooks = false;
+			this.canLoanBooks = false;
+			this.canAlterRules = false;
+			this.masterRule = false;
+		}
+
+		public Dozvole() {
+			this.setUserUUID("");
 			this.isAdmin = false;
 			this.canAddAdmins = false;
 			this.canAddMembers = false;
@@ -167,6 +182,8 @@ public class Administrator extends AbstractOsoba {
 		public boolean canDeleteAdmins() { return canDeleteAdmins; }
 		@Override
 		public boolean canDeleteBooks() { return canDeleteBooks; }
+		@Override
+		public boolean canAlterRules() { return canAlterRules; }
 
 		public String getUserUUID() {
 			return userUUID;
@@ -176,8 +193,58 @@ public class Administrator extends AbstractOsoba {
 			this.userUUID = userUUID;
 		}
 
+		public void setAdmin(boolean admin) {
+			isAdmin = admin;
+		}
+
+		public void setCanAddAdmins(boolean canAddAdmins) {
+			this.canAddAdmins = canAddAdmins;
+		}
+
+		public void setCanAddMembers(boolean canAddMembers) {
+			this.canAddMembers = canAddMembers;
+		}
+
+		public void setCanAddBooks(boolean canAddBooks) {
+			this.canAddBooks = canAddBooks;
+		}
+
+		public void setCanDeleteAdmins(boolean canDeleteAdmins) {
+			this.canDeleteAdmins = canDeleteAdmins;
+		}
+
+		public void setCanDeleteMembers(boolean canDeleteMembers) {
+			this.canDeleteMembers = canDeleteMembers;
+		}
+
+		public void setCanDeleteBooks(boolean canDeleteBooks) {
+			this.canDeleteBooks = canDeleteBooks;
+		}
+
+		public void setCanLoanBooks(boolean canLoanBooks) {
+			this.canLoanBooks = canLoanBooks;
+		}
+
+		public void setMasterRule(boolean masterRule) {
+			this.masterRule = masterRule;
+		}
+
+		public void setCanAlterRules(boolean canAlterRules) {
+			this.canAlterRules = canAlterRules;
+		}
+
 		public String toStringSerializable() {
-			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b", getUserUUID(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteBooks(), canDeleteAdmins(), canDeleteBooks());
+			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b", getUserUUID(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteAdmins(), canDeleteMembers(), canDeleteBooks(), canAlterRules());
+		}
+
+		@Override
+		public String serializedFileName() {
+			return "dozvole.tdb";
+		}
+
+		@Override
+		public void serialize() {
+
 		}
 	}
 }
