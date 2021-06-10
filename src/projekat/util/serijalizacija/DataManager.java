@@ -11,25 +11,28 @@ import projekat.sistem.PravilaBiblioteke;
 import projekat.util.TokProgramaException;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**Staticka klasa koja sadrzi metode za serijalizaciju i deserijalizcaju objekata.*/
 public class DataManager {
 
-	private static final String SIFRE = "sifre.ser";
-	private static final String KNJIGE = "knjige.ser";
-	private static final String KORISNICI = "korisnici.ser";
-	private static final String CLANOVI = "clanovi.ser";
-	private static final String AUTORI = "autori.ser";
-	private static final String IZDAVACI = "izdavaci.ser";
+//	private static final String SIFRE = "sifre.ser";
+//	private static final String KNJIGE = "knjige.ser";
+//	private static final String KORISNICI = "korisnici.ser";
+//	private static final String CLANOVI = "clanovi.ser";
+//	private static final String AUTORI = "autori.ser";
+//	private static final String IZDAVACI = "izdavaci.ser";
 
 	private static final String FOLDER = "data//";
 
-	private static FileInputStream fis;
-	private static ObjectInputStream ois;
-
-	private static FileOutputStream fos;
-	private static ObjectOutputStream oos;
+//	private static FileInputStream fis;
+//	private static ObjectInputStream ois;
+//
+//	private static FileOutputStream fos;
+//	private static ObjectOutputStream oos;
 
 	private static BufferedReader br;
 	private static BufferedWriter bw;
@@ -113,6 +116,7 @@ public class DataManager {
 			administratori.add(a);
 		}
 
+		br.close();
 		return administratori;
 	}
 
@@ -148,6 +152,7 @@ public class DataManager {
 			clanovi.add(c);
 		}
 
+		br.close();
 		return clanovi;
 	}
 	/**Vrsi deserijalizaciju sifara. Ne zahteva prethodne deserijalizacije*/
@@ -168,11 +173,19 @@ public class DataManager {
 			sifre.add(s);
 		}
 
+		br.close();
 		return sifre;
 	}
 
 	/**Vrsi deserijalizaciju clanova. Zahteva da se pre toga deserijalizuje lista autora i izdavaca*/
-	public static ArrayList<Knjiga> deserializeKnjige(ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) throws IOException {
+	public static ArrayList<Knjiga> deserializeKnjige(ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) throws IOException, TokProgramaException {
+
+		if (autori == null || autori.size() == 0) {
+			throw new TokProgramaException("Lista autora mora biti deserijalizovana pre knjiga!");
+		}
+		else if (izdavaci == null || izdavaci.size() == 0) {
+			throw new TokProgramaException("Lista izdavaca mora biti deserijalizovana pre knjiga");
+		}
 
 		String line;
 		String[] lista;
@@ -180,7 +193,7 @@ public class DataManager {
 		br = new BufferedReader(new FileReader(FOLDER + "knjiga.tdb"));
 
 		while((line = br.readLine()) != null) {
-			String[] zanrovi;
+			String[] zanrovi, autors;
 			Knjiga k = new Knjiga();
 			lista = line.split("~");
 
@@ -197,14 +210,20 @@ public class DataManager {
 			int[] zanrList = new int[zanrovi.length];
 
 			for (int i = 0; i < zanrList.length; i++) {
-				zanrList[i] = Integer.parseInt(zanrovi[i]);
+				if (zanrovi[i] != null && !zanrovi[i].equals("")) {
+					zanrList[i] = Integer.parseInt(zanrovi[i]);
+				}
 			}
 			k.setZanrovi(zanrList);
 
+			autors = lista[2].replace("(", "").replace(")", "").split(";");
 			for (Autor a : autori) {
-				if (a.getId().equals(lista[2])) {
-					k.setAutor(a);
-					break;
+				for (int i = 0; i < autors.length; i++) {
+					if (autors[i] != null && !autors[i].equals("")) {
+						if (a.getId().equals(autors[i])) {
+							k.getAutori().add(a);
+						}
+					}
 				}
 			}
 
@@ -218,6 +237,7 @@ public class DataManager {
 			knjige.add(k);
 		}
 
+		br.close();
 		return knjige;
 	}
 
@@ -226,7 +246,7 @@ public class DataManager {
 		String line;
 		String[] lista;
 		ArrayList<Administrator.Dozvole> dozvole = new ArrayList<>();
-		br = new BufferedReader(new FileReader(FOLDER + "knjiga.tdb"));
+		br = new BufferedReader(new FileReader(FOLDER + "dozvole.tdb"));
 
 		while((line = br.readLine()) != null) {
 			Administrator.Dozvole d = new Administrator.Dozvole();
@@ -247,27 +267,110 @@ public class DataManager {
 			dozvole.add(d);
 		}
 
+		br.close();
 		return dozvole;
 	}
 
 	public static ArrayList<Autor> deserializeAutore() throws IOException{
-		//TODO
+		String line;
+		String[] lista;
+		ArrayList<Autor> autori = new ArrayList<>();
+		br = new BufferedReader(new FileReader(FOLDER + "autor.tdb"));
+
+		while((line = br.readLine()) != null) {
+			Autor a = new Autor();
+			lista = line.split("~");
+
+			a.setId(lista[0]);
+			a.setIme(lista[1]);
+			a.setPrezime(lista[2]);
+
+			autori.add(a);
+		}
+
+		br.close();
+		return autori;
 	}
 
 	public static ArrayList<Izdavac> deserializeIzdavace() throws IOException{
-		//TODO
+		String line;
+		String[] lista;
+		ArrayList<Izdavac> izdavaci = new ArrayList<>();
+		br = new BufferedReader(new FileReader(FOLDER + "izdavac.tdb"));
+
+		while((line = br.readLine()) != null) {
+			Izdavac i = new Izdavac();
+			lista = line.split("~");
+
+			i.setId(lista[0]);
+			i.setImeIzdavaca(lista[1]);
+			i.setZemljaPorekla(lista[2]);
+
+			izdavaci.add(i);
+		}
+
+		br.close();
+		return izdavaci;
 	}
 
-	public static ArrayList<Pozajmljivanje> deserializePozajmljivanje() throws IOException{
+	public static ArrayList<Pozajmljivanje> deserializePozajmljivanje(ArrayList<Knjiga> knjige) throws IOException, ParseException, TokProgramaException {
+
+		if (knjige == null || knjige.size() == 0) {
+			throw new TokProgramaException("Lista knjiga mora biti deserijalizovana pre liste pozajmljivanja!");
+		}
+
 		String line;
 		String[] lista;
 		ArrayList<Pozajmljivanje> pozajmljivanjaArrayList = new ArrayList<>();
-		br = new BufferedReader(new FileReader(FOLDER + "pozajmljivanja.tdb"))
-		//TODO
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+		br = new BufferedReader(new FileReader(FOLDER + "pozajmljivanja.tdb"));
+
+		while((line = br.readLine()) != null) {
+			Pozajmljivanje p = new Pozajmljivanje();
+			lista = line.split("~");
+
+			p.setClanUUID(lista[0]);
+			p.setDug(Double.parseDouble(lista[1]));
+
+			for (Knjiga k : knjige) {
+				if (k.getId().equals(lista[2])) {
+					p.setPozajmljenaKnjiga(k);
+				}
+			}
+
+			cal.setTime(dateFormat.parse(lista[3]));
+			p.setDatumPozajmljivanja(cal);
+
+			cal.setTime(dateFormat.parse(lista[4]));
+			p.setDatumVracanja(cal);
+
+			p.setRazreseno(Boolean.parseBoolean(lista[5]));
+
+			pozajmljivanjaArrayList.add(p);
+		}
+
+		br.close();
+		return pozajmljivanjaArrayList;
 	}
 
 	public static PravilaBiblioteke deserializePravila() throws IOException{
-		//TODO
+		String line;
+		String[] lista;
+		PravilaBiblioteke pravila = new PravilaBiblioteke();
+
+		line = br.readLine();
+		lista = line.split("~");
+
+		pravila.maxPeriod(Integer.parseInt(lista[0]))
+				.maxReloan(Integer.parseInt(lista[1]))
+				.multiplier(Double.parseDouble(lista[2]))
+				.loanMultipleAtOnce(Boolean.parseBoolean(lista[3]))
+				.setLoanBeforeReturningPrevious(Boolean.parseBoolean(lista[4]));
+
+		br.close();
+		return pravila;
 	}
 //	/**Serijalizuje listu sifri u data/sifre.ser, {@link DataManager#SIFRE}
 //	 * @param sifre Lista svih sifara
@@ -385,6 +488,38 @@ public class DataManager {
 						}
 					}
 				}
+			}
+		}
+	}
+
+	public static void createFolder() {
+		File folder = new File(FOLDER);
+		if (!folder.exists()) {
+			if (folder.mkdir()) {
+				System.out.println("Kreiran folder data/");
+			}
+		}
+
+	}
+
+	public static void createFileEntries() throws IOException {
+		createFolder();
+		ArrayList<String> files = new ArrayList<String>() {{
+			add("administrator.tdb");
+			add("clan.tdb");
+			add("knjiga.tdb");
+			add("autor.tdb");
+			add("izdavac.tdb");
+			add("dozvole.tdb");
+			add("pravila.tdb");
+			add("sifra.tdb");
+			add("pozajmljivanje.tdb");
+		}};
+
+		for (String s : files) {
+			File file = new File(FOLDER + s);
+			if (file.createNewFile()) {
+				System.out.printf("Kreiran fajl '%s'%n", s);
 			}
 		}
 	}

@@ -10,8 +10,12 @@ import projekat.osoba.Sifra;
 import projekat.sistem.PravilaBiblioteke;
 import projekat.util.ArgManager;
 import projekat.sistem.Login;
+import projekat.util.TokProgramaException;
+import projekat.util.serijalizacija.DataManager;
 
 import javax.security.auth.login.CredentialException;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 
@@ -20,7 +24,7 @@ public class Main {
 
     public static boolean debugMode = false; //U koliko je ovo true, sve poruke iz logger-a se pokazuju u konzoli;
 
-    private static Administrator prijavljenAdmin;
+    public static Administrator prijavljenAdmin;
     public static PravilaBiblioteke pravila;
 
     private static ArrayList<Administrator> admini;
@@ -30,28 +34,29 @@ public class Main {
     private static ArrayList<Izdavac> izdavaci;
     private static ArrayList<Knjiga> knjige;
     private static ArrayList<Pozajmljivanje> pozajmljivanja;
+    private static ArrayList<Administrator.Dozvole> dozvole;
 
     public static void main(String[] args) {
 
         if (args.length > 0) {
             new ArgManager(args); //Pokretanje provere argumenata, pokrece se jednom pri pokretanju programa.
-
         }
 
         int brPokusaja = 0;
+        deserialization(true);
 
         /*Prijavljivanje administratora, tj. korisnika, sistema*/
         while(prijavljenAdmin == null && brPokusaja < 3) {
             try {
-                prijavljenAdmin = Login.login();
+                prijavljenAdmin = Login.login(admini);
+                break;
             } catch (CredentialException e) {
                 System.out.println(e.getMessage());
                 prijavljenAdmin = null;
             }
             brPokusaja++;
         }
-
-
+         init();
 //        Scanner scannerConsoleInput = new Scanner(System.in);
 //        int opcija = 0, brPokusaja = 0;
 //        String username = null, password;
@@ -87,5 +92,99 @@ public class Main {
 //                break;
 //            }
 //        }
+    }
+
+    private static void deserialization(boolean restricted) {
+        if (restricted) {
+
+            try {
+                sifre = DataManager.deserializeSifre();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            try {
+                dozvole = DataManager.deserializeDozvole();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            try {
+                admini = DataManager.deserializeAdmins(sifre, dozvole);
+            } catch (IOException | TokProgramaException exception) {
+                exception.printStackTrace();
+                if (exception instanceof IOException) {
+                    System.out.println("Lista administratora ne postoji. Pokrenite program sa opcijom '--setup'");
+                    System.exit(2);
+                }
+                else {
+                    System.exit(3);
+                }
+            }
+
+        } else {
+            try {
+                pravila = DataManager.deserializePravila();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+            try {
+                sifre = DataManager.deserializeSifre();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            try {
+                dozvole = DataManager.deserializeDozvole();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            try {
+                admini = DataManager.deserializeAdmins(sifre, dozvole);
+            } catch (IOException | TokProgramaException exception) {
+                exception.printStackTrace();
+                if (exception instanceof TokProgramaException) {
+                    System.out.println("Lista administratora ne postoji. Pokrenite program sa opcijom '--setup'");
+                    System.exit(2);
+                }
+            }
+
+            try {
+                autori = DataManager.deserializeAutore();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            try {
+                izdavaci = DataManager.deserializeIzdavace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            try {
+                knjige = DataManager.deserializeKnjige(autori, izdavaci);
+            } catch (IOException | TokProgramaException exception) {
+                exception.printStackTrace();
+                if (exception instanceof TokProgramaException) {
+                    System.exit(3);
+                }
+            }
+            try {
+                pozajmljivanja = DataManager.deserializePozajmljivanje(knjige);
+            } catch (IOException | TokProgramaException | ParseException exception) {
+                exception.printStackTrace();
+                if (exception instanceof TokProgramaException) {
+                    System.exit(3);
+                }
+            }
+            try {
+                clanovi = DataManager.deserializeClanovi(pozajmljivanja);
+            } catch (IOException | TokProgramaException exception) {
+                exception.printStackTrace();
+                if (exception instanceof TokProgramaException) {
+                    System.exit(3);
+                }
+            }
+        }
+    }
+
+    public static void init() {
+        deserialization(false);
     }
 }

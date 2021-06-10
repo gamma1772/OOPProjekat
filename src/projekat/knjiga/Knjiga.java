@@ -1,8 +1,11 @@
 package projekat.knjiga;
 
 import projekat.util.IUUID;
+import projekat.util.serijalizacija.DataManager;
 import projekat.util.serijalizacija.ISerijalizacija;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Knjiga implements IUUID, ISerijalizacija {
@@ -10,16 +13,16 @@ public class Knjiga implements IUUID, ISerijalizacija {
 
 	private String id;
 	private String imeKnjige, ISBN;
-	private Autor autor;
+	private ArrayList<Autor> autori;
 	private Izdavac izdavac;
 	private int[] zanrovi;
 	private int godinaObjavljivanja, izdanje, brStrana, kategorija, kolicina;
 
-	public Knjiga(String id, String imeKnjige, String ISBN, Autor autor, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
+	public Knjiga(String id, String imeKnjige, String ISBN, ArrayList<Autor> autori, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
 		this.setId(id);
 		this.setImeKnjige(imeKnjige);
 		this.setISBN(ISBN);
-		this.setAutor(autor);
+		this.setAutor(autori);
 		this.setIzdavac(izdavac);
 		this.setZanrovi(zanrovi);
 		this.setGodinaObjavljivanja(godinaObjavljivanja);
@@ -29,11 +32,11 @@ public class Knjiga implements IUUID, ISerijalizacija {
 		this.setKolicina(kolicina);
 	}
 
-	public Knjiga(String imeKnjige, String ISBN, Autor autor, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
+	public Knjiga(String imeKnjige, String ISBN, ArrayList<Autor> autori, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
 		this.setId(generateUUID());
 		this.setImeKnjige(imeKnjige);
 		this.setISBN(ISBN);
-		this.setAutor(autor);
+		this.setAutor(autori);
 		this.setIzdavac(izdavac);
 		this.setZanrovi(zanrovi);
 		this.setGodinaObjavljivanja(godinaObjavljivanja);
@@ -47,7 +50,7 @@ public class Knjiga implements IUUID, ISerijalizacija {
 		this.setId("");
 		this.setImeKnjige("");
 		this.setISBN("");
-		this.setAutor(new Autor());
+		this.setAutor(new ArrayList<Autor>());
 		this.setIzdavac(new Izdavac());
 		this.setZanrovi(null);
 		this.setGodinaObjavljivanja(0);
@@ -71,12 +74,12 @@ public class Knjiga implements IUUID, ISerijalizacija {
 		this.imeKnjige = imeKnjige;
 	}
 
-	public Autor getAutor() {
-		return autor;
+	public ArrayList<Autor> getAutori() {
+		return autori;
 	}
 
-	public void setAutor(Autor autor) {
-		this.autor = autor;
+	public void setAutor(ArrayList<Autor> autori) {
+		this.autori = autori;
 	}
 
 	public Izdavac getIzdavac() {
@@ -170,22 +173,34 @@ public class Knjiga implements IUUID, ISerijalizacija {
 
 	@Override
 	public String toString() {
-		return String.format("Naslov: %s, Autor: %s, Izdavac: %s, Godina izdavanja: %d, Izdanje: %d, Broj Strana: %d, ISBN: %s, Kategorija: %s, Zanrovi: %s",
-				getImeKnjige(), getAutor().getFullName(), getIzdavac().toSimpleString(), getGodinaObjavljivanja(), getIzdanje(), getBrStrana(), getISBN(), EnumKategorija.getKategorija(getKategorija()).name().toLowerCase(), zanroviConcat());
+		StringBuilder autors = new StringBuilder();
+		for (Autor a : autori) {
+			autors.append(a.getFullName()).append(' ');
+		}
+		return String.format("Naslov: %s, Autori: %s, Izdavac: %s, Godina izdavanja: %d, Izdanje: %d, Broj Strana: %d, ISBN: %s, Kategorija: %s, Zanrovi: %s",
+				getImeKnjige(), autors, getIzdavac().toSimpleString(), getGodinaObjavljivanja(), getIzdanje(), getBrStrana(), getISBN(), EnumKategorija.getKategorija(getKategorija()).name().toLowerCase(), zanroviConcat());
 	}
 
 	public String toStringSerializable() {
-		return String.format("%s~%s~%s~%s~%d~%d~%d~%s~%s~%d~(%s)",
-				getId(), getImeKnjige(), getAutor().getId(), getIzdavac().getId(), getGodinaObjavljivanja(), getIzdanje(), getBrStrana(), getISBN(), getKategorija(), getKolicina(), zanroviConcatSerializable());
+		StringBuilder authors = new StringBuilder();
+		for (Autor a : autori) {
+			authors.append(a.getId()).append(';');
+		}
+		return String.format("%s~%s~(%s)~%s~%d~%d~%d~%s~%s~%d~(%s)",
+				getId(), getImeKnjige(), authors, getIzdavac().getId(), getGodinaObjavljivanja(), getIzdanje(), getBrStrana(), getISBN(), getKategorija(), getKolicina(), zanroviConcatSerializable());
 	}
 
 	@Override
 	public String serializedFileName() {
-		return null;
+		return "knjiga.tdb";
 	}
 
 	@Override
 	public void serialize() {
-
+		try {
+			DataManager.serializeString(toStringSerializable(), serializedFileName());
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
 	}
 }

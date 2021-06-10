@@ -1,8 +1,10 @@
 package projekat.osoba;
 
+import projekat.util.serijalizacija.DataManager;
 import projekat.util.serijalizacija.ISerijalizacija;
 
 import java.io.CharConversionException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -38,6 +40,10 @@ public class Sifra implements Serializable, ISerijalizacija {
 		this.sifra = sifra;
 	}
 
+	public void encryptSifra(String sifra) {
+		this.setSifra(sifrujLozinku(sifra));
+	}
+
 	/**Racuna sumu karaktera stringa UUID. Pretvara String UUID u niz karaktera UUIDCharArray,
 	 * zatim brojnu vrednost svakog karaktera dodaje na promenljivu UUIDSum.
 	 * @param UUID Korisnicki jedinstveni identifikator*/
@@ -59,6 +65,10 @@ public class Sifra implements Serializable, ISerijalizacija {
 	 * @throws CharConversionException u slucaju da je karakter koji treba da se sifruje znak koji ne moze da se sifruje (svi znakovi osim velikih, malih slova, znakova interpunkcije i brojeva)
 	 * @return sifrovana lozinka (String)*/
 	private String sifrujLozinku(String sifra) {
+
+		if (this.korisnickiUUID.equals("")) {
+			UUIDSummary(this.korisnickiUUID);
+		}
 		StringBuilder tempSifra = new StringBuilder();
 		char errorChar = ' ';
 		char[] tempChar = sifra.toCharArray();
@@ -115,6 +125,10 @@ public class Sifra implements Serializable, ISerijalizacija {
 
 	@Override
 	public void serialize() {
-
+		try {
+			DataManager.serializeString(toStringSerializable(), serializedFileName());
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
 	}
 }

@@ -1,8 +1,10 @@
 package projekat.knjiga;
 
 import projekat.util.IUUID;
+import projekat.util.serijalizacija.DataManager;
 import projekat.util.serijalizacija.ISerijalizacija;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -71,11 +73,15 @@ public class Autor implements IUUID, ISerijalizacija {
 
 	@Override
 	public String serializedFileName() {
-		return null;
+		return "autor.tdb";
 	}
 
 	@Override
 	public void serialize() {
-
+		try {
+			DataManager.serializeString(toStringSerializable(), serializedFileName());
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
 	}
 }

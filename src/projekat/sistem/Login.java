@@ -10,20 +10,16 @@ import java.util.Scanner;
 public class Login {
 	private static final Scanner scannerConsoleInput = new Scanner(System.in);
 
-	private static ArrayList<Administrator> administratori;
+	private static ArrayList<Administrator> administratoriLocal;
 
-	public static Administrator login() throws CredentialException {
-		//int brPokusaja = 0;
+	public static Administrator login(ArrayList<Administrator> administratori) throws CredentialException {
+
+		administratoriLocal = administratori;
 		String korIme, sifra;
 
 		Administrator a = null;
 		System.out.print("Unesite Korisnicko ime: "); korIme = scannerConsoleInput.nextLine();
 		System.out.print("Unesite lozinku: "); sifra = scannerConsoleInput.nextLine();
-
-//		for (int i = 0; i < 50; i++) {
-//			System.out.println("\n");
-//		}
-
 
 		if (administratori != null) {
 			for (Administrator administrator : administratori) {
@@ -37,11 +33,6 @@ public class Login {
 				}
 			}
 		}
-		else {
-			System.out.println("Lista administratora ne postoji. Pokrenite program sa opcijom '--setup'");
-			System.exit(2);
-		}
-
 
 		if (a == null) {
 			throw new CredentialException("Neispravno korisnicko ime");

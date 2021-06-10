@@ -1,6 +1,9 @@
 package projekat.sistem;
 
+import projekat.util.serijalizacija.DataManager;
 import projekat.util.serijalizacija.ISerijalizacija;
+
+import java.io.IOException;
 
 public class PravilaBiblioteke implements IPravila, ISerijalizacija {
 
@@ -24,12 +27,26 @@ public class PravilaBiblioteke implements IPravila, ISerijalizacija {
 
 	/**Poziva se pri pokretanju programa u slucaju da se program pokrece prvi put ili da fajl sa podacima ne postoji.
 	 * Postavlja sve vrednosti na podrazumevane.*/
+
+	public PravilaBiblioteke(boolean defaultVal) {
+		if (defaultVal) {
+			this.setMaxPeriod(DEFAULT_MAX_PERIOD);
+			this.setMaxReloan(DEFAULT_MAX_RELOAN);
+			this.setMultiplier(DEFAULT_MULTIPLIER);
+			this.setLoanMultipleAtOnce(DEFAULT_LOAN_MULTIPLE);
+			this.setLoanBeforeReturningPrevious(DEFAULT_LOAN_BEFORE_RETURNING_PREVIOUS);
+		}
+		else {
+			new PravilaBiblioteke();
+		}
+	}
+
 	public PravilaBiblioteke() {
-		this.setMaxPeriod(DEFAULT_MAX_PERIOD);
-		this.setMaxReloan(DEFAULT_MAX_RELOAN);
-		this.setMultiplier(DEFAULT_MULTIPLIER);
-		this.setLoanMultipleAtOnce(DEFAULT_LOAN_MULTIPLE);
-		this.setLoanBeforeReturningPrevious(DEFAULT_LOAN_BEFORE_RETURNING_PREVIOUS);
+		this.setMaxPeriod(0);
+		this.setMaxReloan(0);
+		this.setMultiplier(0.0D);
+		this.setLoanBeforeReturningPrevious(false);
+		this.setLoanMultipleAtOnce(false);
 	}
 
 	//Lancane metode
@@ -107,12 +124,16 @@ public class PravilaBiblioteke implements IPravila, ISerijalizacija {
 
 	@Override
 	public String serializedFileName() {
-		return null;
+		return "pravila.tdb";
 	}
 
 	@Override
 	public void serialize() {
-
+		try {
+			DataManager.serializeString(toStringSerializable(), serializedFileName());
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
 	}
 
 

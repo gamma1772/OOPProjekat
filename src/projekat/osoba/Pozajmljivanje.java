@@ -2,8 +2,10 @@ package projekat.osoba;
 
 import projekat.Main;
 import projekat.knjiga.Knjiga;
+import projekat.util.serijalizacija.DataManager;
 import projekat.util.serijalizacija.ISerijalizacija;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
@@ -99,16 +101,20 @@ public class Pozajmljivanje implements ISerijalizacija {
 
 	public String toStringSerializable() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		return String.format("%s~%.2f~%s~%s~%s~%s", getClanUUID(), getDug(), getPozajmljenaKnjiga(), dateFormat.format(getDatumPozajmljivanja().toString()), dateFormat.format(getDatumVracanja()), isRazreseno());
+		return String.format("%s~%.2f~%s~%s~%s~%b", getClanUUID(), getDug(), getPozajmljenaKnjiga().getId(), dateFormat.format(getDatumPozajmljivanja()), dateFormat.format(getDatumVracanja()), isRazreseno());
 	}
 
 	@Override
 	public String serializedFileName() {
-		return null;
+		return "pozajmljivanje.tdb";
 	}
 
 	@Override
 	public void serialize() {
-
+		try {
+			DataManager.serializeString(toStringSerializable(), serializedFileName());
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
 	}
 }

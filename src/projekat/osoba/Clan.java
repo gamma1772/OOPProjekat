@@ -1,7 +1,9 @@
 package projekat.osoba;
 
 import projekat.util.IUUID;
+import projekat.util.serijalizacija.DataManager;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,6 +78,10 @@ public class Clan extends AbstractOsoba {
 
 	@Override
 	public void serialize() {
-
+		try {
+			DataManager.serializeString(toStringSerializable(), serializedFileName());
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
 	}
 }

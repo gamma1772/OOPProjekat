@@ -31,9 +31,9 @@ public class Administrator extends AbstractOsoba {
 
 	public Administrator() {
 		super("", "", "", "", "" ,"", 0);
-		this.setDozvole(dozvole);
-		this.setUsername(username);
-		this.setPassword(password);
+		this.setDozvole(new Dozvole());
+		this.setUsername("");
+		this.setPassword(new Sifra());
 	}
 
 	public Dozvole getDozvole() {
@@ -93,6 +93,8 @@ public class Administrator extends AbstractOsoba {
 	public void serialize() {
 		try {
 			DataManager.serializeString(toStringSerializable(), serializedFileName());
+			password.serialize();
+			dozvole.serialize();
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}
@@ -234,7 +236,7 @@ public class Administrator extends AbstractOsoba {
 		}
 
 		public String toStringSerializable() {
-			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b", getUserUUID(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteAdmins(), canDeleteMembers(), canDeleteBooks(), canAlterRules());
+			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b", getUserUUID().toString(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteAdmins(), canDeleteMembers(), canDeleteBooks(), canAlterRules());
 		}
 
 		@Override
@@ -244,7 +246,11 @@ public class Administrator extends AbstractOsoba {
 
 		@Override
 		public void serialize() {
-
+			try {
+				DataManager.serializeString(toStringSerializable(), serializedFileName());
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
 		}
 	}
 }
