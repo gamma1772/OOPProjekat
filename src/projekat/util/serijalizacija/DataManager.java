@@ -61,12 +61,7 @@ public class DataManager {
 	 * @param append Da li da obrise sve iz fajla i napise sadrzaj liste, ili da doda sadrzaj liste ispod postojeceg sadrzaja
 	 * @throws IOException u koliko ne moze da se upisu podaci u fajl.*/
 	public static void serializeString(ArrayList<String> objects, String fileName, boolean append) throws IOException {
-		if (append) {
-			bw = new BufferedWriter(new FileWriter(FOLDER + fileName, true));
-		}
-		else {
-			bw = new BufferedWriter(new FileWriter(FOLDER + fileName));
-		}
+		bw = new BufferedWriter(new FileWriter(FOLDER + fileName, append));
 
 		for (String object : objects) {
 			bw.write(object + '\n');
@@ -359,15 +354,16 @@ public class DataManager {
 		String line;
 		String[] lista;
 		PravilaBiblioteke pravila = new PravilaBiblioteke();
+		br = new BufferedReader(new FileReader(FOLDER + "pravila.tdb"));
 
-		line = br.readLine();
-		lista = line.split("~");
-
-		pravila.maxPeriod(Integer.parseInt(lista[0]))
-				.maxReloan(Integer.parseInt(lista[1]))
-				.multiplier(Double.parseDouble(lista[2]))
-				.loanMultipleAtOnce(Boolean.parseBoolean(lista[3]))
-				.setLoanBeforeReturningPrevious(Boolean.parseBoolean(lista[4]));
+		if ((line = br.readLine()) != null) {
+			lista = line.split("~");
+			pravila.maxPeriod(Integer.parseInt(lista[0]))
+					.maxReloan(Integer.parseInt(lista[1]))
+					.multiplier(Double.parseDouble(lista[2]))
+					.loanMultipleAtOnce(Boolean.parseBoolean(lista[3]))
+					.setLoanBeforeReturningPrevious(Boolean.parseBoolean(lista[4]));
+		}
 
 		br.close();
 		return pravila;

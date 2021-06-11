@@ -134,8 +134,12 @@ public class Main {
                 exception.printStackTrace();
             }
             try {
-                if (knjige == null)
-                knjige = DataManager.deserializeKnjige(autori, izdavaci);
+                if (knjige == null) {
+                    if (!(autori.size() == 0) || !(izdavaci.size() == 0)) {
+                        knjige = DataManager.deserializeKnjige(autori, izdavaci);
+                    }
+                }
+
             } catch (IOException | TokProgramaException exception) {
                 exception.printStackTrace();
                 if (exception instanceof TokProgramaException) {
@@ -143,8 +147,12 @@ public class Main {
                 }
             }
             try {
-                if (pozajmljivanja == null)
-                pozajmljivanja = DataManager.deserializePozajmljivanje(knjige);
+                if (pozajmljivanja == null) {
+                    if (!(knjige == null)) {
+                        pozajmljivanja = DataManager.deserializePozajmljivanje(knjige);
+                    }
+                }
+
             } catch (IOException | TokProgramaException | ParseException exception) {
                 exception.printStackTrace();
                 if (exception instanceof TokProgramaException) {
@@ -152,8 +160,12 @@ public class Main {
                 }
             }
             try {
-                if (clanovi == null)
-                clanovi = DataManager.deserializeClanovi(pozajmljivanja);
+                if (clanovi == null) {
+                    if (!(pozajmljivanja == null)) {
+                        clanovi = DataManager.deserializeClanovi(pozajmljivanja);
+                    }
+                }
+
             } catch (IOException | TokProgramaException exception) {
                 exception.printStackTrace();
                 if (exception instanceof TokProgramaException) {
@@ -203,12 +215,21 @@ public class Main {
                     break;
                 case 4:
                     //TODO: logout
+                    cls();
+                    System.out.println("Odjavljivanje...");
+                    prijavljenAdmin = Login.logout();
+                    try {
+                        prijavljenAdmin = Login.login(admini);
+                    } catch (CredentialException e) {
+                        e.printStackTrace();
+                    }
+                    init();
                     petlja = false;
                     break;
                 case 5:
                     System.exit(0);
                 default:
-                    System.out.println("Niste uneli pravilnu opciju. Ponudjene opcije: [1, 2, 3, 4]");
+                    System.out.println("Niste uneli pravilnu opciju. Ponudjene opcije: [1, 2, 3, 4, 5]");
                     break;
             }
         }

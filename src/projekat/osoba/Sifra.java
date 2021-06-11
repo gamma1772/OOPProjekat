@@ -14,7 +14,7 @@ public class Sifra implements Serializable, ISerijalizacija {
 
 	public Sifra(String korisnickiUUID, String sifra) {
 		this.setKorisnickiUUID(korisnickiUUID);
-		this.UUIDSummary(korisnickiUUID); // Potrebno za sifrovanje lozinke
+		this.UUIDSummary(); // Potrebno za sifrovanje lozinke
 		this.setSifra(sifrujLozinku(sifra));
 	}
 
@@ -44,15 +44,22 @@ public class Sifra implements Serializable, ISerijalizacija {
 		this.setSifra(sifrujLozinku(sifra));
 	}
 
-	/**Racuna sumu karaktera stringa UUID. Pretvara String UUID u niz karaktera UUIDCharArray,
-	 * zatim brojnu vrednost svakog karaktera dodaje na promenljivu UUIDSum.
-	 * @param UUID Korisnicki jedinstveni identifikator*/
-	private void UUIDSummary(String UUID) {
-		char[] UUIDCharArray = UUID.toCharArray();
+	/**Racuna sumu karaktera stringa korisnickiUUID. Pretvara String korisnickiUUID u niz karaktera UUIDCharArray,
+	 * zatim brojnu vrednost svakog karaktera dodaje na promenljivu UUIDSum.*/
+	private void UUIDSummary() {
+		char[] UUIDCharArray = korisnickiUUID.toCharArray();
 		for (char c: UUIDCharArray) {
-			UUIDSum += (int)c;
+			UUIDSum += c;
 		}
 	}
+
+	private static void UUIDSummary(String UUID) {
+		char[] UUIDCharArray = UUID.toCharArray();
+		for (char c: UUIDCharArray) {
+			UUIDSum += c;
+		}
+	}
+
 
 	/**Sifruje lozinku Cezarovim sifrovanjem. Odstup se racuna sumom vrednosti karaktera jedinstvenog identifikatora {@link Sifra#UUIDSummary(String)},
 	 * zatim se u zavisnosti od pozicije na ASCII tabeli, i brojem dostupnih karaktera tog tipa, vrednost osnovnog karaktera povecava za (x+n)%opseg,
@@ -66,10 +73,8 @@ public class Sifra implements Serializable, ISerijalizacija {
 	 * @return sifrovana lozinka (String)*/
 	private String sifrujLozinku(String sifra) {
 
-		if (this.korisnickiUUID.equals("")) {
-			UUIDSummary(this.korisnickiUUID);
-		}
 		StringBuilder tempSifra = new StringBuilder();
+		UUIDSummary();
 		char errorChar = ' ';
 		char[] tempChar = sifra.toCharArray();
 		try {
@@ -94,24 +99,34 @@ public class Sifra implements Serializable, ISerijalizacija {
 		//LOGGER.info("Sifrovana lozinka za UUID " + korisnickiUUID);
 		return tempSifra.toString();
 	}
-	/**Desifruje lozinku koja je sifrovana Cezarovim sifrovanjem. Princip je isti kao i kod sifrovanja,
-	 * samo sto se od ASCII vrednosti oduzima opseg karaktera.
-	 * @param sifra Sifra koja treba da se desifruje
-	 * @return Desifrovana sifra (String)*/
-	public static String desifrujLozinku(String sifra) {
-		StringBuilder desifrovanaSifra = new StringBuilder();
 
-		for (int i = 0; i < sifra.length(); i++) {
-			if (Character.isUpperCase(sifra.charAt(i))) {
-				desifrovanaSifra.append((char)(((int) sifra.charAt(i) + UUIDSum - (65 - 26) % 26 + 65)));
-			} else if (Character.isLowerCase(sifra.charAt(i))) {
-				desifrovanaSifra.append((char)(((int) sifra.charAt(i) + UUIDSum - (97 - 26) % 26 + 97)));
-			} else if (Character.isDigit(sifra.charAt(i))) {
-				desifrovanaSifra.append((char)(((int) sifra.charAt(i) + UUIDSum - (48 - 10) % 10 + 48)));
+	public static String sifrujLozinku(String UUID, String sifra) {
+
+		StringBuilder tempSifra = new StringBuilder();
+		UUIDSummary(UUID);
+		char errorChar = ' ';
+		char[] tempChar = sifra.toCharArray();
+		try {
+			for (int i = 0; i < tempChar.length; i++) {
+				if (Character.isUpperCase(tempChar[i])) {
+					tempSifra.append((char) (((int) tempChar[i] + UUIDSum - 65) % 26 + 65));
+				} else if (Character.isLowerCase(tempChar[i])) {
+					tempSifra.append((char) (((int) tempChar[i] + UUIDSum - 97) % 26 + 97));
+				} else if (Character.isDigit(tempChar[i])) {
+					tempSifra.append((char) (((int) tempChar[i] + UUIDSum - 48) % 10 + 48));
+				} else {
+					errorChar = tempChar[i];
+					throw new CharConversionException();
+				}
 			}
 		}
-
-		return desifrovanaSifra.toString();
+		catch (CharConversionException charConversionException) {
+			//LOGGER.error("Greska u sifrovanju. Pokusaj sifrovanja nedozvoljenog karaktera: '" + errorChar + "'");
+			System.out.println(charConversionException.getMessage());
+			return "NULL";
+		}
+		//LOGGER.info("Sifrovana lozinka za UUID " + korisnickiUUID);
+		return tempSifra.toString();
 	}
 
 	public String toStringSerializable() {

@@ -127,7 +127,7 @@ public class ArgManager {
 				Main.debugMode = true;
 			}
 			else if (args[0].equals(SYSTEM_SETUP.getArgument())) {
-				File temp = new File("//data");
+				File temp = new File("data//");
 				if (temp.exists() && temp.list().length == 0) {
 					setupSystem();
 				}
