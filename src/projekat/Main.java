@@ -7,6 +7,7 @@ import projekat.osoba.Administrator;
 import projekat.osoba.Clan;
 import projekat.osoba.Pozajmljivanje;
 import projekat.osoba.Sifra;
+import projekat.sistem.PozajmljivanjeManager;
 import projekat.sistem.PravilaBiblioteke;
 import projekat.util.ArgManager;
 import projekat.sistem.Login;
@@ -17,6 +18,7 @@ import javax.security.auth.login.CredentialException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 /* @author markonrt8519 */
@@ -57,57 +59,25 @@ public class Main {
             brPokusaja++;
         }
          init();
-//        Scanner scannerConsoleInput = new Scanner(System.in);
-//        int opcija = 0, brPokusaja = 0;
-//        String username = null, password;
-//        while(opcija != 1 || opcija != 2) {
-//            System.out.println("Odaberite opciju:\n1. Prijava\n2. Registracija");
-//            System.out.println("Unos: "); opcija = scannerConsoleInput.nextInt();
-//            scannerConsoleInput.nextLine();
-//            switch (opcija) {
-//                case 1:
-//                    while (brPokusaja < 3) {
-//                        brPokusaja++;
-//                        System.out.println("Unesite korisnicko ime: "); username = scannerConsoleInput.nextLine();
-//                        System.out.println("Unesite sifru: "); password = scannerConsoleInput.nextLine();
-//                        if (new Login(username, password).getStatus()) {
-//                            break;
-//                        }
-//                    }
-//                    if (brPokusaja == 3) {
-//                        LOGGER.error("Previse pokusaja prijavljivanja. Username: " + username);
-//                        LOGGER.info("Program se zatvara");
-//                        Logger.out();
-//                        System.exit(1);
-//                    }
-//                    break;
-//                case 2:
-//                    Registracija.registrujClana();
-//                    break;
-//                default:
-//                    break;
-//            }
-//            if (opcija != 0) {
-//                Logger.out();
-//                break;
-//            }
-//        }
     }
 
     private static void deserialization(boolean restricted) {
         if (restricted) {
 
             try {
+                if (sifre == null)
                 sifre = DataManager.deserializeSifre();
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
             try {
+                if (dozvole == null)
                 dozvole = DataManager.deserializeDozvole();
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
             try {
+                if (admini == null)
                 admini = DataManager.deserializeAdmins(sifre, dozvole);
             } catch (IOException | TokProgramaException exception) {
                 exception.printStackTrace();
@@ -122,22 +92,26 @@ public class Main {
 
         } else {
             try {
+                if (pravila == null)
                 pravila = DataManager.deserializePravila();
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
 
             try {
+                if (sifre == null)
                 sifre = DataManager.deserializeSifre();
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
             try {
+                if (dozvole == null)
                 dozvole = DataManager.deserializeDozvole();
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
             try {
+                if (admini == null)
                 admini = DataManager.deserializeAdmins(sifre, dozvole);
             } catch (IOException | TokProgramaException exception) {
                 exception.printStackTrace();
@@ -148,16 +122,19 @@ public class Main {
             }
 
             try {
+                if (autori == null)
                 autori = DataManager.deserializeAutore();
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
             try {
+                if (izdavaci == null)
                 izdavaci = DataManager.deserializeIzdavace();
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
             try {
+                if (knjige == null)
                 knjige = DataManager.deserializeKnjige(autori, izdavaci);
             } catch (IOException | TokProgramaException exception) {
                 exception.printStackTrace();
@@ -166,6 +143,7 @@ public class Main {
                 }
             }
             try {
+                if (pozajmljivanja == null)
                 pozajmljivanja = DataManager.deserializePozajmljivanje(knjige);
             } catch (IOException | TokProgramaException | ParseException exception) {
                 exception.printStackTrace();
@@ -174,6 +152,7 @@ public class Main {
                 }
             }
             try {
+                if (clanovi == null)
                 clanovi = DataManager.deserializeClanovi(pozajmljivanja);
             } catch (IOException | TokProgramaException exception) {
                 exception.printStackTrace();
@@ -185,6 +164,65 @@ public class Main {
     }
 
     public static void init() {
+        Scanner scanner = new Scanner(System.in);
+        int odabir;
+        boolean petlja = true;
         deserialization(false);
+        cls();
+
+        System.out.println("==========POCETNI MENI==========");
+        System.out.println("Odaberite opciju:\n");
+        System.out.println("1. Dodaj novog clana biblioteke\n2. Pozajmi knjigu\n3. Opcije biblioteke\n4. Odjava\n5. Izlaz\n");
+        while (petlja) {
+            System.out.println("Unos: "); odabir = scanner.nextInt();
+            scanner.nextLine();
+            switch (odabir) {
+                case 1:
+                    break;
+                case 2:
+                    if (prijavljenAdmin.getDozvole().canLoanBooks()) {
+                        PozajmljivanjeManager.init();
+                    }
+                    else {
+                        System.out.println("Nemate dozvolu da pozajmljujete knjige.");
+                    }
+                    break;
+                case 3:
+                    prikaziOpcijeBiblioteke();
+                    odabir = scanner.nextInt();
+                    //TODO: Loop
+                    switch (odabir) {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        default:
+
+                    }
+                    break;
+                case 4:
+                    //TODO: logout
+                    petlja = false;
+                    break;
+                case 5:
+                    System.exit(0);
+                default:
+                    System.out.println("Niste uneli pravilnu opciju. Ponudjene opcije: [1, 2, 3, 4]");
+                    break;
+            }
+        }
+    }
+
+    public static void cls() {
+        for (int i = 0; i < 25; i++) {
+            System.out.println('\n');
+        }
+    }
+
+    public static void prikaziOpcijeBiblioteke() {
+        cls();
+        System.out.println("==========OPCIJE BIBLIOTEKE==========");
+        System.out.println("1. Opcije administratora\n2. Dodaj novu knjigu\n3. Dodaj novog autora\n4. Dodaj novog izdavaca\n5. Pocetni meni");
     }
 }

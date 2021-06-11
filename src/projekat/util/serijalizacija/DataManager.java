@@ -479,11 +479,9 @@ public class DataManager {
 					String temp = fajl.getName();
 					if (!temp.contains("pravila")) {
 						if(fajl.delete()) {
-							//LOGGER.info(String.format("Obrisan fajl '%s'", temp));
 							System.out.println(String.format("Obrisan fajl '%s'", temp));
 						}
 						else {
-							//LOGGER.poruka(String.format("Nemoguce obrisati fajl '%s'", temp), EnumTipovi.ERROR);
 							System.out.println(String.format("Nemoguce obrisati fajl '%s'", temp));
 						}
 					}

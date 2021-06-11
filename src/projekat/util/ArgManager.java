@@ -2,10 +2,14 @@ package projekat.util;
 
 import projekat.Main;
 import projekat.osoba.Administrator;
+import projekat.sistem.Login;
 import projekat.sistem.PravilaBiblioteke;
 import projekat.util.serijalizacija.DataManager;
 
+import javax.security.auth.login.CredentialException;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import static projekat.util.EnumArguments.*;
@@ -33,7 +37,39 @@ public class ArgManager {
 	}
 
 	private void resetSystem() {
+		ArrayList<Administrator> admin = new ArrayList<>();
+		Administrator a = new Administrator();
+		try {
+			admin = DataManager.deserializeAdmins(DataManager.deserializeSifre(), DataManager.deserializeDozvole());
+		} catch (IOException | TokProgramaException exception) {
+			exception.printStackTrace();
+			System.out.println("Greska u deserijalizaciji!");
+			System.exit(1);
+		}
+		try {
+			a = Login.login(admin);
+		} catch (CredentialException e) {
+			e.printStackTrace();
+		}
 
+		if (a.getDozvole().hasMasterRule()) {
+			Scanner tempScanner = new Scanner(System.in);
+			System.out.println("Da li ste sigurni da zelite da resetujete sistem? [Da / Ne]");
+			while (true) {
+				System.out.print("Unos: ");
+				switch (tempScanner.nextLine()) {
+					case "Da":
+						DataManager.resetSystem(true);
+						System.out.println("Sistem je resetovan, da bi ste ponovo podesili sistem, potrebno je da pokrenete program sa opcijom '--setup'");
+						System.exit(0);
+					case "Ne":
+						System.exit(0);
+					default:
+						System.out.println("Niste uneli pravilnu opciju!");
+						break;
+				}
+			}
+		}
 	}
 
 	private void setupSystem() {
@@ -83,21 +119,24 @@ public class ArgManager {
 	}
 
 	public void test() {
-		if (args[0].equals(HELP.getArgument())) { displayHelp(); System.exit(0);}
-		else if (args[0].equals(DEBUG.getArgument())) { Main.debugMode = true;}
-
-		//TODO: Login potvrda
-		else if (args[0].equals(RESET.getArgument()) && args[1].equals("da")) {
-			Main.pravila = new PravilaBiblioteke(true);
-			DataManager.resetSystem(args[1].equals("da"));
-			System.out.println("Resetovanje sistema uspesno. Pokrenite program sa argumentom '--setup' da bi ste podesili program."); System.exit(100);
+		if (args.length == 1) {
+			if (args[0].equals(HELP.getArgument())) {
+				displayHelp(); System.exit(0);
+			}
+			else if (args[0].equals(DEBUG.getArgument())) {
+				Main.debugMode = true;
+			}
+			else if (args[0].equals(SYSTEM_SETUP.getArgument())) {
+				File temp = new File("//data");
+				if (temp.exists() && temp.list().length == 0) {
+					setupSystem();
+				}
+				else {
+					System.out.println("Sistem je vec podesen i sadrzi fajlove, program se zatvara.");
+					System.exit(4);
+				}
+			}
 		}
-
-		//TODO: Provera da li sistem sadrzi podatke
-		else if (args[0].equals(SYSTEM_SETUP.getArgument())) {
-			setupSystem();
-		}
-
 		if (args.length > 1) {
 			if (args[0].equals(LOGIN.getArgument())) {
 

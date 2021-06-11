@@ -198,6 +198,10 @@ public class Knjiga implements IUUID, ISerijalizacija {
 	@Override
 	public void serialize() {
 		try {
+			izdavac.serialize();
+			for (Autor a : autori) {
+				a.serialize();
+			}
 			DataManager.serializeString(toStringSerializable(), serializedFileName());
 		} catch (IOException exception) {
 			exception.printStackTrace();

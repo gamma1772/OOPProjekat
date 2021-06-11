@@ -92,9 +92,9 @@ public class Administrator extends AbstractOsoba {
 	@Override
 	public void serialize() {
 		try {
-			DataManager.serializeString(toStringSerializable(), serializedFileName());
 			password.serialize();
 			dozvole.serialize();
+			DataManager.serializeString(toStringSerializable(), serializedFileName());
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}

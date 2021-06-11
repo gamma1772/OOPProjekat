@@ -112,6 +112,7 @@ public class Pozajmljivanje implements ISerijalizacija {
 	@Override
 	public void serialize() {
 		try {
+			pozajmljenaKnjiga.serialize();
 			DataManager.serializeString(toStringSerializable(), serializedFileName());
 		} catch (IOException exception) {
 			exception.printStackTrace();
