@@ -267,7 +267,8 @@ public class Administrator extends AbstractOsoba {
 		}
 
 		public String toStringSerializable() {
-			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b", getUserUUID().toString(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteAdmins(), canDeleteMembers(), canDeleteBooks(), canAlterRules());
+			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b",
+					getUserUUID(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteAdmins(), canDeleteMembers(), canDeleteBooks(), canAlterRules(), canEditAdmins(), canEditMembers(), canEditBooks());
 		}
 
 		public void setPravilaIndexed(String[] index) {

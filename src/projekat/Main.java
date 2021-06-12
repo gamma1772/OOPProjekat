@@ -257,7 +257,7 @@ public class Main {
                 case 1:
                     break;
                 case 2:
-                    SistemManager.initPozajmljivanje();
+                    SistemManager.initPozajmljivanje(clanovi, pozajmljivanja, knjige);
                     break;
                 case 3:
                     petlja = false;
@@ -339,7 +339,7 @@ public class Main {
                     SistemManager.initAdminManager(prijavljenAdmin, odabir, admini);
                     break;
                 case 4:
-                    SistemManager.initPravilaManager(prijavljenAdmin);
+                    SistemManager.initPravilaManager(pravila);
                     break;
                 case 5:
                     petlja = false;

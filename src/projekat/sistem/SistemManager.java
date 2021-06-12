@@ -1,14 +1,17 @@
 package projekat.sistem;
 
 import projekat.Main;
+import projekat.knjiga.Knjiga;
 import projekat.osoba.Administrator;
+import projekat.osoba.Clan;
 import projekat.osoba.EnumPol;
+import projekat.osoba.Pozajmljivanje;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SistemManager {
-	public static void initPozajmljivanje() {
+	public static void initPozajmljivanje(ArrayList<Clan> clanovi, ArrayList<Pozajmljivanje> pozajmljivanja, ArrayList<Knjiga> knjige) {
 		//TODO
 	}
 
@@ -20,19 +23,19 @@ public class SistemManager {
 				}
 				break;
 			case 2:
-				if (prijavljenAdmin.getDozvole().canAddAdmins() && prijavljenAdmin.getDozvole().canDeleteAdmins() || prijavljenAdmin.getDozvole().hasMasterRule()) {
-
+				if (prijavljenAdmin.getDozvole().canEditAdmins() || prijavljenAdmin.getDozvole().hasMasterRule()) {
+					editAdmin(adminList);
 				}
 				break;
 			case 3:
 				if (prijavljenAdmin.getDozvole().canDeleteAdmins() || prijavljenAdmin.getDozvole().hasMasterRule()) {
-
+					deleteAdmin(adminList);
 				}
 				break;
 		}
 	}
 
-	public static void initPravilaManager(Administrator prijavljenAdmin) {
+	public static void initPravilaManager(PravilaBiblioteke pravila) {
 
 	}
 
@@ -111,5 +114,25 @@ public class SistemManager {
 
 			a.getDozvole().setPravilaIndexed(pravilaList);
 		}
+
+		a.serialize();
 	}
+	private static void addMember() {}
+	private static void addBook() {}
+	private static void addAuthor() {}
+	private static void addPublisher() {}
+
+	private static void editAdmin(ArrayList<Administrator> adminList) {}
+	private static void editMember() {}
+	private static void editBook() {}
+	private static void editAuthor() {}
+	private static void editPublisher() {}
+
+	private static void deleteAdmin(ArrayList<Administrator> adminList) {}
+	private static void deleteMember() {}
+	private static void deleteBook() {}
+	private static void deleteAuthor() {}
+	private static void deletePublisher() {}
+
+	private static void editRules(PravilaBiblioteke pravilaBiblioteke) {}
 }

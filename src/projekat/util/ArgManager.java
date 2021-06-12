@@ -2,6 +2,7 @@ package projekat.util;
 
 import projekat.Main;
 import projekat.osoba.Administrator;
+import projekat.osoba.EnumPol;
 import projekat.sistem.Login;
 import projekat.sistem.PravilaBiblioteke;
 import projekat.util.serijalizacija.DataManager;
@@ -93,7 +94,26 @@ public class ArgManager {
 		System.out.print("Unesite zeljeno korisnicko ime: "); masterAdmin.setUsername(scanner.nextLine());
 
 		System.out.print("Unesite sifru: "); masterAdmin.getPassword().encryptSifra(scanner.nextLine());
-		masterAdmin.getPassword().setKorisnickiUUID(masterAdmin.getUUID());
+		System.out.println("Odaberite pol: ");
+
+		boolean petlja = true;
+
+		while (petlja) {
+			System.out.println("\n1. Musko\n2. Zensko");
+			System.out.println("Unos: ");
+			switch (scanner.nextInt()) {
+				case 1:
+					petlja = false;
+					masterAdmin.setPol(EnumPol.MUSKO.getNum());
+					break;
+				case 2:
+					petlja = false;
+					masterAdmin.setPol(EnumPol.ZENSKO.getNum());
+					break;
+				default:
+					System.out.println("Molimo unesite jednu od dostupnih opcija!");
+			}
+		}
 		masterAdmin.setDozvole(masterAdmin.getDozvole().admin().addAdmins().addBooks().addMembers().deleteAdmins().deleteMembers().deleteBooks().loanBooks().alterRules().masterRule());
 
 		masterAdmin.serialize();
