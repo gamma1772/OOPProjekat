@@ -7,7 +7,7 @@ import projekat.osoba.Administrator;
 import projekat.osoba.Clan;
 import projekat.osoba.Pozajmljivanje;
 import projekat.osoba.Sifra;
-import projekat.sistem.PozajmljivanjeManager;
+import projekat.sistem.SistemManager;
 import projekat.sistem.PravilaBiblioteke;
 import projekat.util.ArgManager;
 import projekat.sistem.Login;
@@ -177,73 +177,187 @@ public class Main {
 
     public static void init() {
         Scanner scanner = new Scanner(System.in);
-        int odabir;
-        boolean petlja = true;
         deserialization(false);
-        cls();
 
-        System.out.println("==========POCETNI MENI==========");
-        System.out.println("Odaberite opciju:\n");
-        System.out.println("1. Dodaj novog clana biblioteke\n2. Pozajmi knjigu\n3. Opcije biblioteke\n4. Odjava\n5. Izlaz\n");
+        pocetniMeni(scanner);
+
+//        while (petlja) {
+//            System.out.println("Unos: "); odabir = scanner.nextInt();
+//            scanner.nextLine();
+//            switch (odabir) {
+//                case 1:
+//                    break;
+//                case 2:
+//                    if (prijavljenAdmin.getDozvole().canLoanBooks()) {
+//                        PozajmljivanjeManager.init();
+//                    }
+//                    else {
+//                        System.out.println("Nemate dozvolu da pozajmljujete knjige.");
+//                    }
+//                    break;
+//                case 3:
+//                    prikaziOpcijeBiblioteke();
+//                    odabir = scanner.nextInt();
+//                    //TODO: Loop
+//                    switch (odabir) {
+//                        case 1:
+//                            prikaziOpcijeAdministratora();
+//                            break;
+//                        case 2:
+//                        case 3:
+//                        case 4:
+//                        case 5:
+//                            prikaziOpcijeBiblioteke();
+//                            break;
+//                        default:
+//
+//                    }
+//                    break;
+//                case 4:
+//                    //TODO: logout
+//                    cls();
+//                    System.out.println("Odjavljivanje...");
+//                    prijavljenAdmin = Login.logout();
+//                    try {
+//                        prijavljenAdmin = Login.login(admini);
+//                    } catch (CredentialException e) {
+//                        e.printStackTrace();
+//                    }
+//                    init();
+//                    petlja = false;
+//                    break;
+//                case 5:
+//                    System.exit(0);
+//                default:
+//                    System.out.println("Niste uneli pravilnu opciju. Ponudjene opcije: [1, 2, 3, 4, 5]");
+//                    break;
+//            }
+//        }
+    }
+
+    public static void cls() {
+        for (int i = 0; i < 50; i++) {
+            System.out.println('\n');
+        }
+    }
+
+    public static void pocetniMeni(Scanner scanner) {
+        boolean petlja = true;
+        int odabir;
+
+
+
         while (petlja) {
-            System.out.println("Unos: "); odabir = scanner.nextInt();
-            scanner.nextLine();
+            cls();
+            System.out.println("==========POCETNI MENI==========");
+            System.out.println("Odaberite opciju:\n");
+            System.out.println("1. Dodaj novog clana biblioteke\n2. Pozajmi knjigu\n3. Opcije biblioteke\n4. Odjava\n5. Izlaz\n");
+            System.out.print("Unos: "); odabir = scanner.nextInt();
             switch (odabir) {
                 case 1:
                     break;
                 case 2:
-                    if (prijavljenAdmin.getDozvole().canLoanBooks()) {
-                        PozajmljivanjeManager.init();
-                    }
-                    else {
-                        System.out.println("Nemate dozvolu da pozajmljujete knjige.");
-                    }
+                    SistemManager.initPozajmljivanje();
                     break;
                 case 3:
-                    prikaziOpcijeBiblioteke();
-                    odabir = scanner.nextInt();
-                    //TODO: Loop
-                    switch (odabir) {
-                        case 1:
-                        case 2:
-                        case 3:
-                        case 4:
-                        case 5:
-                        default:
-
-                    }
+                    petlja = false;
+                    prikaziOpcijeBiblioteke(scanner);
                     break;
                 case 4:
-                    //TODO: logout
-                    cls();
-                    System.out.println("Odjavljivanje...");
-                    prijavljenAdmin = Login.logout();
-                    try {
-                        prijavljenAdmin = Login.login(admini);
-                    } catch (CredentialException e) {
-                        e.printStackTrace();
-                    }
-                    init();
                     petlja = false;
+                    prijavljenAdmin = Login.logout();
+                    //...
                     break;
                 case 5:
+                    petlja = false;
                     System.exit(0);
+                    break;
                 default:
-                    System.out.println("Niste uneli pravilnu opciju. Ponudjene opcije: [1, 2, 3, 4, 5]");
+                    System.out.println("Unesite jednu od postojecih opcija: [1, 2, 3, 4, 5]");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     break;
             }
         }
     }
 
-    public static void cls() {
-        for (int i = 0; i < 25; i++) {
-            System.out.println('\n');
+    public static void prikaziOpcijeBiblioteke( Scanner scanner) {
+        boolean petlja = true;
+        int odabir;
+
+
+
+        while (petlja) {
+            cls();
+            System.out.println("==========OPCIJE BIBLIOTEKE==========");
+            System.out.println("1. Opcije administratora\n2. Dodaj novu knjigu\n3. Dodaj novog autora\n4. Dodaj novog izdavaca\n5. Pocetni meni\n");
+            System.out.print("Unos: "); odabir = scanner.nextInt();
+            switch (odabir) {
+                case 1:
+                    petlja = false;
+                    prikaziOpcijeAdministratora(scanner);
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+
+                    break;
+                case 5:
+                    petlja = false;
+                    pocetniMeni(scanner);
+                    break;
+                default:
+                    System.out.println("Unesite jednu od postojecih opcija: [1, 2, 3, 4, 5]");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
         }
     }
 
-    public static void prikaziOpcijeBiblioteke() {
-        cls();
-        System.out.println("==========OPCIJE BIBLIOTEKE==========");
-        System.out.println("1. Opcije administratora\n2. Dodaj novu knjigu\n3. Dodaj novog autora\n4. Dodaj novog izdavaca\n5. Pocetni meni");
+    public static void prikaziOpcijeAdministratora(Scanner scanner) {
+        boolean petlja = true;
+        int odabir;
+
+        while (petlja) {
+            cls();
+            System.out.println("==========OPCIJE ADMINISTRATORA==========");
+            System.out.println("1. Dodaj administratora\n2. Izmeni podatke administratora\n3. Obrisi administratora\n4. Promeni pravila biblioteke\n5. Nazad\n6. Pocetni meni");
+            System.out.print("Unos: "); odabir = scanner.nextInt();
+            switch (odabir) {
+                case 1 | 2 | 3: // nzm sto ovo radi ali ok
+                    SistemManager.initAdminManager(prijavljenAdmin, odabir, admini);
+                    break;
+                case 4:
+                    SistemManager.initPravilaManager(prijavljenAdmin);
+                    break;
+                case 5:
+                    petlja = false;
+                    prikaziOpcijeBiblioteke(scanner);
+                    break;
+                case 6:
+                    petlja = false;
+                    pocetniMeni(scanner);
+                    break;
+                default:
+                    System.out.println("Unesite jednu od postojecih opcija: [1, 2, 3, 4, 5, 6]");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        }
     }
 }

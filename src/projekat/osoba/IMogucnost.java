@@ -22,5 +22,8 @@ public interface IMogucnost {
 
 	boolean canLoanBooks();
 
-
+	/*Provera da li korisnik moze da vrsi izmene nad adminima, clanovima ili knjigama*/
+	boolean canEditMembers();
+	boolean canEditAdmins();
+	boolean canEditBooks();
 }

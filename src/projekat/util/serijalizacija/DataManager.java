@@ -55,6 +55,22 @@ public class DataManager {
 		bw.close();
 	}
 
+	/**Vrsi upisivanje Stringa u fajl. String sadrzi podatke objekta koji treba da se "Serijalizuje".
+	 * @param object Objekat koji je formatiran pomocu toStringSerializable()
+	 * @param fileName Ime fajla gde treba da se cuva objekat.
+	 * @param append Da li da se sadrzaj dopisuje na kraj fajla, ili da pise fajl od pocetka
+	 * @throws IOException u koliko upisivanje objekta nije uspelo*/
+	public static void serializeString(String object, String fileName, boolean append) throws IOException {
+		if (new File(fileName).exists()) {
+			bw = new BufferedWriter(new FileWriter(FOLDER + fileName, append));
+		}
+
+		bw.write(object + '\n');
+
+		bw.flush();
+		bw.close();
+	}
+
 	/**Vrsi serijalizaciju liste stringova koji sadrze informacije o objektu.
 	 * @param objects Lista stringova
 	 * @param fileName Datoteka u kojoj ce se cuvati podaci

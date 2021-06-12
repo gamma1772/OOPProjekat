@@ -6,6 +6,8 @@ import projekat.util.serijalizacija.ISerijalizacija;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Administrator extends AbstractOsoba {
@@ -113,6 +115,7 @@ public class Administrator extends AbstractOsoba {
 		//Dozvole korisnika
 		private boolean canAddAdmins, canAddMembers, canAddBooks;
 		private boolean canDeleteAdmins, canDeleteMembers, canDeleteBooks;
+		private boolean canEditAdmins, canEditMembers, canEditBooks;
 		private boolean canLoanBooks, masterRule;
 		private boolean canAlterRules;
 
@@ -178,6 +181,22 @@ public class Administrator extends AbstractOsoba {
 		public boolean hasMasterRule() { return masterRule; }
 		@Override
 		public boolean canLoanBooks() { return canLoanBooks; }
+
+		@Override
+		public boolean canEditMembers() {
+			return false;
+		}
+
+		@Override
+		public boolean canEditAdmins() {
+			return false;
+		}
+
+		@Override
+		public boolean canEditBooks() {
+			return false;
+		}
+
 		@Override
 		public boolean canDeleteMembers() { return canDeleteMembers; }
 		@Override
@@ -235,9 +254,69 @@ public class Administrator extends AbstractOsoba {
 			this.canAlterRules = canAlterRules;
 		}
 
+		public void setCanEditAdmins(boolean canEditAdmins) {
+			this.canEditAdmins = canEditAdmins;
+		}
+
+		public void setCanEditMembers(boolean canEditMembers) {
+			this.canEditMembers = canEditMembers;
+		}
+
+		public void setCanEditBooks(boolean canEditBooks) {
+			this.canEditBooks = canEditBooks;
+		}
+
 		public String toStringSerializable() {
 			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b", getUserUUID().toString(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteAdmins(), canDeleteMembers(), canDeleteBooks(), canAlterRules());
 		}
+
+		public void setPravilaIndexed(String[] index) {
+			for (String s : index) {
+				switch (s) {
+					case "1":
+						setCanAddAdmins(true);
+						break;
+					case "2":
+						setCanDeleteAdmins(true);
+						break;
+					case "3":
+						setCanEditAdmins(true);
+						break;
+					case "4":
+						setMasterRule(true);
+						break;
+					case "5":
+						setCanAddBooks(true);
+						break;
+					case "6":
+						setCanDeleteBooks(true);
+						break;
+					case "7":
+						setCanEditBooks(true);
+						break;
+					case "8":
+						setCanLoanBooks(true);
+						break;
+					case "9":
+						setCanAlterRules(true);
+						break;
+					case "10":
+						setCanAddMembers(true);
+						break;
+					case "11":
+						setCanDeleteMembers(true);
+						break;
+					case "12":
+						setCanEditMembers(true);
+						break;
+					default:
+						System.out.printf("Uneta nepostojeca dozvola! (%s)%n", s);
+						break;
+
+				}
+			}
+		}
+
 
 		@Override
 		public String serializedFileName() {

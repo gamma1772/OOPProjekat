@@ -1,8 +1,8 @@
 package projekat.osoba;
 
 public enum EnumPol {
-	MUSKO(0),
-	ZENSKO(1);
+	MUSKO(1),
+	ZENSKO(2);
 
 	private int rbr;
 
