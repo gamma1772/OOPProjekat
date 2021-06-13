@@ -94,9 +94,7 @@ public class Administrator extends AbstractOsoba {
 	@Override
 	public void serialize() {
 		try {
-			password.serialize();
-			dozvole.serialize();
-			DataManager.serializeString(toStringSerializable(), serializedFileName());
+			DataManager.serializeString(toStringSerializable(), serializedFileName(), true);
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}
@@ -201,24 +199,23 @@ public class Administrator extends AbstractOsoba {
 		/**Prikazuje tabelu dozvola u terminal*/
 		public void printDozvole(boolean enumerated) {
 			if (enumerated) {
-				System.out.println("           Administratori   \tKnjige   \tClanovi");
-				System.out.printf ("Dodavanje: 1. %b            \t2. %b    \t3. %b     ", canAddAdmins(), canAddBooks(), canAddMembers());
-				System.out.printf ("Izmena:    4. %b            \t5. %b    \t6. %b     ", canEditAdmins(), canEditBooks(), canEditMembers());
-				System.out.printf ("brisanje:  7. %b            \t8. %b    \t9. %b     ", canDeleteAdmins(), canDeleteBooks(), canDeleteMembers());
+				System.out.println("             Administratori   Knjige   Clanovi");
+				System.out.printf (  "Dodavanje: 1. %b            2. %b    3. %b     ", canAddAdmins(), canAddBooks(), canAddMembers());
+				System.out.printf ("\nIzmena:    4. %b            5. %b    6. %b     ", canEditAdmins(), canEditBooks(), canEditMembers());
+				System.out.printf ("\nbrisanje:  7. %b            8. %b    9. %b     ", canDeleteAdmins(), canDeleteBooks(), canDeleteMembers());
 				System.out.printf ("\nPozajmljivanje knjiga: 10. %b", canLoanBooks());
 				System.out.printf ("\nMenjanje pravila:      11. %b", canAlterRules());
 				System.out.printf ("\nMaster dozvola:        12. %b", hasMasterRule());
 			}
 			else {
-				System.out.println("           Administratori\tKnjige\tClanovi");
-				System.out.printf ("Dodavanje: %b            \t%b    \t%b     ", canAddAdmins(), canAddBooks(), canAddMembers());
-				System.out.printf ("Izmena:    %b            \t%b    \t%b     ", canEditAdmins(), canEditBooks(), canEditMembers());
-				System.out.printf ("brisanje:  %b            \t%b    \t%b     ", canDeleteAdmins(), canDeleteBooks(), canDeleteMembers());
+				System.out.println("             Administratori		Knjige		Clanovi");
+				System.out.printf (  "Dodavanje: %b            		%b    		%b     ", canAddAdmins(), canAddBooks(), canAddMembers());
+				System.out.printf ("\nIzmena:    %b            		%b    		%b     ", canEditAdmins(), canEditBooks(), canEditMembers());
+				System.out.printf ("\nbrisanje:  %b            		%b   		%b     ", canDeleteAdmins(), canDeleteBooks(), canDeleteMembers());
 				System.out.printf ("\nPozajmljivanje knjiga: %b", canLoanBooks());
 				System.out.printf ("\nMenjanje pravila:      %b", canAlterRules());
 				System.out.printf ("\nMaster dozvola:        %b", hasMasterRule());
 			}
-
 		}
 
 		@Override
@@ -236,17 +233,17 @@ public class Administrator extends AbstractOsoba {
 
 		@Override
 		public boolean canEditMembers() {
-			return false;
+			return canEditMembers;
 		}
 
 		@Override
 		public boolean canEditAdmins() {
-			return false;
+			return canEditAdmins;
 		}
 
 		@Override
 		public boolean canEditBooks() {
-			return false;
+			return canEditBooks;
 		}
 
 		@Override
@@ -319,8 +316,8 @@ public class Administrator extends AbstractOsoba {
 		}
 
 		public String toStringSerializable() {
-			return String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b",
-					getUserUUID(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteAdmins(), canDeleteMembers(), canDeleteBooks(), canAlterRules(), canEditAdmins(), canEditMembers(), canEditBooks());
+			String dozvole = String.format("%s~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b~%b", getUserUUID(), isAdmin(), canAddAdmins(), canAddMembers(), canAddBooks(), hasMasterRule(), canLoanBooks(), canDeleteAdmins(), canDeleteMembers(), canDeleteBooks(), canAlterRules(), canEditAdmins(), canEditMembers(), canEditBooks());
+			return dozvole;
 		}
 
 		public void setPravilaIndexed(String[] index) {
@@ -379,7 +376,7 @@ public class Administrator extends AbstractOsoba {
 		@Override
 		public void serialize() {
 			try {
-				DataManager.serializeString(toStringSerializable(), serializedFileName());
+				DataManager.serializeString(toStringSerializable(), serializedFileName(), true);
 			} catch (IOException exception) {
 				exception.printStackTrace();
 			}

@@ -48,14 +48,150 @@ public class DataManager {
 	 * @param append Da li da se sadrzaj dopisuje na kraj fajla, ili da pise fajl od pocetka
 	 * @throws IOException u koliko upisivanje objekta nije uspelo*/
 	public static void serializeString(String object, String fileName, boolean append) throws IOException {
-		if (new File(fileName).exists()) {
-			bw = new BufferedWriter(new FileWriter(FOLDER + fileName, append));
-		}
+		bw = new BufferedWriter(new FileWriter(FOLDER + fileName, append));
 
 		bw.write(object + '\n');
 
 		bw.flush();
 		bw.close();
+	}
+
+	public static void serializeFromGenericArray(ArrayList<?> list) {
+		if (list != null && list.size() != 0) {
+				try {
+					if (list.get(0) instanceof Administrator)
+						clearData("administrator.tdb");
+					else if (list.get(0) instanceof Knjiga)
+						clearData("knjiga.tdb");
+					else if (list.get(0) instanceof Clan)
+						clearData("clan.tdb");
+					else if (list.get(0) instanceof Autor)
+						clearData("autor.tdb");
+					else if (list.get(0) instanceof Izdavac)
+						clearData("izdavac.tdb");
+					else if (list.get(0) instanceof Sifra)
+						clearData("sifra.tdb");
+					else if (list.get(0) instanceof Pozajmljivanje)
+						clearData("pozajmljivanje.tdb");
+					else if (list.get(0) instanceof Administrator.Dozvole)
+						clearData("dozvole.tdb");
+					else if (list.get(0) instanceof PravilaBiblioteke)
+						clearData("pravila.tdb");
+				} catch (IOException exception) {
+					exception.printStackTrace();
+			}
+			for (Object o : list) {
+				if (o instanceof Administrator) {
+					((Administrator) o).serialize();
+				}
+				else if (o instanceof Sifra) {
+					((Sifra) o).serialize();
+				}
+				else if (o instanceof Administrator.Dozvole) {
+					((Administrator.Dozvole) o).serialize();
+				}
+				else if (o instanceof Clan) {
+					((Clan) o).serialize();
+				}
+				else if (o instanceof Knjiga) {
+					((Knjiga) o).serialize();
+				}
+				else if (o instanceof Autor) {
+					((Autor) o).serialize();
+				}
+				else if (o instanceof Izdavac) {
+					((Izdavac) o).serialize();
+				}
+				else if (o instanceof Pozajmljivanje) {
+					((Pozajmljivanje) o).serialize();
+				}
+				else if (o instanceof PravilaBiblioteke) {
+					((PravilaBiblioteke) o).serialize();
+				}
+			}
+		}
+	}
+
+	private static void clearData(String file) throws IOException {
+		bw = new BufferedWriter(new FileWriter(FOLDER + file, false));
+		bw.write("");
+		bw.close();
+	}
+
+
+	public static void serializeGeneric(Object o) {
+		if (o instanceof Administrator) {
+			try {
+				clearData("administrator.tdb");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			((Administrator) o).serialize();
+		}
+		else if (o instanceof Sifra) {
+			try {
+				clearData("sifra.tdb");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			((Sifra) o).serialize();
+		}
+		else if (o instanceof Administrator.Dozvole) {
+			try {
+				clearData("dozvole.tdb");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			((Administrator.Dozvole) o).serialize();
+		}
+		else if (o instanceof Clan) {
+			try {
+				clearData("clan.tdb");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			((Clan) o).serialize();
+		}
+		else if (o instanceof Knjiga) {
+			try {
+				clearData("knjiga.tdb");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			((Knjiga) o).serialize();
+		}
+		else if (o instanceof Autor) {
+			try {
+				clearData("autor.tdb");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			((Autor) o).serialize();
+		}
+		else if (o instanceof Izdavac) {
+			try {
+				clearData("izdavac.tdb");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			((Izdavac) o).serialize();
+		}
+		else if (o instanceof Pozajmljivanje) {
+			try {
+				clearData("pozajmljivanje.tdb");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			((Pozajmljivanje) o).serialize();
+		}
+		else if (o instanceof PravilaBiblioteke) {
+			try {
+				clearData("pravila.tdb");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+			((PravilaBiblioteke) o).serialize();
+		}
 	}
 
 	/**Vrsi serijalizaciju liste stringova koji sadrze informacije o objektu.
@@ -86,7 +222,7 @@ public class DataManager {
 		ArrayList<Administrator> administratori = new ArrayList<>();
 		br = new BufferedReader(new FileReader(FOLDER + "administrator.tdb"));
 
-		while((line = br.readLine()) != null) {
+		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
 			Administrator a = new Administrator();
 			lista = line.split("~");
 			a.setUUID(lista[0]);
@@ -129,7 +265,7 @@ public class DataManager {
 		ArrayList<Clan> clanovi = new ArrayList<>();
 		br = new BufferedReader(new FileReader(FOLDER + "clan.tdb"));
 
-		while((line = br.readLine()) != null) {
+		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
 			Clan c = new Clan();
 			lista = line.split("~");
 
@@ -161,7 +297,7 @@ public class DataManager {
 		ArrayList<Sifra> sifre = new ArrayList<>();
 		br = new BufferedReader(new FileReader(FOLDER + "sifra.tdb"));
 
-		while((line = br.readLine()) != null) {
+		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
 			Sifra s = new Sifra();
 			lista = line.split("~");
 
@@ -190,7 +326,7 @@ public class DataManager {
 		ArrayList<Knjiga> knjige = new ArrayList<>();
 		br = new BufferedReader(new FileReader(FOLDER + "knjiga.tdb"));
 
-		while((line = br.readLine()) != null) {
+		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
 			String[] zanrovi, autors;
 			Knjiga k = new Knjiga();
 			lista = line.split("~");
@@ -246,7 +382,7 @@ public class DataManager {
 		ArrayList<Administrator.Dozvole> dozvole = new ArrayList<>();
 		br = new BufferedReader(new FileReader(FOLDER + "dozvole.tdb"));
 
-		while((line = br.readLine()) != null) {
+		while((line = br.readLine()) != null && !line.equals("") && !line.equals("\n")) {
 			Administrator.Dozvole d = new Administrator.Dozvole();
 			lista = line.split("~");
 
@@ -278,7 +414,7 @@ public class DataManager {
 		ArrayList<Autor> autori = new ArrayList<>();
 		br = new BufferedReader(new FileReader(FOLDER + "autor.tdb"));
 
-		while((line = br.readLine()) != null) {
+		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
 			Autor a = new Autor();
 			lista = line.split("~");
 
@@ -299,7 +435,7 @@ public class DataManager {
 		ArrayList<Izdavac> izdavaci = new ArrayList<>();
 		br = new BufferedReader(new FileReader(FOLDER + "izdavac.tdb"));
 
-		while((line = br.readLine()) != null) {
+		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
 			Izdavac i = new Izdavac();
 			lista = line.split("~");
 
@@ -328,7 +464,7 @@ public class DataManager {
 
 		br = new BufferedReader(new FileReader(FOLDER + "pozajmljivanja.tdb"));
 
-		while((line = br.readLine()) != null) {
+		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
 			Pozajmljivanje p = new Pozajmljivanje();
 			lista = line.split("~");
 
@@ -362,11 +498,11 @@ public class DataManager {
 		PravilaBiblioteke pravila = new PravilaBiblioteke();
 		br = new BufferedReader(new FileReader(FOLDER + "pravila.tdb"));
 
-		if ((line = br.readLine()) != null) {
+		if ((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
 			lista = line.split("~");
 			pravila.maxPeriod(Integer.parseInt(lista[0]))
 					.maxReloan(Integer.parseInt(lista[1]))
-					.multiplier(Double.parseDouble(lista[2]))
+					.multiplier(Double.parseDouble(lista[2].replace(',', '.')))
 					.loanMultipleAtOnce(Boolean.parseBoolean(lista[3]))
 					.setLoanBeforeReturningPrevious(Boolean.parseBoolean(lista[4]));
 		}

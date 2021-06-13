@@ -168,7 +168,7 @@ public class Knjiga implements IUUID, ISerijalizacija {
 		for (char c : ISBN.toCharArray()) {
 			count += (int)c;
 		}
-		return String.format("%A7d-%07d", count, random.nextInt());
+		return String.format("%07d-%07d", count, random.nextInt());
 	}
 
 	@Override
@@ -198,11 +198,7 @@ public class Knjiga implements IUUID, ISerijalizacija {
 	@Override
 	public void serialize() {
 		try {
-			izdavac.serialize();
-			for (Autor a : autori) {
-				a.serialize();
-			}
-			DataManager.serializeString(toStringSerializable(), serializedFileName());
+			DataManager.serializeString(toStringSerializable(), serializedFileName(), true);
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}

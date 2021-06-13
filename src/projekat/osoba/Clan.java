@@ -79,11 +79,7 @@ public class Clan extends AbstractOsoba {
 	@Override
 	public void serialize() {
 		try {
-			for (Pozajmljivanje p : pozajmljivanje) {
-				p.serialize();
-			}
-			DataManager.serializeString(toStringSerializable(), serializedFileName());
-
+			DataManager.serializeString(toStringSerializable(), serializedFileName(), true);
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}

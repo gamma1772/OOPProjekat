@@ -141,7 +141,7 @@ public class Sifra implements Serializable, ISerijalizacija {
 	@Override
 	public void serialize() {
 		try {
-			DataManager.serializeString(toStringSerializable(), serializedFileName());
+			DataManager.serializeString(toStringSerializable(), serializedFileName(), true);
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}

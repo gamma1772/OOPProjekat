@@ -59,7 +59,7 @@ public class Autor implements IUUID, ISerijalizacija {
 	public String generateUUID() {
 		SimpleDateFormat sdf = new SimpleDateFormat("mmssSS");
 		Random random = new Random();
-		return String.format("%05d-%s", random.nextInt(), sdf.format(new Date()));
+		return String.format("%05d-%s", Math.abs(random.nextInt()), sdf.format(new Date()));
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class Autor implements IUUID, ISerijalizacija {
 	@Override
 	public void serialize() {
 		try {
-			DataManager.serializeString(toStringSerializable(), serializedFileName());
+			DataManager.serializeString(toStringSerializable(), serializedFileName(), true);
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}

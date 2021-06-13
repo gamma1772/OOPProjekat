@@ -113,7 +113,7 @@ public class Pozajmljivanje implements ISerijalizacija {
 	public void serialize() {
 		try {
 			pozajmljenaKnjiga.serialize();
-			DataManager.serializeString(toStringSerializable(), serializedFileName());
+			DataManager.serializeString(toStringSerializable(), serializedFileName(), true);
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}

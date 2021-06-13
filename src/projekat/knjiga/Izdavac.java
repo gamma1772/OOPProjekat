@@ -63,7 +63,7 @@ public class Izdavac implements IUUID, ISerijalizacija {
 
 	@Override
 	public String generateUUID() {
-		SimpleDateFormat sdf = new SimpleDateFormat("UmmssSS");
+		SimpleDateFormat sdf = new SimpleDateFormat("WmmssSS");
 		Random random = new Random();
 		return String.format("%09d-%s", random.nextInt(), sdf.format(new Date()));
 	}
@@ -86,7 +86,7 @@ public class Izdavac implements IUUID, ISerijalizacija {
 	@Override
 	public void serialize() {
 		try {
-			DataManager.serializeString(toStringSerializable(), serializedFileName());
+			DataManager.serializeString(toStringSerializable(), serializedFileName(), true);
 		} catch (IOException exception) {
 			exception.printStackTrace();
 		}

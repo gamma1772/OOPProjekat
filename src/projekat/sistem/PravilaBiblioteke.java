@@ -77,8 +77,18 @@ public class PravilaBiblioteke implements IPravila, ISerijalizacija {
 	/**Da li moze da se pozajmi knjiga, pre nego sto se vrate prethodno pozajmljene
 	 * Podrazumevano: {@link IPravila#DEFAULT_LOAN_BEFORE_RETURNING_PREVIOUS}
 	 * @param loanBeforeReturningPrevious Boolean*/
-	public PravilaBiblioteke loanBreforeReturningPrevious(boolean loanBeforeReturningPrevious) {
+	public PravilaBiblioteke loanBeforeReturningPrevious(boolean loanBeforeReturningPrevious) {
 		this.loanBeforeReturningPrevious = loanBeforeReturningPrevious; return this;
+	}
+	/**Da li moze da se pozajmi vise knjiga od jednom?
+	 * Podrazumevano: {@link IPravila#DEFAULT_LOAN_MULTIPLE}*/
+	public PravilaBiblioteke loanMultipleAtOnce() {
+		this.loanMultipleAtOnce = !loanMultipleAtOnce; return this;
+	}
+	/**Da li moze da se pozajmi knjiga, pre nego sto se vrate prethodno pozajmljene
+	 * Podrazumevano: {@link IPravila#DEFAULT_LOAN_BEFORE_RETURNING_PREVIOUS}*/
+	public PravilaBiblioteke loanBeforeReturningPrevious() {
+		this.loanBeforeReturningPrevious = !loanBeforeReturningPrevious; return this;
 	}
 
 	public void setMaxPeriod(int maxPeriod) {

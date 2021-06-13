@@ -16,11 +16,11 @@ public class SistemManager {
 		//TODO
 	}
 
-	public static void initAdminManager(Administrator prijavljenAdmin, int opcija, ArrayList<Administrator> adminList) {
+	public static void initAdminManager(Administrator prijavljenAdmin, int opcija, ArrayList<Administrator> adminList, ArrayList<Administrator.Dozvole> dozvole, ArrayList<Sifra> sifre) {
 		switch (opcija) {
 			case 1:
 				if (prijavljenAdmin.getDozvole().canAddAdmins() || prijavljenAdmin.getDozvole().hasMasterRule()) {
-					AdminManager.addAdmin(adminList);
+					AdminManager.addAdmin(adminList, dozvole, sifre);
 				}
 				break;
 			case 2:
@@ -71,6 +71,9 @@ public class SistemManager {
 					BookManager.deleteBook(knjigaList, autorList, izdavacList);
 				}
 				break;
+			default: {
+
+			}
 		}
 	}
 	public static void initAuthorManager(int opcija, ArrayList<Autor> autorList) {
@@ -117,10 +120,89 @@ public class SistemManager {
 	}
 
 	private static void viewRules(PravilaBiblioteke pravilaBiblioteke) {
-		//TODO
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("Pravila biblioteke");
+		System.out.printf("1. Koliko dugo knjiga moze da bude pozajmljena?                 		 	 %d dana.%n" +
+						  "2. Koliko puta moze da se produzi pozajmljivanje jedne knjige?  		 	 %d put(a)%n" +
+						  "3. Mnozilac duga:														 %.2f%n" +
+						  "4. Da li moze da se pozajmi vise knjiga od jednom? 				 		 %b%n" +
+						  "5. Da li je potrebno da se vrate prethodne knjige pre pozajmljivanja?     %b%n",
+				pravilaBiblioteke.getMaxPeriod(), pravilaBiblioteke.getMaxReloan(), pravilaBiblioteke.getMultiplier(), pravilaBiblioteke.getLoanMultipleAtOnce(), pravilaBiblioteke.getLoanBeforeReturningPrevious());
+
+
+		boolean petlja = true;
+		while (petlja) {
+			System.out.print("\nDa li zelite da izmenite pravila? [Y/N]: "); String odabir = scanner.nextLine();
+			switch (odabir) {
+				case "Y":
+					petlja = false;
+					editRules(pravilaBiblioteke);
+					break;
+				case "N":
+					petlja = false;
+					break;
+				default: {
+					System.out.println("Unesite Y ili N");
+				}
+			}
+		}
+
 	}
 	private static void editRules(PravilaBiblioteke pravilaBiblioteke) {
-		//TODO
+		Scanner scanner = new Scanner(System.in);
+		String odabir;
+		boolean petlja = true;
+		while (petlja) {
+			Main.cls();
+			System.out.println("Pravila biblioteke");
+			System.out.printf("1. Koliko dugo knjiga moze da bude pozajmljena?                 		 	 %d dana.%n" +
+							  "2. Koliko puta moze da se produzi pozajmljivanje jedne knjige?  		 	 %d put(a)%n" +
+							  "3. Mnozilac duga:														 %.2f%n" +
+							  "4. Da li moze da se pozajmi vise knjiga od jednom? 				 		 %b%n" +
+							  "5. Da li je potrebno da se vrate prethodne knjige pre pozajmljivanja?     %b%n",
+					pravilaBiblioteke.getMaxPeriod(), pravilaBiblioteke.getMaxReloan(), pravilaBiblioteke.getMultiplier(), pravilaBiblioteke.getLoanMultipleAtOnce(), pravilaBiblioteke.getLoanBeforeReturningPrevious());
+
+			System.out.print("\nOdaberite pravilo koje zelite da izmenite (0 za izlaz): "); odabir = scanner.nextLine();
+			switch (odabir) {
+				case "1":
+					Main.cls();
+					System.out.println("Menjanje pravila 'Koliko dugo knjiga moze da bude pozajmljena?'");
+					System.out.println("Unesite broj: "); pravilaBiblioteke.maxPeriod(scanner.nextInt());
+					scanner.nextLine();
+					break;
+				case "2":
+					Main.cls();
+					System.out.println("Menjanje pravila 'Koliko puta moze da se produzi pozajmljivanje jedne knjige?'");
+					System.out.println("Unesite broj: "); pravilaBiblioteke.maxReloan(scanner.nextInt());
+					scanner.nextLine();
+					break;
+				case "3":
+					Main.cls();
+					System.out.println("Menjanje pravila 'Koliko puta moze da se produzi pozajmljivanje jedne knjige?'");
+					System.out.println("Unesite broj (Sa ili bez decimalnog zareza): "); pravilaBiblioteke.multiplier(scanner.nextDouble());
+					scanner.nextLine();
+					break;
+				case "4":
+					pravilaBiblioteke.loanMultipleAtOnce();
+					break;
+				case "5":
+					pravilaBiblioteke.loanBeforeReturningPrevious();
+					break;
+				case "0":
+					petlja = false;
+					break;
+				default: {
+					System.out.println("Unesite jedno od dostupnih pravila!");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	protected static String pol(int pol) {
@@ -138,12 +220,13 @@ public class SistemManager {
 
 class AdminManager {
 	//TODO: Testiranje, provera
-	protected static void addAdmin(ArrayList<Administrator> adminList) {
+	protected static void addAdmin(ArrayList<Administrator> adminList, ArrayList<Administrator.Dozvole> dozvole, ArrayList<Sifra> sifre) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
 		System.out.println("Dodavanje novog administratora...");
 		Administrator a = new Administrator();
 
+		a.setUUID(a.generateUUID());
 		a.getPassword().setKorisnickiUUID(a.getUUID());
 		a.getDozvole().setUserUUID(a.getUUID());
 
@@ -161,12 +244,12 @@ class AdminManager {
 		while (petlja) {
 			System.out.println("\n1. Musko\n2. Zensko");
 			System.out.println("Unos: ");
-			switch (scanner.nextInt()) {
-				case 1:
+			switch (scanner.nextLine()) {
+				case "1":
 					petlja = false;
 					a.setPol(EnumPol.MUSKO.getNum());
 					break;
-				case 2:
+				case "2":
 					petlja = false;
 					a.setPol(EnumPol.ZENSKO.getNum());
 					break;
@@ -179,43 +262,80 @@ class AdminManager {
 		Main.cls();
 		System.out.printf("Podesavanje dozvola za administratora %s%n", a.getUsername());
 		System.out.println("Dostupne dozvole: ");
-		String pravila;
-		String[] pravilaList;
 
-		if (Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
-
-			System.out.println("Upravljanje administratorima:");
-			System.out.println("1. Dodavanje\t2. Brisanje\t3. Izmena\t4. Dodeljivanje master naloga\n");
-			System.out.println("Upravljanje bibliotekom:");
-			System.out.println("5. Dodavanje knjiga\t6. Brisanje knjiga\t7. Izmena knjiga\n8. Pozajmljivanje knjiga\t9. Izmena pravila biblioteke\n");
-			System.out.println("Upravljanje clanovima: ");
-			System.out.println("10. Dodavanje\t11. Brisanje\t12. Izmena\n");
-
-			System.out.println("Uneti odabir u sledecem formatu: 1 3 10");
-			System.out.println("Ako ne zelite da dodelite dozvole, upisati 0");
-			System.out.print("Unos: "); pravila = scanner.nextLine();
+		boolean petlja2 = true;
+		while (petlja2) {
+			Main.cls();
+			System.out.println("Dozvole odabranog administratora:");
+			a.getDozvole().printDozvole(true);
+			System.out.println("\nOdaberite dozvolu koju zelite da promenite (0 za izlaz): ");
+			switch (scanner.nextLine()) {
+				case "0":
+					petlja2 = false;
+					break;
+				case "1":
+					a.getDozvole().addAdmins();
+					break;
+				case "2":
+					a.getDozvole().addBooks();
+					break;
+				case "3":
+					a.getDozvole().addMembers();
+					break;
+				case "4":
+					a.getDozvole().editAdmins();
+					break;
+				case "5":
+					a.getDozvole().editBooks();
+					break;
+				case "6":
+					a.getDozvole().editMembers();
+					break;
+				case "7":
+					a.getDozvole().deleteAdmins();
+					break;
+				case "8":
+					a.getDozvole().deleteBooks();
+					break;
+				case "9":
+					a.getDozvole().deleteMembers();
+					break;
+				case "10":
+					a.getDozvole().loanBooks();
+					break;
+				case "11":
+					if (Main.prijavljenAdmin.getDozvole().hasMasterRule())
+						a.getDozvole().alterRules();
+					else {
+					System.out.println("Nemate dozvolu za zatrazenu operaciju.");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+					break;
+				case "12":
+					if (Main.prijavljenAdmin.getDozvole().hasMasterRule())
+						a.getDozvole().masterRule();
+					else {
+						System.out.println("Nemate dozvolu za zatrazenu operaciju.");
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					break;
+				default:
+					System.out.println("Unesite redni broj dozvole koja postoji!");
+					break;
+			}
 		}
-		else {
-			System.out.println("Upravljanje administratorima:");
-			System.out.println("1. Dodavanje       \t2. Brisanje       \t3. Izmena\n");
-			System.out.println("Upravljanje bibliotekom:");
-			System.out.println("5. Dodavanje knjiga\t6. Brisanje knjiga\t7. Izmena knjiga\n8. Pozajmljivanje knjiga\n");
-			System.out.println("Upravljanje clanovima: ");
-			System.out.println("10. Dodavanje      \t11. Brisanje      \t12. Izmena\n");
 
-			System.out.println("Uneti odabir u sledecem formatu: 1 3 10");
-			System.out.println("Ako ne zelite da dodelite dozvole, upisati 0");
-			System.out.print("Unos: "); pravila = scanner.nextLine();
-		}
-
-		if (pravila.contains(" ")) {
-			pravilaList = pravila.split(" ");
-
-			a.getDozvole().setPravilaIndexed(pravilaList);
-		}
-
-		a.serialize();
 		adminList.add(a);
+		sifre.add(a.getPassword());
+		dozvole.add(a.getDozvole());
 	}
 	//TODO: Testiranje, provera
 	protected static void editAdmin(ArrayList<Administrator> adminList) {
@@ -444,16 +564,6 @@ class AdminManager {
 				}
 			}
 		}
-		ArrayList<String> objects = new ArrayList<>();
-		String fileName = adminList.get(0).serializedFileName();
-		for (Administrator a : adminList) {
-			objects.add(a.toStringSerializable());
-		}
-		try {
-			DataManager.serializeString(objects, fileName, false);
-		} catch (IOException exception) {
-			exception.printStackTrace();
-		}
 	}
 	//TODO: Testiranje, provera
 	protected static void deleteAdmin(ArrayList<Administrator> adminList) {
@@ -482,16 +592,6 @@ class AdminManager {
 								petlja = false;
 								adminList.remove(Integer.parseInt(unos) - 1);
 								System.out.println("Uspesno obrisano.");
-								ArrayList<String> objects = new ArrayList<>();
-								String fileName = adminList.get(0).serializedFileName();
-								for (Administrator a : adminList) {
-									objects.add(a.toStringSerializable());
-								}
-								try {
-									DataManager.serializeString(objects, fileName, false);
-								} catch (IOException exception) {
-									exception.printStackTrace();
-								}
 								break;
 							case "N":
 								petlja = false;
@@ -527,12 +627,12 @@ class MemberManager {
 		while (petlja) {
 			System.out.println("\n1. Musko\n2. Zensko");
 			System.out.println("Unos: ");
-			switch (scanner.nextInt()) {
-				case 1:
+			switch (scanner.nextLine()) {
+				case "1":
 					petlja = false;
 					c.setPol(EnumPol.MUSKO.getNum());
 					break;
-				case 2:
+				case "2":
 					petlja = false;
 					c.setPol(EnumPol.ZENSKO.getNum());
 					break;
@@ -541,7 +641,6 @@ class MemberManager {
 			}
 		}
 
-		c.serialize();
 		clanovi.add(c);
 	}
 	//TODO: Testiranje, provera
@@ -667,16 +766,6 @@ class MemberManager {
 								petlja = false;
 								clanovi.remove(Integer.parseInt(unos) - 1);
 								System.out.println("Uspesno obrisano.");
-								ArrayList<String> objects = new ArrayList<>();
-								String fileName = clanovi.get(0).serializedFileName();
-								for (Clan c : clanovi) {
-									objects.add(c.toStringSerializable());
-								}
-								try {
-									DataManager.serializeString(objects, fileName, false);
-								} catch (IOException exception) {
-									exception.printStackTrace();
-								}
 								break;
 							case "N":
 								petlja = false;
@@ -702,28 +791,29 @@ class BookManager {
 		System.out.println("Dodavanje nove knjige...");
 		Knjiga k = new Knjiga();
 		k.setId(k.generateUUID());
-		System.out.println("Unesite ime knjige: ");
-		System.out.println("Unesite ISBN: ");
-		System.out.println("Unesite godinu objavljivanja: ");
-		System.out.println("Unesite izdanje knjige: ");
-		System.out.println("Unesite broj strana: ");
-		System.out.println("Unesite kolicinu: ");
+
+		System.out.print("Unesite ime knjige: "); k.setImeKnjige(scanner.nextLine());
+		System.out.print("Unesite ISBN: "); k.setISBN(scanner.nextLine());
+		System.out.print("Unesite godinu objavljivanja: "); k.setGodinaObjavljivanja(Integer.parseInt(scanner.nextLine()));
+		System.out.print("Unesite izdanje knjige: "); k.setIzdanje(Integer.parseInt(scanner.nextLine()));
+		System.out.print("Unesite broj strana: "); k.setBrStrana(Integer.parseInt(scanner.nextLine()));
+		System.out.print("Unesite kolicinu: "); k.setKolicina(Integer.parseInt(scanner.nextLine()));
 
 		boolean petlja = true;
+		Main.cls();
 		System.out.println("Autori: ");
 		System.out.println("Odaberite opciju: ");
 		while (petlja) {
 			System.out.println("1. Odaberite postojece autore\n2. Novi autor/i");
-			System.out.println("Unos: ");
-			switch (scanner.nextInt()) {
-				case 1:
+			System.out.print("Unos: ");
+			switch (scanner.nextLine()) {
+				case "1":
 					//petlja = false;
 					while (true) {
-						System.out.println("Unesite redni broj autora (0 za izlaz):"); String unos = scanner.nextLine();
 						for (int i = 0; i < autori.size(); i++) {
 							System.out.printf("%d. %s%n", i+1, autori.get(i).getId().concat(" " + autori.get(i).getFullName()));
 						}
-						System.out.print("Unos: ");
+						System.out.print("Unesite redni broj autora (0 za izlaz): "); String unos = scanner.nextLine();
 						if (unos.equals("0")) {
 							break;
 						}
@@ -733,11 +823,12 @@ class BookManager {
 							}
 							else {
 								k.getAutori().add(autori.get(Integer.parseInt(unos) - 1));
+								break;
 							}
 						}
 					}
 					break;
-				case 2:
+				case "2":
 					Autor a = new Autor();
 					a.setId(a.generateUUID());
 					System.out.print("Unesite ime autora: "); a.setIme(scanner.nextLine());
@@ -771,17 +862,35 @@ class BookManager {
 		}
 
 		petlja = true;
+		Main.cls();
 		System.out.println("Izdavac: ");
 		System.out.println("Odaberite opciju: ");
 		while (petlja) {
 			System.out.println("1. Odaberite postojeceg izvodjaca\n2. Novi izdavac/i");
-			System.out.println("Unos: ");
-			switch (scanner.nextInt()) {
-				case 1:
+			System.out.print("Unos: ");
+			switch (scanner.nextLine()) {
+				case "1":
 					petlja = false;
-
+					while (true) {
+						for (int i = 0; i < izdavaci.size(); i++) {
+							System.out.printf("%d. %s%n", i+1, izdavaci.get(i).getId().concat(" " + izdavaci.get(i).getImeIzdavaca()));
+						}
+						System.out.print("Unesite redni broj izdavaca (0 za izlaz): "); String unos = scanner.nextLine();
+						if (unos.equals("0")) {
+							break;
+						}
+						else {
+							if (Integer.parseInt(unos) - 1 > izdavaci.size()) {
+								System.out.println("Uneli ste nepostojeci redni broj");
+							}
+							else {
+								k.setIzdavac(izdavaci.get(Integer.parseInt(unos) - 1));
+								break;
+							}
+						}
+					}
 					break;
-				case 2:
+				case "2":
 					petlja = false;
 
 					Izdavac i = new Izdavac();
@@ -798,7 +907,9 @@ class BookManager {
 			}
 		}
 
-		k.serialize();
+		Main.cls();
+		System.out.println("Zanrovi...");
+
 		knjige.add(k);
 	}
 	//TODO: Testiranje, provera
@@ -827,7 +938,6 @@ class BookManager {
 				switch (scanner.nextLine()) {
 					case "Y":
 						petlja = false;
-						a.serialize();
 						autori.add(a);
 						break;
 					case "N":
@@ -838,7 +948,6 @@ class BookManager {
 				}
 			}
 		} else {
-			a.serialize();
 			autori.add(a);
 		}
 
@@ -869,7 +978,6 @@ class BookManager {
 				switch (scanner.nextLine()) {
 					case "Y":
 						petlja = false;
-						i.serialize();
 						izdavaci.add(i);
 						break;
 					case "N":
@@ -880,7 +988,6 @@ class BookManager {
 				}
 			}
 		} else {
-			i.serialize();
 			izdavaci.add(i);
 		}
 	}
@@ -1018,16 +1125,6 @@ class BookManager {
 								petlja = false;
 								autori.remove(Integer.parseInt(unos) - 1);
 								System.out.println("Uspesno obrisano.");
-								ArrayList<String> objects = new ArrayList<>();
-								String fileName = autori.get(0).serializedFileName();
-								for (Autor a : autori) {
-									objects.add(a.toStringSerializable());
-								}
-								try {
-									DataManager.serializeString(objects, fileName, false);
-								} catch (IOException exception) {
-									exception.printStackTrace();
-								}
 								break;
 							case "N":
 								petlja = false;
@@ -1069,16 +1166,6 @@ class BookManager {
 								petlja = false;
 								izdavaci.remove(Integer.parseInt(unos) - 1);
 								System.out.println("Uspesno obrisano.");
-								ArrayList<String> objects = new ArrayList<>();
-								String fileName = izdavaci.get(0).serializedFileName();
-								for (Izdavac i : izdavaci) {
-									objects.add(i.toStringSerializable());
-								}
-								try {
-									DataManager.serializeString(objects, fileName, false);
-								} catch (IOException exception) {
-									exception.printStackTrace();
-								}
 								break;
 							case "N":
 								petlja = false;
