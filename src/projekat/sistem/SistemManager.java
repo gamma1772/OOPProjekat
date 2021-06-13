@@ -9,7 +9,6 @@ import projekat.util.serijalizacija.DataManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class SistemManager {
@@ -114,11 +113,15 @@ public class SistemManager {
 	}
 
 	public static void initPravilaManager(PravilaBiblioteke pravila) {
-
+		viewRules(pravila);
 	}
 
-	private static void viewRules(PravilaBiblioteke pravilaBiblioteke) {}
-	private static void editRules(PravilaBiblioteke pravilaBiblioteke) {}
+	private static void viewRules(PravilaBiblioteke pravilaBiblioteke) {
+		//TODO
+	}
+	private static void editRules(PravilaBiblioteke pravilaBiblioteke) {
+		//TODO
+	}
 
 	protected static String pol(int pol) {
 		if (pol == 1) {
@@ -131,11 +134,10 @@ public class SistemManager {
 			return "NEODREDJENO";
 		}
 	}
-
-
 }
 
 class AdminManager {
+	//TODO: Testiranje, provera
 	protected static void addAdmin(ArrayList<Administrator> adminList) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -215,6 +217,7 @@ class AdminManager {
 		a.serialize();
 		adminList.add(a);
 	}
+	//TODO: Testiranje, provera
 	protected static void editAdmin(ArrayList<Administrator> adminList) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -452,6 +455,7 @@ class AdminManager {
 			exception.printStackTrace();
 		}
 	}
+	//TODO: Testiranje, provera
 	protected static void deleteAdmin(ArrayList<Administrator> adminList) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -505,6 +509,7 @@ class AdminManager {
 }
 
 class MemberManager {
+	//TODO: Testiranje, provera
 	protected static void addMember(ArrayList<Clan> clanovi) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -539,6 +544,7 @@ class MemberManager {
 		c.serialize();
 		clanovi.add(c);
 	}
+	//TODO: Testiranje, provera
 	protected static void editMember(ArrayList<Clan> clanovi) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -634,6 +640,7 @@ class MemberManager {
 			}
 		}
 	}
+	//TODO: Testiranje, provera
 	protected static void deleteMember(ArrayList<Clan> clanovi) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -688,6 +695,7 @@ class MemberManager {
 
 class BookManager {
 
+	//TODO: Testiranje, provera
 	protected static void addBook(ArrayList<Knjiga> knjige, ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -793,6 +801,7 @@ class BookManager {
 		k.serialize();
 		knjige.add(k);
 	}
+	//TODO: Testiranje, provera
 	protected static void addAuthor(ArrayList<Autor> autori) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -800,12 +809,41 @@ class BookManager {
 		Autor a = new Autor();
 
 		a.setId(a.generateUUID());
-		System.out.println("Unesite ime autora: "); a.setIme(scanner.nextLine());
-		System.out.println("Unesite prezime autora: "); a.setPrezime(scanner.nextLine());
+		System.out.print("Unesite ime autora: "); a.setIme(scanner.nextLine());
+		System.out.print("Unesite prezime autora: "); a.setPrezime(scanner.nextLine());
 
-		a.serialize();
-		autori.add(a);
+		boolean postoji = false;
+		for (Autor autor : autori) {
+			if (a.getIme().equals(autor.getIme()) && a.getPrezime().equals(autor.getPrezime())) {
+				postoji = true;
+				break;
+			}
+		}
+
+		if (postoji) {
+			boolean petlja = true;
+			while (petlja) {
+				System.out.print("Autor sa identicnim informacijama vec postoji. Da li ste sigurni da zelite da dodate novog autora? (Y/N): ");
+				switch (scanner.nextLine()) {
+					case "Y":
+						petlja = false;
+						a.serialize();
+						autori.add(a);
+						break;
+					case "N":
+						petlja = false;
+						break;
+					default:
+						System.out.println("Unesite Y ili N!");
+				}
+			}
+		} else {
+			a.serialize();
+			autori.add(a);
+		}
+
 	}
+	//TODO: Testiranje, provera
 	protected static void addPublisher(ArrayList<Izdavac> izdavaci) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -813,18 +851,246 @@ class BookManager {
 		Izdavac i = new Izdavac();
 
 		i.setId(i.generateUUID());
-		System.out.println("Unesite naziv izdavaca: "); i.setImeIzdavaca(scanner.nextLine());
-		System.out.println("Unesite zemlju: "); i.setZemljaPorekla(scanner.nextLine());
+		System.out.print("Unesite naziv izdavaca: "); i.setImeIzdavaca(scanner.nextLine());
+		System.out.print("Unesite zemlju: "); i.setZemljaPorekla(scanner.nextLine());
 
-		i.serialize();
-		izdavaci.add(i);
+		boolean postoji = false;
+		for (Izdavac izdavac : izdavaci) {
+			if (i.getImeIzdavaca().equals(izdavac.getImeIzdavaca()) && i.getZemljaPorekla().equals(izdavac.getZemljaPorekla())) {
+				postoji = true;
+				break;
+			}
+		}
+
+		if (postoji) {
+			boolean petlja = true;
+			while (petlja) {
+				System.out.print("Izdavac sa identicnim informacijama ec postoji. Da li ste sigurni da zelite da dodate novog izdavaca? (Y/N): ");
+				switch (scanner.nextLine()) {
+					case "Y":
+						petlja = false;
+						i.serialize();
+						izdavaci.add(i);
+						break;
+					case "N":
+						petlja = false;
+						break;
+					default:
+						System.out.println("Unesite Y ili N!");
+				}
+			}
+		} else {
+			i.serialize();
+			izdavaci.add(i);
+		}
 	}
 
+	//TODO: Testiranje, provera
 	protected static void editBook(ArrayList<Knjiga> knjige, ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) {}
-	protected static void editAuthor(ArrayList<Autor> autori) {}
-	protected static void editPublisher(ArrayList<Izdavac> izdavaci) {}
+	//TODO: Testiranje, provera
+	protected static void editAuthor(ArrayList<Autor> autori) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("Odaberite autora cije podatke zelite da izmenite (0 za izlaz):");
+		for (int i = 0; i < autori.size(); i++) {
+			System.out.printf("%d. %s%n", i+1, autori.get(i).getId().concat(" " + autori.get(i).getFullName()));
+		}
 
-	protected static void deleteBook(ArrayList<Knjiga> knjige, ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) {}
-	protected static void deleteAuthor(ArrayList<Autor> autori) {}
-	protected static void deletePublisher(ArrayList<Izdavac> izdavaci) {}
+		while (true) {
+			System.out.println("Unos: "); String unos = scanner.nextLine();
+			if (unos.equals("0")) {
+				break;
+			}
+			else {
+				Main.cls();
+				System.out.println("Podaci o odabranom autoru: ");
+				System.out.printf("ID: %s%nIme: %s%nPrezime: %s%n",autori.get(Integer.parseInt(unos) - 1).getId(), autori.get(Integer.parseInt(unos) - 1).getIme(), autori.get(Integer.parseInt(unos) - 1).getPrezime());
+				System.out.println("Odaberite sta zelite da izmenite (1. Ime, 2. Prezime). Unesite 0 za izlaz: ");
+				switch (scanner.nextLine()) {
+					case "1":
+						while (true) {
+							System.out.println("Unesite novo ime: "); String tempIme = scanner.nextLine();
+							if (tempIme.length() < 2) {
+								System.out.println("Ime moze da sardzi samo slova.");
+							}
+							else {
+								autori.get(Integer.parseInt(unos) - 1).setIme(tempIme);
+								break;
+							}
+						}
+						break;
+					case "2":
+						while (true) {
+							System.out.println("Unesite novo prezime: "); String tempPrezime = scanner.nextLine();
+							if (tempPrezime.length() < 2) {
+								System.out.println("Prezime moze da sardzi samo slova.");
+							}
+							else {
+								autori.get(Integer.parseInt(unos) - 1).setPrezime(tempPrezime);
+								break;
+							}
+						}
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
+	//TODO: Testiranje, provera
+	protected static void editPublisher(ArrayList<Izdavac> izdavaci) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("Odaberite autora cije podatke zelite da izmenite (0 za izlaz):");
+		for (int i = 0; i < izdavaci.size(); i++) {
+			System.out.printf("%d. %s%n", i+1, izdavaci.get(i).getId().concat(" " + izdavaci.get(i).getImeIzdavaca() + " " + izdavaci.get(i).getZemljaPorekla()));
+		}
+
+		while (true) {
+			System.out.println("Unos: "); String unos = scanner.nextLine();
+			if (unos.equals("0")) {
+				break;
+			}
+			else {
+				Main.cls();
+				System.out.println("Podaci o odabranom autoru: ");
+				System.out.printf("ID: %s%nIme izdavaca: %s%nZemlja porekla: %s%n",izdavaci.get(Integer.parseInt(unos) - 1).getId(), izdavaci.get(Integer.parseInt(unos) - 1).getImeIzdavaca(), izdavaci.get(Integer.parseInt(unos) - 1).getZemljaPorekla());
+				System.out.println("Odaberite sta zelite da izmenite (1. Ime izdavaca, 2. Zemlja porekla). Unesite 0 za izlaz: ");
+				switch (scanner.nextLine()) {
+					case "1":
+						while (true) {
+							System.out.println("Unesite novo ime izdavaca: "); String tempIme = scanner.nextLine();
+							if (tempIme.length() < 2) {
+								System.out.println("Ime izdavaca moze da sardzi samo slova.");
+							}
+							else {
+								izdavaci.get(Integer.parseInt(unos) - 1).setImeIzdavaca(tempIme);
+								break;
+							}
+						}
+						break;
+					case "2":
+						while (true) {
+							System.out.println("Unesite novu zemlju porekla: "); String tempPrezime = scanner.nextLine();
+							if (tempPrezime.length() < 2) {
+								System.out.println("Zemlja porekla moze da sardzi samo slova.");
+							}
+							else {
+								izdavaci.get(Integer.parseInt(unos) - 1).setZemljaPorekla(tempPrezime);
+								break;
+							}
+						}
+						break;
+					default:
+						break;
+				}
+			}
+		}
+	}
+
+	protected static void deleteBook(ArrayList<Knjiga> knjige, ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) {
+		//TODO
+	}
+	//TODO: Testiranje, provera
+	protected static void deleteAuthor(ArrayList<Autor> autori) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("Odaberite autora kojeg zelite da obrisete (0 za izlaz):");
+		for (int i = 0; i < autori.size(); i++) {
+			System.out.printf("%d. %s%n", i+1, autori.get(i).getId().concat(" " + autori.get(i).getFullName()));
+		}
+		while (true) {
+			System.out.println("Unos: "); String unos = scanner.nextLine();
+			if (unos.equals("0")) {
+				break;
+			}
+			else {
+				if (Integer.parseInt(unos) - 1 > autori.size()) {
+					System.out.println("Uneli ste nepostojeci redni broj.");
+				}
+				else {
+					System.out.printf("Odabran clan: %s, %s%n", autori.get((Integer.parseInt(unos) - 1)).getId(), autori.get((Integer.parseInt(unos) - 1)).getFullName());
+					System.out.println("Da li ste sigurni da zelite da obrisete ovog autora? (Y/N)");
+					boolean petlja = true;
+					while (petlja) {
+						switch (scanner.nextLine().toUpperCase()) {
+							case "Y":
+								petlja = false;
+								autori.remove(Integer.parseInt(unos) - 1);
+								System.out.println("Uspesno obrisano.");
+								ArrayList<String> objects = new ArrayList<>();
+								String fileName = autori.get(0).serializedFileName();
+								for (Autor a : autori) {
+									objects.add(a.toStringSerializable());
+								}
+								try {
+									DataManager.serializeString(objects, fileName, false);
+								} catch (IOException exception) {
+									exception.printStackTrace();
+								}
+								break;
+							case "N":
+								petlja = false;
+								System.out.println("Brisanje otkazano.");
+								break;
+							default:
+								System.out.println("Unesite Y ili N");
+								break;
+						}
+					}
+				}
+			}
+		}
+	}
+	//TODO: Testiranje, provera
+	protected static void deletePublisher(ArrayList<Izdavac> izdavaci) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("Odaberite autora kojeg zelite da obrisete (0 za izlaz):");
+		for (int i = 0; i < izdavaci.size(); i++) {
+			System.out.printf("%d. %s%n", i+1, izdavaci.get(i).getId().concat(" " + izdavaci.get(i).getImeIzdavaca() + " " + izdavaci.get(i).getZemljaPorekla()));
+		}
+		while (true) {
+			System.out.println("Unos: "); String unos = scanner.nextLine();
+			if (unos.equals("0")) {
+				break;
+			}
+			else {
+				if (Integer.parseInt(unos) - 1 > izdavaci.size()) {
+					System.out.println("Uneli ste nepostojeci redni broj.");
+				}
+				else {
+					System.out.printf("Odabran clan: %s, %s%n", izdavaci.get((Integer.parseInt(unos) - 1)).getId(), izdavaci.get((Integer.parseInt(unos) - 1)).getImeIzdavaca().concat(" " + izdavaci.get((Integer.parseInt(unos) - 1)).getZemljaPorekla()));
+					System.out.println("Da li ste sigurni da zelite da obrisete ovog autora? (Y/N)");
+					boolean petlja = true;
+					while (petlja) {
+						switch (scanner.nextLine().toUpperCase()) {
+							case "Y":
+								petlja = false;
+								izdavaci.remove(Integer.parseInt(unos) - 1);
+								System.out.println("Uspesno obrisano.");
+								ArrayList<String> objects = new ArrayList<>();
+								String fileName = izdavaci.get(0).serializedFileName();
+								for (Izdavac i : izdavaci) {
+									objects.add(i.toStringSerializable());
+								}
+								try {
+									DataManager.serializeString(objects, fileName, false);
+								} catch (IOException exception) {
+									exception.printStackTrace();
+								}
+								break;
+							case "N":
+								petlja = false;
+								System.out.println("Brisanje otkazano.");
+								break;
+							default:
+								System.out.println("Unesite Y ili N");
+								break;
+						}
+					}
+				}
+			}
+		}
+	}
 }
