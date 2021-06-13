@@ -261,6 +261,9 @@ public class DataManager {
 			d.setCanDeleteMembers(Boolean.parseBoolean(lista[8]));
 			d.setCanDeleteBooks(Boolean.parseBoolean(lista[9]));
 			d.setCanAlterRules(Boolean.parseBoolean(lista[10]));
+			d.setCanEditAdmins(Boolean.parseBoolean(lista[11]));
+			d.setCanEditMembers(Boolean.parseBoolean(lista[12]));
+			d.setCanEditBooks(Boolean.parseBoolean(lista[13]));
 
 			dozvole.add(d);
 		}

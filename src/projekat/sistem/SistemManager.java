@@ -4,11 +4,10 @@ import projekat.Main;
 import projekat.knjiga.Autor;
 import projekat.knjiga.Izdavac;
 import projekat.knjiga.Knjiga;
-import projekat.osoba.Administrator;
-import projekat.osoba.Clan;
-import projekat.osoba.EnumPol;
-import projekat.osoba.Pozajmljivanje;
+import projekat.osoba.*;
+import projekat.util.serijalizacija.DataManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -32,6 +31,82 @@ public class SistemManager {
 			case 3:
 				if (prijavljenAdmin.getDozvole().canDeleteAdmins() || prijavljenAdmin.getDozvole().hasMasterRule()) {
 					deleteAdmin(adminList);
+				}
+				break;
+		}
+	}
+	public static void initMemberManager(int opcija, ArrayList<Clan> clanList) {
+		switch (opcija) {
+			case 1:
+				if (Main.prijavljenAdmin.getDozvole().canAddMembers() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					addMember(clanList);
+				}
+				break;
+			case 2:
+				if (Main.prijavljenAdmin.getDozvole().canEditMembers() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					editMember(clanList);
+				}
+				break;
+			case 3:
+				if (Main.prijavljenAdmin.getDozvole().canDeleteMembers() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					deleteMember(clanList);
+				}
+				break;
+		}
+	}
+	public static void initBookManager(int opcija, ArrayList<Knjiga> knjigaList, ArrayList<Autor> autorList, ArrayList<Izdavac> izdavacList) {
+		switch (opcija) {
+			case 1:
+				if (Main.prijavljenAdmin.getDozvole().canAddBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					addBook(knjigaList, autorList, izdavacList);
+				}
+				break;
+			case 2:
+				if (Main.prijavljenAdmin.getDozvole().canEditBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					editBook(knjigaList, autorList, izdavacList);
+				}
+				break;
+			case 3:
+				if (Main.prijavljenAdmin.getDozvole().canDeleteBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					deleteBook(knjigaList, autorList, izdavacList);
+				}
+				break;
+		}
+	}
+	public static void initAuthorManager(int opcija, ArrayList<Autor> autorList) {
+		switch (opcija) {
+			case 1:
+				if (Main.prijavljenAdmin.getDozvole().canAddBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					addAuthor(autorList);
+				}
+				break;
+			case 2:
+				if (Main.prijavljenAdmin.getDozvole().canEditBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					editAuthor(autorList);
+				}
+				break;
+			case 3:
+				if (Main.prijavljenAdmin.getDozvole().canDeleteBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					deleteAuthor(autorList);
+				}
+				break;
+		}
+	}
+	public static void initPublisherManager(int opcija, ArrayList<Izdavac> izdavacList) {
+		switch (opcija) {
+			case 1:
+				if (Main.prijavljenAdmin.getDozvole().canAddBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					addPublisher(izdavacList);
+				}
+				break;
+			case 2:
+				if (Main.prijavljenAdmin.getDozvole().canEditBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					editPublisher(izdavacList);
+				}
+				break;
+			case 3:
+				if (Main.prijavljenAdmin.getDozvole().canDeleteBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+					deletePublisher(izdavacList);
 				}
 				break;
 		}
@@ -256,17 +331,360 @@ public class SistemManager {
 		izdavaci.add(i);
 	}
 
-	private static void editAdmin(ArrayList<Administrator> adminList) {}
-	private static void editMember() {}
-	private static void editBook() {}
-	private static void editAuthor() {}
-	private static void editPublisher() {}
+	private static void editAdmin(ArrayList<Administrator> adminList) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("Odaberite administratora cije podatke zelite da izmenite (0 za izlaz):");
+		for (int i = 0; i < adminList.size(); i++) {
+			System.out.printf("%d. %s%n", i+1, adminList.get(i).getUUID().concat(" " + adminList.get(i).getUsername()));
+		}
+		while (true) {
+			System.out.println("Unos: "); int unos = scanner.nextInt();
+			if (unos == 0) {
+				break;
+			}
+			else {
+				if (unos - 1 > adminList.size()) {
+					System.out.println("Uneli ste nepostojeci redni broj.");
+				}
+				else {
+					boolean petlja = true;
+					while (petlja) {
+						Main.cls();
+						System.out.println("Podaci o odabranom administratoru:");
+						System.out.printf("ID: %s%nIme: %s%nPrezime: %s%nAdresa: %s%nBroj telefona: %s%nEmail: %s%nPol: %s%nKorisnicko ime: %s%n",
+								adminList.get(unos - 1).getUUID(), adminList.get(unos - 1).getIme(), adminList.get(unos - 1).getPrezime(), adminList.get(unos - 1).getAdresa(),
+								adminList.get(unos - 1).getBrTelefona(), adminList.get(unos - 1).getEmail(), pol(adminList.get(unos - 1).getPol()), adminList.get(unos - 1).getUsername());
+						System.out.print("\nIzaberite sta zelite da izmenite (1. Ime, 2. Prezime, 3. Adresa, 4. Broj telefona, 5. Email, 6. Pol, 7. Korisnicko ime, 8. Sifra, 9. Dozvole). Za otkazivanje unesite 0: ");
+						switch (scanner.nextInt()) {
+							case 1:
+								while (true) {
+									System.out.println("Unesite novo ime: "); String tempIme = scanner.nextLine();
+									if (tempIme.length() < 2) {
+										System.out.println("Ime moze da sardzi samo slova.");
+									}
+									else {
+										petlja = false;
+										adminList.get(unos - 1).setIme(tempIme);
+										break;
+									}
+								}
+								break;
+							case 2:
+								while (true) {
+									System.out.println("Unesite novo prezime: "); String tempPrezime = scanner.nextLine();
+									if (tempPrezime.length() < 2) {
+										System.out.println("Prezime moze da sardzi samo slova.");
+									}
+									else {
+										petlja = false;
+										adminList.get(unos - 1).setPrezime(tempPrezime);
+										break;
+									}
+								}
+								break;
+							case 3:
+								while (true) {
+									System.out.println("Unesite novu adresu: "); String tempAdresa = scanner.nextLine();
+									if (tempAdresa.length() < 2) {
+										System.out.println("Adresa mora biti duza od 2 karaktera i ne sme da sadrzi specijalne znakove.");
+									}
+									else {
+										petlja = false;
+										adminList.get(unos - 1).setAdresa(tempAdresa);
+										break;
+									}
+								}
+								break;
+							case 4:
+								while (true) {
+									System.out.println("Unesite novi broj telefona: "); String tempBrTelefona = scanner.nextLine();
+									if (tempBrTelefona.length() < 9 || tempBrTelefona.length() > 10) {
+										System.out.println("Broj telefona mora da ima 9 ili 10 brojeva");
+									}
+									else {
+										petlja = false;
+										adminList.get(unos - 1).setBrTelefona(tempBrTelefona);
+										break;
+									}
+								}
+								break;
+							case 5:
+								while (true) {
+									System.out.println("Unesite novu email adresu: "); String tempEmail = scanner.nextLine();
+									if (tempEmail.length() < 7 || !tempEmail.contains("@")) {
+										System.out.println("Email adresa mora da sardzi znak @, i mora biti duza od 7 karaktera");
+									}
+									else {
+										petlja = false;
+										adminList.get(unos - 1).setEmail(tempEmail);
+										break;
+									}
+								}
+								break;
+							case 6:
+								System.out.println("Odaberite pol: ");
+								boolean petljaPol = true;
+								while (petljaPol) {
+									System.out.println("\n1. Musko\n2. Zensko");
+									System.out.println("Unos: ");
+									switch (scanner.nextInt()) {
+										case 1:
+											petlja = false;
+											petljaPol = false;
+											adminList.get(unos - 1).setPol(EnumPol.MUSKO.getNum());
+											break;
+										case 2:
+											petlja = false;
+											petljaPol = false;
+											adminList.get(unos - 1).setPol(EnumPol.ZENSKO.getNum());
+											break;
+										default:
+											System.out.println("Molimo unesite jednu od dostupnih opcija!");
+									}
+								}
+							case 7:
+								while (true) {
+									System.out.println("Unesite novo korisnicko ime: "); String tempUsername = scanner.nextLine();
+									if (tempUsername.length() < 6) {
+										System.out.println("Korisnicko ime mora biti duze od 6 karaktera");
+									}
+									else {
+										petlja = false;
+										adminList.get(unos - 1).setUsername(tempUsername);
+										break;
+									}
+								}
+								break;
+							case 8:
+								Main.cls();
+								System.out.print("Unesite trenutnu lozinku odabranog administratora: ");
+								int pokusaj = 0;
+								while (pokusaj < 3) {
+									if (Sifra.sifrujLozinku(adminList.get(unos - 1).getUUID(), scanner.nextLine()).equals(adminList.get(unos - 1).getPassword().getSifra())) {
+										break;
+									}
+									else {
+										System.out.println("Lozinka nije ispravna");
+										pokusaj++;
+									}
+								}
+								if (pokusaj == 3) {
+									System.out.println("Nije moguce promeniti sifru (3 puta netacna lozinka).");
+									petlja = false;
+									break;
+								}
+								while (true) {
+									Main.cls();
+									System.out.println("Unesite novu lozinku (Unesite 0 za otkazivanje): "); String tempSifra = scanner.nextLine();
+									if (tempSifra.equals("0")) {
+										break;
+									}
+									System.out.println("Ponovo unesite lozinku");
+									if (scanner.nextLine().equals(tempSifra)) {
+										adminList.get(unos - 1).getPassword().encryptSifra(tempSifra);
+										System.out.println("Sifra promenjena");
+										break;
+									}
+								}
+								break;
+							case 9:
+								boolean petlja3 = true;
+								while (petlja3) {
+									Main.cls();
+									System.out.println("Dozvole odabranog administratora:");
+									adminList.get(unos - 1).getDozvole().printDozvole(true);
+									System.out.println("Odaberite dozvolu koju zelite da promenite (0 za izlaz): ");
+									switch (scanner.nextLine()) {
+										case "0":
+											petlja3 = false;
+											break;
+										case "1":
+											adminList.get(unos - 1).getDozvole().addAdmins();
+											break;
+										case "2":
+											adminList.get(unos - 1).getDozvole().addBooks();
+											break;
+										case "3":
+											adminList.get(unos - 1).getDozvole().addMembers();
+											break;
+										case "4":
+											adminList.get(unos - 1).getDozvole().editAdmins();
+											break;
+										case "5":
+											adminList.get(unos - 1).getDozvole().editBooks();
+											break;
+										case "6":
+											adminList.get(unos - 1).getDozvole().editMembers();
+											break;
+										case "7":
+											adminList.get(unos - 1).getDozvole().deleteAdmins();
+											break;
+										case "8":
+											adminList.get(unos - 1).getDozvole().deleteBooks();
+											break;
+										case "9":
+											adminList.get(unos - 1).getDozvole().deleteMembers();
+											break;
+										case "10":
+											adminList.get(unos - 1).getDozvole().loanBooks();
+											break;
+										case "11":
+											adminList.get(unos - 1).getDozvole().alterRules();
+											break;
+										case "12":
+											adminList.get(unos - 1).getDozvole().masterRule();
+											break;
+										default:
+											System.out.println("Unesite redni broj dozvole koja postoji!");
+											break;
+									}
+								}
+								break;
+							case 0:
+								petlja = false;
+								break;
+							default:
+								System.out.println("Unesite jednu od ponudjenih opcija!");
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								break;
+						}
+					}
+				}
+			}
+		}
+		ArrayList<String> objects = new ArrayList<>();
+		String fileName = adminList.get(0).serializedFileName();
+		for (Administrator a : adminList) {
+			objects.add(a.toStringSerializable());
+		}
+		try {
+			DataManager.serializeString(objects, fileName, false);
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
+	}
+	private static void editMember(ArrayList<Clan> clanovi) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("Odaberite clana cije podatke zelite da izmenite (0 za izlaz):");
+		for (int i = 0; i < clanovi.size(); i++) {
+			System.out.printf("%d. %s%n", i+1, clanovi.get(i).getUUID().concat(" " + clanovi.get(i).getPunoIme()));
+		}
+
+		while (true) {
+			System.out.println("Unos: "); String unos = scanner.nextLine();
+			if (unos.equals("0")) {
+				break;
+			}
+			else {
+				Main.cls();
+				System.out.println("Podaci o odabranom clanu: ");
+				System.out.printf("ID: %s%nIme: %s%nPrezime: %s%nBroj telefona %s%nPol: %s%nEmail: %s%n",
+						clanovi.get(Integer.parseInt(unos) - 1).getUUID(), clanovi.get(Integer.parseInt(unos) - 1).getIme(), clanovi.get(Integer.parseInt(unos) - 1).getPrezime(),
+						clanovi.get(Integer.parseInt(unos) - 1).getBrTelefona(), pol(clanovi.get(Integer.parseInt(unos) - 1).getPol()), clanovi.get(Integer.parseInt(unos) - 1).getEmail());
+				System.out.println("Odaberite sta zelite da izmenite (1. Ime, 2. Prezime, 3. Broj telefona, 4. Pol, 5. Email, 6. Pogledaj pozajmljivanja clana). Unesite 0 za izlaz: ");
+				switch (scanner.nextLine()) {
+					case "1":
+						while (true) {
+							System.out.println("Unesite novo ime: "); String tempIme = scanner.nextLine();
+							if (tempIme.length() < 2) {
+								System.out.println("Ime moze da sardzi samo slova.");
+							}
+							else {
+								clanovi.get(Integer.parseInt(unos) - 1).setIme(tempIme);
+								break;
+							}
+						}
+						break;
+					case "2":
+						while (true) {
+							System.out.println("Unesite novo prezime: "); String tempPrezime = scanner.nextLine();
+							if (tempPrezime.length() < 2) {
+								System.out.println("Prezime moze da sardzi samo slova.");
+							}
+							else {
+								clanovi.get(Integer.parseInt(unos) - 1).setPrezime(tempPrezime);
+								break;
+							}
+						}
+						break;
+					case "3":
+						while (true) {
+							System.out.println("Unesite novi broj telefona: "); String tempBrTelefona = scanner.nextLine();
+							if (tempBrTelefona.length() < 9 || tempBrTelefona.length() > 10) {
+								System.out.println("Broj telefona mora da ima 9 ili 10 brojeva");
+							}
+							else {
+								clanovi.get(Integer.parseInt(unos) - 1).setBrTelefona(tempBrTelefona);
+								break;
+							}
+						}
+						break;
+					case "4":
+						System.out.println("Odaberite pol: ");
+						boolean petljaPol = true;
+						while (petljaPol) {
+							System.out.println("\n1. Musko\n2. Zensko");
+							System.out.println("Unos: ");
+							switch (scanner.nextInt()) {
+								case 1:
+									petljaPol = false;
+									clanovi.get(Integer.parseInt(unos) - 1).setPol(EnumPol.MUSKO.getNum());
+									break;
+								case 2:
+									petljaPol = false;
+									clanovi.get(Integer.parseInt(unos) - 1).setPol(EnumPol.ZENSKO.getNum());
+									break;
+								default:
+									System.out.println("Molimo unesite jednu od dostupnih opcija!");
+							}
+						}
+					case "5":
+						while (true) {
+							System.out.println("Unesite novu email adresu: "); String tempEmail = scanner.nextLine();
+							if (tempEmail.length() < 7 || !tempEmail.contains("@")) {
+								System.out.println("Email adresa mora da sardzi znak @, i mora biti duza od 7 karaktera");
+							}
+							else {
+								clanovi.get(Integer.parseInt(unos) - 1).setEmail(tempEmail);
+								break;
+							}
+						}
+						break;
+					case "6":
+						//TODO: Prikazivanje pozajmljivanja
+					default:
+				}
+			}
+		}
+	}
+	private static void editBook(ArrayList<Knjiga> knjige, ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) {}
+	private static void editAuthor(ArrayList<Autor> autori) {}
+	private static void editPublisher(ArrayList<Izdavac> izdavaci) {}
 
 	private static void deleteAdmin(ArrayList<Administrator> adminList) {}
-	private static void deleteMember() {}
-	private static void deleteBook() {}
-	private static void deleteAuthor() {}
-	private static void deletePublisher() {}
+	private static void deleteMember(ArrayList<Clan> clanovi) {}
+	private static void deleteBook(ArrayList<Knjiga> knjige, ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) {}
+	private static void deleteAuthor(ArrayList<Autor> autori) {}
+	private static void deletePublisher(ArrayList<Izdavac> izdavaci) {}
 
+	private static void viewRules(PravilaBiblioteke pravilaBiblioteke) {}
 	private static void editRules(PravilaBiblioteke pravilaBiblioteke) {}
+
+	private static String pol(int pol) {
+		if (pol == 1) {
+			return EnumPol.MUSKO.name();
+		}
+		else if (pol == 2) {
+			return EnumPol.ZENSKO.name();
+		}
+		else {
+			return "NEODREDJENO";
+		}
+	}
 }

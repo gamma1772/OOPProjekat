@@ -126,6 +126,9 @@ public class Administrator extends AbstractOsoba {
 			this.canAddAdmins = false;
 			this.canAddMembers = false;
 			this.canAddBooks = false;
+			this.canEditAdmins = false;
+			this.canEditMembers = false;
+			this.canEditBooks = false;
 			this.canDeleteAdmins = false;
 			this.canDeleteMembers = false;
 			this.canDeleteBooks = false;
@@ -140,6 +143,9 @@ public class Administrator extends AbstractOsoba {
 			this.canAddAdmins = false;
 			this.canAddMembers = false;
 			this.canAddBooks = false;
+			this.canEditAdmins = false;
+			this.canEditMembers = false;
+			this.canEditBooks = false;
 			this.canDeleteAdmins = false;
 			this.canDeleteMembers = false;
 			this.canDeleteBooks = false;
@@ -149,24 +155,70 @@ public class Administrator extends AbstractOsoba {
 		}
 
 		/*Sledece 'metode' se koriste za postavljanje vrednosti dozvola na true. Ovi konstruktori se mogu pozivati lancano*/
-		public Dozvole admin() { this.isAdmin = true; return this; }
-		public Dozvole addAdmins() { this.canAddAdmins = true; return this; }
-		public Dozvole addMembers() { this.canAddMembers = true; return this; }
-		public Dozvole addBooks() { this.canAddBooks = true; return this; }
-		public Dozvole deleteAdmins() { this.canDeleteAdmins = true; return this; }
-		public Dozvole deleteMembers() { this.canDeleteMembers = true; return this; }
-		public Dozvole deleteBooks() { this.canDeleteBooks = true; return this; }
-		public Dozvole loanBooks() { this.canLoanBooks = true; return this; }
-		public Dozvole alterRules() {this.canAlterRules = true; return this;}
-		public Dozvole masterRule() { this.masterRule = true; return this; }
+		public Dozvole admin() {
+			this.isAdmin = true;
+			return this;
+		}
+		public Dozvole addAdmins() {
+			this.canAddAdmins = !canAddAdmins;
+			return this;
+		}
+		public Dozvole addMembers() {
+			this.canAddMembers = !canAddMembers;
+			return this;
+		}
+		public Dozvole addBooks() {
+			this.canAddBooks = !canAddBooks;
+			return this;
+		}
+		public Dozvole editBooks() {
+			this.canEditBooks = !canEditBooks;
+			return this;
+		}
+		public Dozvole editAdmins() {
+			this.canEditAdmins = !canEditAdmins;
+			return this;
+		}
+		public Dozvole editMembers() {
+			this.canEditMembers = !canEditMembers;
+			return this;
+		}
+		public Dozvole deleteAdmins() {
+			this.canDeleteAdmins = !canDeleteAdmins;
+			return this;
+		}
+		public Dozvole deleteMembers() {
+			this.canDeleteMembers = !canDeleteMembers; return this; }
+		public Dozvole deleteBooks() {
+			this.canDeleteBooks = !canDeleteBooks; return this; }
+		public Dozvole loanBooks() {
+			this.canLoanBooks = !canLoanBooks; return this; }
+		public Dozvole alterRules() {
+			this.canAlterRules = !canAlterRules; return this;}
+		public Dozvole masterRule() {
+			this.masterRule = !masterRule; return this; }
 
 		/**Prikazuje tabelu dozvola u terminal*/
-		//TODO: Novi format.
-		public void proveraMogucnosti() {
-			System.out.println("Dozvole:\tDodavanje\tBrisanje\tRegistracija\tPozajmljivanje");
-			System.out.println("Admini:\t\t" + canAddAdmins + "\t\t" + canDeleteAdmins + "\t\t" + "X" + "\t\t\t\t" + "X");
-			System.out.println("Korisnici:\t" + canAddMembers + "\t\t" + canDeleteMembers + "\t\t" + masterRule + "\t\t\t" + "X");
-			System.out.println("Knjige:\t\t" + canAddBooks + "\t\t" + canDeleteBooks + "\t\t" + "X" + "\t\t\t\t" + canLoanBooks);
+		public void printDozvole(boolean enumerated) {
+			if (enumerated) {
+				System.out.println("           Administratori   \tKnjige   \tClanovi");
+				System.out.printf ("Dodavanje: 1. %b            \t2. %b    \t3. %b     ", canAddAdmins(), canAddBooks(), canAddMembers());
+				System.out.printf ("Izmena:    4. %b            \t5. %b    \t6. %b     ", canEditAdmins(), canEditBooks(), canEditMembers());
+				System.out.printf ("brisanje:  7. %b            \t8. %b    \t9. %b     ", canDeleteAdmins(), canDeleteBooks(), canDeleteMembers());
+				System.out.printf ("\nPozajmljivanje knjiga: 10. %b", canLoanBooks());
+				System.out.printf ("\nMenjanje pravila:      11. %b", canAlterRules());
+				System.out.printf ("\nMaster dozvola:        12. %b", hasMasterRule());
+			}
+			else {
+				System.out.println("           Administratori\tKnjige\tClanovi");
+				System.out.printf ("Dodavanje: %b            \t%b    \t%b     ", canAddAdmins(), canAddBooks(), canAddMembers());
+				System.out.printf ("Izmena:    %b            \t%b    \t%b     ", canEditAdmins(), canEditBooks(), canEditMembers());
+				System.out.printf ("brisanje:  %b            \t%b    \t%b     ", canDeleteAdmins(), canDeleteBooks(), canDeleteMembers());
+				System.out.printf ("\nPozajmljivanje knjiga: %b", canLoanBooks());
+				System.out.printf ("\nMenjanje pravila:      %b", canAlterRules());
+				System.out.printf ("\nMaster dozvola:        %b", hasMasterRule());
+			}
+
 		}
 
 		@Override
