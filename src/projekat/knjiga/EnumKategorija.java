@@ -34,7 +34,9 @@ public enum EnumKategorija {
 	public static EnumKategorija getKategorija(int redniBroj) {
 		return mapaKategorija.get(redniBroj);
 	}
-
+	public static Map<Integer, EnumKategorija>  getMap() {
+		return mapaKategorija;
+	}
 	public int getRedniBroj() {
 		return redniBroj;
 	}

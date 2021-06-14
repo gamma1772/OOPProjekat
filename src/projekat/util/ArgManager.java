@@ -3,6 +3,7 @@ package projekat.util;
 import projekat.Main;
 import projekat.osoba.Administrator;
 import projekat.osoba.EnumPol;
+import projekat.osoba.Sifra;
 import projekat.sistem.Login;
 import projekat.sistem.PravilaBiblioteke;
 import projekat.util.serijalizacija.DataManager;
@@ -143,9 +144,6 @@ public class ArgManager {
 			if (args[0].equals(HELP.getArgument())) {
 				displayHelp(); System.exit(0);
 			}
-			else if (args[0].equals(DEBUG.getArgument())) {
-				Main.debugMode = true;
-			}
 			else if (args[0].equals(SYSTEM_SETUP.getArgument())) {
 				File temp = new File("data//");
 				if (temp.exists() && temp.list().length == 0) {
@@ -159,7 +157,28 @@ public class ArgManager {
 		}
 		if (args.length > 1) {
 			if (args[0].equals(LOGIN.getArgument())) {
+				ArrayList<Sifra> sifre = null;
+				ArrayList<Administrator.Dozvole> dozvole = null;
+				ArrayList<Administrator> admini = null;
+				try {
+					sifre = DataManager.deserializeSifre();
+					dozvole = DataManager.deserializeDozvole();
+					admini = DataManager.deserializeAdmins(sifre, dozvole);
+				} catch (IOException | TokProgramaException exception) {
+					exception.printStackTrace();
+				}
 
+				try {
+					Main.prijavljenAdmin = Login.login(admini);
+				} catch (CredentialException e) {
+					e.printStackTrace();
+				}
+				if (Main.prijavljenAdmin == null) {
+					System.exit(1);
+				}
+				else {
+					Main.init();
+				}
 			}
 			else if (args[0].equals(RESET.getArgument())) {
 				if (args[1].equals("Da")) {

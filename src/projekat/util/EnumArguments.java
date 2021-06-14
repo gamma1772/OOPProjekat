@@ -6,8 +6,6 @@ import java.util.Map;
 /**Enumerator argumenata, sadrzi sve argumente koji su dozvoljeni*/
 public enum EnumArguments {
 
-	DEBUG("--debug", "Pokrece program u debug rezimu rada. Sve poruke ce biti prikazane na displeju"),
-	NOLOGIN("--nologin", "Pokrece program bez prijavljivanja. U ovom rezimu rada je moguc samo pregled odredjenih podataka"),
 	RESET("--reset", "Resetuje program, brise sve podatke. Zahteva potvrdu i prijavljivanje sa nalogom koji ima 'masterRule' dozvolu", "[Da/Ne]"),
 	SYSTEM_SETUP("--setup", "Pokrece program u rezimu za prvo podezavanje. Moze samo da se pokrene ako ne postoji ni jedan korisnik"),
 	LOGIN("--login", "Preskace proces prijavljivanja i direktno se prijavljuje na sistem uz pomoc dodeljenih argumenata", "username", "password"),

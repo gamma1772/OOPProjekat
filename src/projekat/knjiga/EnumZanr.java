@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EnumZanr {
-	KOMEDIJA(0),
-	ANIMIRANI(1),
+
+	MANGA(1),
 	NAUCNA_FANTASTIKA(2),
 	EP(3),
 	ISTORIJA(4),
@@ -22,11 +22,12 @@ public enum EnumZanr {
 	KRIMI(14),
 	DECIJI(15),
 	ROMANTIKA(16),
-	DOKUMENTARNI(17),
+	KULINARSTVO(17),
 	BIOGRAFIJA(18),
 	EDUKATIVNO(19),
 	AKADEMSKI_RAD(20),
-	PUTOVANJE(21);
+	KOMEDIJA(21),
+	PUTOVANJE(22);
 
 	private final int redniBroj;
 	private static final Map<Integer, EnumZanr> mapaZanrova = new HashMap<>();
@@ -44,7 +45,9 @@ public enum EnumZanr {
 	public static EnumZanr getZanr(int redniBroj) {
 		return mapaZanrova.get(redniBroj);
 	}
-
+	public static Map<Integer, EnumZanr>  getMap() {
+		return mapaZanrova;
+	}
 	public int getRedniBroj() {
 		return redniBroj;
 	}

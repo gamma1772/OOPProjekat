@@ -24,8 +24,6 @@ import java.util.Scanner;
 /* @author markonrt8519 */
 public class Main {
 
-    public static boolean debugMode = false; //U koliko je ovo true, sve poruke iz logger-a se pokazuju u konzoli;
-
     public static Administrator prijavljenAdmin;
     public static PravilaBiblioteke pravila;
 
@@ -114,12 +112,13 @@ public class Main {
             System.out.println("Odaberite opciju:\n");
             System.out.println("1. Dodaj novog clana biblioteke\n2. Pozajmi knjigu\n3. Opcije biblioteke\n4. Odjava\n5. Izlaz\n");
             System.out.print("Unos: "); odabir = scanner.nextInt();
+            scanner.nextLine();
             switch (odabir) {
                 case 1:
-                    SistemManager.initMemberManager(odabir, clanovi);
+                    SistemManager.initMemberManager(odabir, clanovi, pozajmljivanja);
                     break;
                 case 2:
-                    SistemManager.initPozajmljivanje(clanovi, pozajmljivanja, knjige);
+                    SistemManager.initPozajmljivanje(2, clanovi, pozajmljivanja, knjige);
                     break;
                 case 3:
                     petlja = false;
@@ -153,7 +152,7 @@ public class Main {
         }
     }
 
-    private static void prikaziOpcijeBiblioteke( Scanner scanner) {
+    private static void prikaziOpcijeBiblioteke(Scanner scanner) {
         boolean petlja = true;
         int odabir;
 
@@ -162,6 +161,7 @@ public class Main {
             System.out.println("==========OPCIJE BIBLIOTEKE==========");
             System.out.println("1. Opcije administratora\n2. Opcije Knjiga\n3. Opcije autora\n4. Opcije izdavaca\n5. Opcije clanova\n6. Pocetni meni\n");
             System.out.print("Unos: "); odabir = scanner.nextInt();
+            scanner.nextLine();
             switch (odabir) {
                 case 1:
                     petlja = false;
@@ -204,6 +204,7 @@ public class Main {
             System.out.println("==========OPCIJE ADMINISTRATORA==========");
             System.out.println("1. Dodaj administratora\n2. Izmeni podatke administratora\n3. Obrisi administratora\n4. Promeni pravila biblioteke\n5. Nazad\n6. Pocetni meni");
             System.out.print("Unos: "); odabir = scanner.nextInt();
+            scanner.nextLine();
             switch (odabir) {
                 case 1: case 2: case 3:
                     SistemManager.initAdminManager(prijavljenAdmin, odabir, admini, dozvole, sifre);
@@ -276,6 +277,7 @@ public class Main {
             System.out.println("1. Dodaj novog autora\n2. Izmeni autora\n3. Obrisi autora\n4. Prikazi sve autore\n5. Nazad\n6. Pocetni meni");
             System.out.print("Unos: "); odabir = scanner.nextInt();
             scanner.nextLine();
+            scanner.nextLine();
 
             switch (odabir) {
                 case 1: case 2: case 3:
@@ -311,7 +313,7 @@ public class Main {
             System.out.println("==========IZDAVACI==========");
             System.out.println("1. Dodaj novog izdavaca\n2. Izmeni izdavaca\n3. Obrisi izdavaca\n4. Prikazi sve izdavace\n5. Nazad\n6. Pocetni meni");
             System.out.print("Unos: "); odabir = scanner.nextInt();
-
+            scanner.nextLine();
             switch (odabir) {
                 case 1: case 2: case 3:
                     SistemManager.initPublisherManager(odabir, izdavaci);
@@ -346,10 +348,10 @@ public class Main {
             System.out.println("==========CLANOVI==========");
             System.out.println("1. Dodaj novog clana\n2. Izmeni clana\n3. Obrisi clana\n4. Prikazi sve clanove\n5. Nazad\n6. Pocetni meni");
             System.out.print("Unos: "); odabir = scanner.nextInt();
-
+            scanner.nextLine();
             switch (odabir) {
                 case 1: case 2: case 3:
-                    SistemManager.initMemberManager(odabir, clanovi);
+                    SistemManager.initMemberManager(odabir, clanovi, pozajmljivanja);
                     break;
                 case 4:
                 case 5:
@@ -378,8 +380,7 @@ public class Main {
             System.out.println('\n');
         }
     }
-
-    public static void exit() {
+    public static void save() {
         DataManager.serializeFromGenericArray(admini);
         DataManager.serializeFromGenericArray(sifre);
         DataManager.serializeFromGenericArray(dozvole);
@@ -388,8 +389,47 @@ public class Main {
         DataManager.serializeFromGenericArray(izdavaci);
         DataManager.serializeFromGenericArray(clanovi);
         DataManager.serializeFromGenericArray(pozajmljivanja);
-        DataManager.serializeFromGenericArray(knjige);
         DataManager.serializeGeneric(pravila);
+    }
+
+    public static void save(int check) {
+        switch (check) {
+            case 0:
+                DataManager.serializeFromGenericArray(admini);
+                break;
+            case 1:
+                DataManager.serializeFromGenericArray(sifre);
+                break;
+            case 2:
+                DataManager.serializeFromGenericArray(dozvole);
+                break;
+            case 3:
+                DataManager.serializeFromGenericArray(knjige);
+                break;
+            case 4:
+                DataManager.serializeFromGenericArray(autori);
+                break;
+            case 5:
+                DataManager.serializeFromGenericArray(izdavaci);
+                break;
+            case 6:
+                DataManager.serializeFromGenericArray(clanovi);
+                break;
+            case 7:
+                DataManager.serializeFromGenericArray(pozajmljivanja);
+                break;
+            case 8:
+                DataManager.serializeGeneric(pravila);
+                break;
+            default: {
+                System.out.println("Nepostojeca opcija");
+            }
+        }
+    }
+
+    public static void exit() {
+
+        save();
 
         admini = null;
         sifre = null;

@@ -156,7 +156,7 @@ public class Knjiga implements IUUID, ISerijalizacija {
 	private String zanroviConcatSerializable() {
 		StringBuilder zanrString = new StringBuilder();
 		for (int zanr : getZanrovi()) {
-			zanrString.append(EnumZanr.getZanr(zanr).name().toLowerCase()).append(";");
+			zanrString.append(EnumZanr.getZanr(zanr).getRedniBroj()).append(";");
 		}
 		return zanrString.toString();
 	}

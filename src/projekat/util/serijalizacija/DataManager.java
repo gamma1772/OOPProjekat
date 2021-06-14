@@ -484,6 +484,7 @@ public class DataManager {
 			p.setDatumVracanja(cal);
 
 			p.setRazreseno(Boolean.parseBoolean(lista[5]));
+			p.setProduzenoPuta(Integer.parseInt(lista[6]));
 
 			pozajmljivanjaArrayList.add(p);
 		}
