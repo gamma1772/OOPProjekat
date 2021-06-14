@@ -38,6 +38,12 @@ public class Main {
 
     public static void main(String[] args) {
 
+        try {
+                deserialization(true);
+            } catch (IOException | TokProgramaException exception) {
+                exception.printStackTrace();
+            }
+        
         if (args.length > 0) {
             new ArgManager(args); //Pokretanje provere argumenata, pokrece se jednom pri pokretanju programa.
         }
@@ -45,11 +51,7 @@ public class Main {
         if (prijavljenAdmin == null) {
 
             int brPokusaja = 0;
-            try {
-                deserialization(true);
-            } catch (IOException | TokProgramaException exception) {
-                exception.printStackTrace();
-            }
+            
 
             /*Prijavljivanje administratora, tj. korisnika, sistema*/
             while(prijavljenAdmin == null && brPokusaja < 3) {
