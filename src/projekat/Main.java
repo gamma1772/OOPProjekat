@@ -42,25 +42,28 @@ public class Main {
             new ArgManager(args); //Pokretanje provere argumenata, pokrece se jednom pri pokretanju programa.
         }
 
-        int brPokusaja = 0;
-        try {
-            deserialization(true);
-        } catch (IOException | TokProgramaException exception) {
-            exception.printStackTrace();
-        }
+        if (prijavljenAdmin == null) {
 
-        /*Prijavljivanje administratora, tj. korisnika, sistema*/
-        while(prijavljenAdmin == null && brPokusaja < 3) {
+            int brPokusaja = 0;
             try {
-                prijavljenAdmin = Login.login(admini);
-                break;
-            } catch (CredentialException e) {
-                System.out.println(e.getMessage());
-                prijavljenAdmin = null;
+                deserialization(true);
+            } catch (IOException | TokProgramaException exception) {
+                exception.printStackTrace();
             }
-            brPokusaja++;
+
+            /*Prijavljivanje administratora, tj. korisnika, sistema*/
+            while(prijavljenAdmin == null && brPokusaja < 3) {
+                try {
+                    prijavljenAdmin = Login.login(admini);
+                    break;
+                } catch (CredentialException e) {
+                    System.out.println(e.getMessage());
+                    prijavljenAdmin = null;
+                }
+                brPokusaja++;
+            }
+            init();
         }
-         init();
     }
 
     private static void deserialization(boolean restricted) throws IOException, TokProgramaException {
@@ -115,9 +118,12 @@ public class Main {
             cls();
             System.out.println("==========POCETNI MENI==========");
             System.out.println("Odaberite opciju:\n");
-            System.out.println("1. Dodaj novog clana biblioteke\n2. Pozajmljivanje knjiga\n3. Opcije biblioteke\n4. Odjava\n5. Izlaz\n");
-            System.out.print("Unos: "); odabir = scanner.nextInt();
-            scanner.nextLine();
+            System.out.println("1. Dodaj novog clana biblioteke\n2. Pozajmljivanje knjiga\n3. Opcije biblioteke\n4. Izlaz\n");
+            try {
+                System.out.print("Unos: "); odabir = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException exception) {
+                continue;
+            }
             switch (odabir) {
                 case 1:
                     SistemManager.initMemberManager(odabir, clanovi, pozajmljivanja);
@@ -131,22 +137,10 @@ public class Main {
                     break;
                 case 4:
                     petlja = false;
-                    prijavljenAdmin = Login.logout();
-                    try {
-                        prijavljenAdmin = Login.login(admini);
-                    } catch (CredentialException e) {
-                        e.printStackTrace();
-                    }
-                    if (prijavljenAdmin != null) {
-                        init();
-                    }
-                    break;
-                case 5:
-                    petlja = false;
                     exit();
                     break;
                 default:
-                    System.out.println("Unesite jednu od postojecih opcija: [1, 2, 3, 4, 5]");
+                    System.out.println("Unesite jednu od postojecih opcija: [1, 2, 3, 4]");
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -159,37 +153,36 @@ public class Main {
 
     private static void prikaziOpcijeBiblioteke(Scanner scanner) {
         boolean petlja = true;
-        int odabir;
+        String odabir;
 
         while (petlja) {
             cls();
             System.out.println("==========OPCIJE BIBLIOTEKE==========");
             System.out.println("1. Opcije administratora\n2. Opcije Knjiga\n3. Opcije autora\n4. Opcije izdavaca\n5. Opcije clanova\n6. Pocetni meni\n");
-            System.out.print("Unos: "); odabir = scanner.nextInt();
-            scanner.nextLine();
+            System.out.print("Unos: "); odabir = scanner.nextLine();
             switch (odabir) {
-                case 1:
+                case "1":
                     petlja = false;
                     prikaziOpcijeAdministratora(scanner);
                     break;
-                case 2:
+                case "2":
                     prikaziOpcijeKnjiga(scanner);
                     break;
-                case 3:
+                case "3":
                     prikaziOpcijeAutora(scanner);
                     break;
-                case 4:
+                case "4":
                     prikaziOpcijeIzdavaca(scanner);
                     break;
-                case 5:
+                case "5":
                     prikaziOpcijeClanova(scanner);
                     break;
-                case 6:
+                case "6":
                     petlja = false;
                     pocetniMeni(scanner);
                     break;
                 default:
-                    System.out.println("Unesite jednu od postojecih opcija: [1, 2, 3, 4, 5]");
+                    System.out.println("Unesite jednu od postojecih opcija: [1, 2, 3, 4, 5, 6]");
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -202,26 +195,30 @@ public class Main {
 
     private static void prikaziOpcijeAdministratora(Scanner scanner) {
         boolean petlja = true;
-        int odabir;
+        String odabir;
 
         while (petlja) {
             cls();
             System.out.println("==========OPCIJE ADMINISTRATORA==========");
             System.out.println("1. Dodaj administratora\n2. Izmeni podatke administratora\n3. Obrisi administratora\n4. Promeni pravila biblioteke\n5. Nazad\n6. Pocetni meni");
-            System.out.print("Unos: "); odabir = scanner.nextInt();
-            scanner.nextLine();
+            System.out.print("Unos: "); odabir = scanner.nextLine();
             switch (odabir) {
-                case 1: case 2: case 3:
-                    SistemManager.initAdminManager(prijavljenAdmin, odabir, admini, dozvole, sifre);
+                case "1": case "2": case "3":
+                    try {
+                        SistemManager.initAdminManager(prijavljenAdmin, Integer.parseInt(odabir), admini, dozvole, sifre);
+                    } catch (NumberFormatException exception) {
+                        continue;
+                    }
+
                     break;
-                case 4:
+                case "4":
                     SistemManager.initPravilaManager(pravila);
                     break;
-                case 5:
+                case "5":
                     petlja = false;
                     prikaziOpcijeBiblioteke(scanner);
                     break;
-                case 6:
+                case "6":
                     petlja = false;
                     pocetniMeni(scanner);
                     break;
@@ -245,11 +242,14 @@ public class Main {
             cls();
             System.out.println("==========KNJIGE==========");
             System.out.println("1. Dodaj novu knjigu\n2. Izmeni knjigu\n3. Obrisi knjigu\n4. Nazad\n5. Pocetni meni");
-            System.out.print("Unos: "); odabir = scanner.nextInt();
-
+            try {
+                System.out.print("Unos: "); odabir = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException exception) {
+                continue;
+            }
             switch (odabir) {
                 case 1: case 2: case 3:
-                    SistemManager.initBookManager(odabir, knjige, autori, izdavaci);
+                    SistemManager.initBookManager(odabir, knjige, autori, izdavaci, pozajmljivanja);
                     break;
                 case 4:
                     petlja = false;
@@ -279,9 +279,11 @@ public class Main {
             cls();
             System.out.println("==========AUTORI==========");
             System.out.println("1. Dodaj novog autora\n2. Izmeni autora\n3. Obrisi autora\n4. Nazad\n5. Pocetni meni");
-            System.out.print("Unos: "); odabir = scanner.nextInt();
-            scanner.nextLine();
-            scanner.nextLine();
+            try {
+                System.out.print("Unos: "); odabir = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException exception) {
+                continue;
+            }
 
             switch (odabir) {
                 case 1: case 2: case 3:
@@ -315,8 +317,11 @@ public class Main {
             cls();
             System.out.println("==========IZDAVACI==========");
             System.out.println("1. Dodaj novog izdavaca\n2. Izmeni izdavaca\n3. Obrisi izdavaca\n4. Nazad\n5. Pocetni meni");
-            System.out.print("Unos: "); odabir = scanner.nextInt();
-            scanner.nextLine();
+            try {
+                System.out.print("Unos: "); odabir = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException exception) {
+                continue;
+            }
             switch (odabir) {
                 case 1: case 2: case 3:
                     SistemManager.initPublisherManager(odabir, izdavaci, knjige);
@@ -349,8 +354,11 @@ public class Main {
             cls();
             System.out.println("==========CLANOVI==========");
             System.out.println("1. Dodaj novog clana\n2. Izmeni clana\n3. Obrisi clana\n4. Nazad\n5. Pocetni meni");
-            System.out.print("Unos: "); odabir = scanner.nextInt();
-            scanner.nextLine();
+            try {
+                System.out.print("Unos: "); odabir = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException exception) {
+                continue;
+            }
             switch (odabir) {
                 case 1: case 2: case 3:
                     SistemManager.initMemberManager(odabir, clanovi, pozajmljivanja);
@@ -441,8 +449,6 @@ public class Main {
         clanovi = null;
         pozajmljivanja = null;
         pravila = null;
-
-        prijavljenAdmin = Login.logout();
 
         System.exit(0);
     }

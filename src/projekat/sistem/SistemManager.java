@@ -51,7 +51,7 @@ public class SistemManager {
 		}
 	}
 
-	public static void initBookManager(int opcija, ArrayList<Knjiga> knjigaList, ArrayList<Autor> autorList, ArrayList<Izdavac> izdavacList) {
+	public static void initBookManager(int opcija, ArrayList<Knjiga> knjigaList, ArrayList<Autor> autorList, ArrayList<Izdavac> izdavacList, ArrayList<Pozajmljivanje> pozajmljivanja) {
 		switch (opcija) {
 			case 1:
 				if (Main.prijavljenAdmin.getDozvole().canAddBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
@@ -65,7 +65,7 @@ public class SistemManager {
 				break;
 			case 3:
 				if (Main.prijavljenAdmin.getDozvole().canDeleteBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
-					BookManager.deleteBook(knjigaList);
+					BookManager.deleteBook(knjigaList, pozajmljivanja);
 				}
 				break;
 			default: {
@@ -240,15 +240,18 @@ class PozajmljivanjeManager {
 
 		boolean petlja = true;
 		while (petlja) {
-			System.out.println("1. Pozajmi knjigu, 2. Vrati knjigu, 3. Prikazi sva pozajmljivanja, 4. Pocetni meni");
+			System.out.println("1. Pozajmi knjigu, 2. Vrati knjigu, 3. Prikazi sva pozajmljivanja, 4. Produzi knjigu, 5. Pocetni meni");
 			System.out.print("Unos: ");
 			switch (scanner.nextLine()) {
 				case "1":
 					loanBook(pozajmljivanja, clanovi, knjige);
+					break;
 				case "2":
 					returnBook(pozajmljivanja, clanovi);
+					break;
 				case "3":
 					Main.cls();
+					System.out.println("ID                  Knjiga                Datum Pozajmljivanja  Datum isteka   Dug     Razreseno");
 					if (pozajmljivanja != null && pozajmljivanja.size() > 0) {
 						for (Pozajmljivanje p : pozajmljivanja) {
 							System.out.println(p.toString());
@@ -256,11 +259,16 @@ class PozajmljivanjeManager {
 					} else {
 						System.out.println("Lista pozajmljivanja je prazna.");
 					}
+					break;
 				case "4":
+					extendBook(pozajmljivanja, clanovi);
+					break;
+				case "5":
 					petlja = false;
 					break;
 				default:
 					System.out.println("Uneli ste nepostojecu opciju");
+					break;
 			}
 		}
 	}
@@ -339,7 +347,9 @@ class PozajmljivanjeManager {
 		if (c != null && k != null) {
 			Calendar calendar = Calendar.getInstance();
 			Calendar cal2 = Calendar.getInstance();
+			System.out.println(cal2.getTime());
 			cal2.add(Calendar.DAY_OF_MONTH, Main.pravila.getMaxPeriod());
+			System.out.println(cal2.getTime());
 			for (Knjiga knjiga : knjige) {
 				if (knjiga.getISBN().equals(k.getISBN())) {
 					knjiga.setKolicina(knjiga.getKolicina() - 1);
@@ -425,10 +435,81 @@ class PozajmljivanjeManager {
 			}
 		}
 	}
+
+	protected static void extendBook(ArrayList<Pozajmljivanje> pozajmljivanja, ArrayList<Clan> clanovi) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+
+		while (true) {
+			System.out.println("Odaberite clana: ");
+			for (int i = 0; i < clanovi.size(); i++) {
+				int finalI = i;
+				if (pozajmljivanja.stream().anyMatch(p -> p.getClanUUID().equals(clanovi.get(finalI).getUUID()))) {
+					System.out.printf("%d. %s%n", i + 1, clanovi.get(i).getUUID().concat(" " + clanovi.get(i).getPunoIme()));
+				}
+			}
+			System.out.print("Unos (0 za izlaz): ");
+			int unos = Integer.parseInt(scanner.nextLine()) - 1;
+
+			if (unos >= 0 && unos < clanovi.size()) {
+				Clan c = clanovi.get(unos);
+				Pozajmljivanje p;
+
+				while (true) {
+					System.out.println("Odaberite pozajmljivanje za produzetak:");
+					for (int i = 0; i < c.getPozajmljivanje().size(); i++) {
+						if (!c.getPozajmljivanje().get(i).isRazreseno()) {
+							System.out.printf("%d. %s%n", i + 1, c.getPozajmljivanje().get(i).getPozajmljenaKnjiga().getImeKnjige().concat(" " + c.getPozajmljivanje().get(i).getDug()));
+						} else {
+							System.out.println("Lista pozajmljivanja ovog clana je prazna, ili su sva pozajmljivanja razresena.");
+						}
+					}
+					System.out.print("Unos (0 za izlaz): ");
+					unos = Integer.parseInt(scanner.nextLine()) - 1;
+					if (unos >= 0 && unos < c.getPozajmljivanje().size()) {
+						p = c.getPozajmljivanje().get(unos);
+						break;
+					} else if (unos == -1) {
+						p = null;
+						break;
+					} else {
+						System.out.println("Unesite jednu od dostupnih opcija");
+					}
+				}
+				if (p != null) {
+					if (!p.isRazreseno()) {
+						System.out.printf("Pozajmljena knjiga: %s%n", p.getPozajmljenaKnjiga().getImeKnjige());
+						boolean petlja = true;
+						while (petlja) {
+							System.out.print("Produzi zaduzenje? (Y/N): ");
+							switch (scanner.nextLine()) {
+								case "Y":
+									petlja = false;
+									p.produziKnjigu();
+									Main.save(EnumCheckpoints.POZAJMLJIVANJE.ordinal());
+									break;
+								case "N":
+									petlja = false;
+									break;
+								default:
+									System.out.println("Unesite Y ili N!");
+									break;
+							}
+						}
+					} else {
+						System.out.println("Pozajmljivanje ne postoji ili je razreseno.");
+						break;
+					}
+				}
+
+			} else if (unos == -1) {
+				break;
+			}
+		}
+	}
 }
 
 class AdminManager {
-	//TODO: Testiranje, provera
 	protected static void addAdmin(ArrayList<Administrator> adminList, ArrayList<Administrator.Dozvole> dozvole, ArrayList<Sifra> sifre) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -439,20 +520,84 @@ class AdminManager {
 		a.getPassword().setKorisnickiUUID(a.getUUID());
 		a.getDozvole().setUserUUID(a.getUUID());
 
-		System.out.print("Unesite ime: ");
-		a.setIme(scanner.nextLine());
-		System.out.print("Unesite prezime: ");
-		a.setPrezime(scanner.nextLine());
-		System.out.print("Unesite adresu stanovanja: ");
-		a.setAdresa(scanner.nextLine());
-		System.out.print("Unesite broj telefona: ");
-		a.setBrTelefona(scanner.nextLine());
-		System.out.print("Unesite email: ");
-		a.setEmail(scanner.nextLine());
-		System.out.print("Unesite korisnicko ime: ");
-		a.setUsername(scanner.nextLine());
-		System.out.print("Unesite sifru: ");
-		a.getPassword().encryptSifra(scanner.nextLine());
+		while (true) {
+			System.out.print("Unesite ime: ");
+			String ime = scanner.nextLine();
+			if (ime.matches("[a-zA-Z.]+")) {
+				a.setIme(ime);
+				break;
+			}
+			else {
+				System.out.println("Ime ne sme da sadrzi posebne znakove, osim '.'.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite prezime: ");
+			String prezime = scanner.nextLine();
+			if (prezime.matches("[a-zA-Z.\\s]+")) {
+				a.setPrezime(prezime);
+				break;
+			}
+			else {
+				System.out.println("Prezime ne sme da sadrzi posebne znakove, osim '.'.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite adresu stanovanja: ");
+			String adresa = scanner.nextLine();
+			if (adresa.matches("[a-zA-Z0-9.\\s]+")) {
+				a.setAdresa(adresa);
+				break;
+			}
+			else {
+				System.out.println("Adresa ne sme da sadrzi posebne znakove, osim '.' i brojeva.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite broj telefona: ");
+			String brTelefona = scanner.nextLine();
+			if (brTelefona.matches("\\d{9,10}")) {
+				a.setBrTelefona(brTelefona);
+				break;
+			}
+			else {
+				System.out.println("Broj telefona mora da sadrzi 9 ili 10 brojeva.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite email: ");
+			String email = scanner.nextLine();
+			if (email.matches("\\w+@[a-zA-Z.]+")) {
+				a.setEmail(email.toLowerCase());
+				break;
+			}
+			else {
+				System.out.println("Email mora da bude u sledecem formatu: example@email.com.");
+			}
+
+		}
+		while (true) {
+			System.out.print("Unesite korisnicko ime: ");
+			String korisnickoIme = scanner.nextLine();
+			if (korisnickoIme.matches("[a-zA-Z0-9_]+")) {
+				a.setUsername(korisnickoIme.toLowerCase());
+				break;
+			}
+			else {
+				System.out.println("Korisnicko ime ne sme da sadrzi posebne znakove, osim '_' i brojeva.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite sifru: ");
+			String sifra = scanner.nextLine();
+			if (sifra.matches("[a-zA-Z0-9_-]+")) {
+				a.getPassword().encryptSifra(sifra);
+				break;
+			}
+			else {
+				System.out.println("Ime ne sme da sadrzi posebne znakove, osim '.'.");
+			}
+		}
 		System.out.println("Odaberite pol: ");
 
 		boolean petlja = true;
@@ -558,7 +703,6 @@ class AdminManager {
 		Main.save(EnumCheckpoints.DOZVOLE.ordinal());
 	}
 
-	//TODO: Testiranje, provera
 	protected static void editAdmin(ArrayList<Administrator> adminList) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -588,7 +732,7 @@ class AdminManager {
 								while (true) {
 									System.out.println("Unesite novo ime: ");
 									String tempIme = scanner.nextLine();
-									if (tempIme.length() < 2) {
+									if (tempIme.length() < 2 && !tempIme.matches("[a-zA-Z.]+")) {
 										System.out.println("Ime moze da sardzi samo slova.");
 									} else {
 										petlja = false;
@@ -601,7 +745,7 @@ class AdminManager {
 								while (true) {
 									System.out.println("Unesite novo prezime: ");
 									String tempPrezime = scanner.nextLine();
-									if (tempPrezime.length() < 2) {
+									if (tempPrezime.length() < 2 && !tempPrezime.matches("[a-zA-Z.\\s]+")) {
 										System.out.println("Prezime moze da sardzi samo slova.");
 									} else {
 										petlja = false;
@@ -614,7 +758,7 @@ class AdminManager {
 								while (true) {
 									System.out.println("Unesite novu adresu: ");
 									String tempAdresa = scanner.nextLine();
-									if (tempAdresa.length() < 2) {
+									if (tempAdresa.length() < 2 && !tempAdresa.matches("[a-zA-Z0-9.\\s]+")) {
 										System.out.println("Adresa mora biti duza od 2 karaktera i ne sme da sadrzi specijalne znakove.");
 									} else {
 										petlja = false;
@@ -627,7 +771,7 @@ class AdminManager {
 								while (true) {
 									System.out.println("Unesite novi broj telefona: ");
 									String tempBrTelefona = scanner.nextLine();
-									if (tempBrTelefona.length() < 9 || tempBrTelefona.length() > 10) {
+									if (!tempBrTelefona.matches("\\d{9,10}")) {
 										System.out.println("Broj telefona mora da ima 9 ili 10 brojeva");
 									} else {
 										petlja = false;
@@ -640,7 +784,7 @@ class AdminManager {
 								while (true) {
 									System.out.println("Unesite novu email adresu: ");
 									String tempEmail = scanner.nextLine();
-									if (tempEmail.length() < 7 || !tempEmail.contains("@")) {
+									if (!tempEmail.matches("\\w+@[a-zA-Z.]+")) {
 										System.out.println("Email adresa mora da sardzi znak @, i mora biti duza od 7 karaktera");
 									} else {
 										petlja = false;
@@ -675,8 +819,8 @@ class AdminManager {
 								while (true) {
 									System.out.println("Unesite novo korisnicko ime: ");
 									String tempUsername = scanner.nextLine();
-									if (tempUsername.length() < 6) {
-										System.out.println("Korisnicko ime mora biti duze od 6 karaktera");
+									if (tempUsername.length() < 6 && !tempUsername.matches("[A-Za-z0-9_]+")) {
+										System.out.println("Korisnicko ime mora biti duze od 6 karaktera i ne sme sadrzati specijalne karaktere");
 									} else {
 										petlja = false;
 										adminList.get(unos - 1).setUsername(tempUsername);
@@ -708,12 +852,24 @@ class AdminManager {
 									if (tempSifra.equals("0")) {
 										break;
 									}
-									System.out.println("Ponovo unesite lozinku");
-									if (scanner.nextLine().equals(tempSifra)) {
-										adminList.get(unos - 1).getPassword().encryptSifra(tempSifra);
-										System.out.println("Sifra promenjena");
-										Main.save(EnumCheckpoints.SIFRE.ordinal());
-										break;
+									else if (!tempSifra.matches("[a-zA-Z0-9-_]+") && tempSifra.length() < 6) {
+										System.out.println("Sifra ne sme da sadrzi posebne karaktere (osim - i _) i mora biti duza od 6 karaktera");
+										try {
+											Thread.sleep(1000);
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										}
+									}
+									else {
+										System.out.println("Ponovo unesite lozinku");
+										if (scanner.nextLine().equals(tempSifra)) {
+											adminList.get(unos - 1).getPassword().encryptSifra(tempSifra);
+											System.out.println("Sifra promenjena");
+											Main.save(EnumCheckpoints.SIFRE.ordinal());
+											break;
+										} else {
+											System.out.println("Neispravna ponovna lozinka.");
+										}
 									}
 								}
 								break;
@@ -790,15 +946,15 @@ class AdminManager {
 		Main.save(EnumCheckpoints.ADMINI.ordinal());
 	}
 
-	//TODO: Testiranje, provera
 	protected static void deleteAdmin(ArrayList<Administrator> adminList, ArrayList<Sifra> sifre, ArrayList<Administrator.Dozvole> dozvole) {
-		Scanner scanner = new Scanner(System.in);
-		Main.cls();
-		System.out.println("Odaberite administratora cije podatke zelite da izmenite (0 za izlaz):");
-		for (int i = 0; i < adminList.size(); i++) {
-			System.out.printf("%d. %s%n", i + 1, adminList.get(i).getUUID().concat(" " + adminList.get(i).getUsername()));
-		}
+
 		while (true) {
+			Scanner scanner = new Scanner(System.in);
+			Main.cls();
+			System.out.println("Odaberite administratora cije podatke zelite da izmenite (0 za izlaz):");
+			for (int i = 0; i < adminList.size(); i++) {
+				System.out.printf("%d. %s%n", i + 1, adminList.get(i).getUUID().concat(" " + adminList.get(i).getUsername()));
+			}
 			System.out.println("Unos: ");
 			String unos = scanner.nextLine();
 			if (unos.equals("0")) {
@@ -849,23 +1005,69 @@ class AdminManager {
 }
 
 class MemberManager {
-	//TODO: Testiranje, provera
+
 	protected static void addMember(ArrayList<Clan> clanovi) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
 		System.out.println("Dodavanje novog clana...");
 		Clan c = new Clan();
 		c.setUUID(c.generateUUID());
-		System.out.print("Unesite ime: ");
-		c.setIme(scanner.nextLine());
-		System.out.print("Unesite prezime: ");
-		c.setPrezime(scanner.nextLine());
-		System.out.print("Unesite adresu stanovanja: ");
-		c.setAdresa(scanner.nextLine());
-		System.out.print("Unesite broj telefona: ");
-		c.setBrTelefona(scanner.nextLine());
-		System.out.print("Unesite email: ");
-		c.setEmail(scanner.nextLine());
+		while (true) {
+			System.out.print("Unesite ime: ");
+			String ime = scanner.nextLine();
+			if (ime.matches("[a-zA-Z.]+")) {
+				c.setIme(ime);
+				break;
+			}
+			else {
+				System.out.println("Ime ne sme da sadrzi posebne znakove, osim '.'.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite prezime: ");
+			String prezime = scanner.nextLine();
+			if (prezime.matches("[a-zA-Z.\\s]+")) {
+				c.setPrezime(prezime);
+				break;
+			}
+			else {
+				System.out.println("Prezime ne sme da sadrzi posebne znakove, osim '.'.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite adresu stanovanja: ");
+			String adresa = scanner.nextLine();
+			if (adresa.matches("[a-zA-Z0-9.\\s]+")) {
+				c.setAdresa(adresa);
+				break;
+			}
+			else {
+				System.out.println("Adresa ne sme da sadrzi posebne znakove, osim '.' i brojeva.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite broj telefona: ");
+			String brTelefona = scanner.nextLine();
+			if (brTelefona.matches("\\d{9,10}")) {
+				c.setBrTelefona(brTelefona);
+				break;
+			}
+			else {
+				System.out.println("Broj telefona mora da sadrzi 9 ili 10 brojeva.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite email: ");
+			String email = scanner.nextLine();
+			if (email.matches("\\w+@[a-zA-Z.]+")) {
+				c.setEmail(email.toLowerCase());
+				break;
+			}
+			else {
+				System.out.println("Email mora da bude u sledecem formatu: example@email.com.");
+			}
+
+		}
 
 		boolean petlja = true;
 
@@ -890,7 +1092,6 @@ class MemberManager {
 		Main.save(EnumCheckpoints.CLANOVI.ordinal());
 	}
 
-	//TODO: Testiranje, provera
 	protected static void editMember(ArrayList<Clan> clanovi) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -907,16 +1108,16 @@ class MemberManager {
 			} else {
 				Main.cls();
 				System.out.println("Podaci o odabranom clanu: ");
-				System.out.printf("ID: %s%nIme: %s%nPrezime: %s%nBroj telefona %s%nPol: %s%nEmail: %s%n",
-						clanovi.get(Integer.parseInt(unos) - 1).getUUID(), clanovi.get(Integer.parseInt(unos) - 1).getIme(), clanovi.get(Integer.parseInt(unos) - 1).getPrezime(),
+				System.out.printf("ID: %s%nIme: %s%nPrezime: %s%nAdresa: %s%nBroj telefona: %s%nPol: %s%nEmail: %s%n",
+						clanovi.get(Integer.parseInt(unos) - 1).getUUID(), clanovi.get(Integer.parseInt(unos) - 1).getIme(), clanovi.get(Integer.parseInt(unos) - 1).getPrezime(), clanovi.get(Integer.parseInt(unos) - 1).getAdresa(),
 						clanovi.get(Integer.parseInt(unos) - 1).getBrTelefona(), SistemManager.pol(clanovi.get(Integer.parseInt(unos) - 1).getPol()), clanovi.get(Integer.parseInt(unos) - 1).getEmail());
-				System.out.println("Odaberite sta zelite da izmenite (1. Ime, 2. Prezime, 3. Broj telefona, 4. Pol, 5. Email, 6. Pogledaj pozajmljivanja clana). Unesite 0 za izlaz: ");
+				System.out.println("Odaberite sta zelite da izmenite (1. Ime, 2. Prezime, 3. Adresa, 4. Broj telefona, 5. Pol, 6. Email). Unesite 0 za izlaz: ");
 				switch (scanner.nextLine()) {
 					case "1":
 						while (true) {
 							System.out.println("Unesite novo ime: ");
 							String tempIme = scanner.nextLine();
-							if (tempIme.length() < 2) {
+							if (tempIme.length() < 2 && !tempIme.matches("[a-zA-Z.]+")) {
 								System.out.println("Ime moze da sardzi samo slova.");
 							} else {
 								clanovi.get(Integer.parseInt(unos) - 1).setIme(tempIme);
@@ -928,7 +1129,7 @@ class MemberManager {
 						while (true) {
 							System.out.println("Unesite novo prezime: ");
 							String tempPrezime = scanner.nextLine();
-							if (tempPrezime.length() < 2) {
+							if (tempPrezime.length() < 2 && !tempPrezime.matches("[a-zA-Z.\\s]+")) {
 								System.out.println("Prezime moze da sardzi samo slova.");
 							} else {
 								clanovi.get(Integer.parseInt(unos) - 1).setPrezime(tempPrezime);
@@ -940,7 +1141,7 @@ class MemberManager {
 						while (true) {
 							System.out.println("Unesite novi broj telefona: ");
 							String tempBrTelefona = scanner.nextLine();
-							if (tempBrTelefona.length() < 9 || tempBrTelefona.length() > 10) {
+							if (!tempBrTelefona.matches("\\d{9,10}")) {
 								System.out.println("Broj telefona mora da ima 9 ili 10 brojeva");
 							} else {
 								clanovi.get(Integer.parseInt(unos) - 1).setBrTelefona(tempBrTelefona);
@@ -949,6 +1150,19 @@ class MemberManager {
 						}
 						break;
 					case "4":
+						while (true) {
+							System.out.print("Unesite adresu stanovanja: ");
+							String adresa = scanner.nextLine();
+							if (adresa.matches("[a-zA-Z0-9.\\s]+")) {
+								clanovi.get(Integer.parseInt(unos) - 1).setAdresa(adresa);
+								break;
+							}
+							else {
+								System.out.println("Adresa ne sme da sadrzi posebne znakove, osim '.' i brojeva.");
+							}
+						}
+						break;
+					case "5":
 						System.out.println("Odaberite pol: ");
 						boolean petljaPol = true;
 						while (petljaPol) {
@@ -967,11 +1181,11 @@ class MemberManager {
 									System.out.println("Molimo unesite jednu od dostupnih opcija!");
 							}
 						}
-					case "5":
+					case "6":
 						while (true) {
 							System.out.println("Unesite novu email adresu: ");
 							String tempEmail = scanner.nextLine();
-							if (tempEmail.length() < 7 || !tempEmail.contains("@")) {
+							if (!tempEmail.matches("\\w+@[a-zA-Z.]+")) {
 								System.out.println("Email adresa mora da sardzi znak @, i mora biti duza od 7 karaktera");
 							} else {
 								clanovi.get(Integer.parseInt(unos) - 1).setEmail(tempEmail);
@@ -979,20 +1193,19 @@ class MemberManager {
 							}
 						}
 						break;
-					case "6":
-						//TODO: Prikazivanje pozajmljivanja
 					default:
+						System.out.println("Unesite jednu od ponudjenih opcija.");
 				}
 			}
 		}
 		Main.save(EnumCheckpoints.CLANOVI.ordinal());
 	}
 
-	//TODO: Testiranje, provera
 	protected static void deleteMember(ArrayList<Clan> clanovi, ArrayList<Pozajmljivanje> pozajmljivanja) {
 		Scanner scanner = new Scanner(System.in);
-		Main.cls();
+
 		while (true) {
+			Main.cls();
 			System.out.println("Odaberite clana kojeg zelite da obrisete (0 za izlaz):");
 			for (int i = 0; i < clanovi.size(); i++) {
 				System.out.printf("%d. %s%n", i + 1, clanovi.get(i).getUUID().concat(" " + clanovi.get(i).getPunoIme()));
@@ -1045,7 +1258,7 @@ class MemberManager {
 
 class BookManager {
 
-	//TODO: Testiranje, provera
+
 	protected static void addBook(ArrayList<Knjiga> knjige, ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -1053,24 +1266,79 @@ class BookManager {
 		Knjiga k = new Knjiga();
 		k.setId(k.generateUUID());
 
-		System.out.print("Unesite ime knjige: ");
-		k.setImeKnjige(scanner.nextLine());
-		System.out.print("Unesite ISBN: ");
-		k.setISBN(scanner.nextLine());
-		System.out.print("Unesite godinu objavljivanja: ");
-		k.setGodinaObjavljivanja(Integer.parseInt(scanner.nextLine()));
-		System.out.print("Unesite izdanje knjige: ");
-		k.setIzdanje(Integer.parseInt(scanner.nextLine()));
-		System.out.print("Unesite broj strana: ");
-		k.setBrStrana(Integer.parseInt(scanner.nextLine()));
-		System.out.print("Unesite kolicinu: ");
-		k.setKolicina(Integer.parseInt(scanner.nextLine()));
+		while (true) {
+			System.out.print("Unesite ime knjige: ");
+			String knjiga = scanner.nextLine();
+			if (knjiga.matches("[A-Za-z0-9:;'\"\\s]+")) {
+				k.setImeKnjige(knjiga);
+				break;
+			}
+			else {
+				System.out.println("Naziv knjige ne sme da sadrzi znakove osim slova, brojeva i ';' ':' '\"' '''");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite ISBN knjige: ");
+			String ISBN = scanner.nextLine();
+			if (ISBN.matches("[0-9-]+")) {
+				k.setISBN(ISBN);
+				break;
+			}
+			else {
+				System.out.println("ISBN sme da sadrzi samo brojeve i crte '-'");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite godinu objavljivanja knjige: ");
+			String godObjavljivnja = scanner.nextLine();
+			if (godObjavljivnja.matches("[0-9]{1,4}")) {
+				k.setGodinaObjavljivanja(Integer.parseInt(godObjavljivnja));
+				break;
+			}
+			else {
+				System.out.println("Godina izdanja moze da ima izmedju 1 i 4 broja");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite izdanje knjige: ");
+			String izdanje = scanner.nextLine();
+			if (izdanje.matches("[0-9]+")) {
+				k.setIzdanje(Integer.parseInt(izdanje));
+				break;
+			}
+			else {
+				System.out.println("Izdanje sme da sadrzi samo brojeve");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite broj strana knjige: ");
+			String brStrana = scanner.nextLine();
+			if (brStrana.matches("[0-9]+")) {
+				k.setBrStrana(Integer.parseInt(brStrana));
+				break;
+			}
+			else {
+				System.out.println("Broj strana moze da bude upisan samo brojevima");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite kolicinu ove knjige koja je na raspolaganju: ");
+			String godObjavljivnja = scanner.nextLine();
+			if (godObjavljivnja.matches("[0-9]+")) {
+				k.setKolicina(Integer.parseInt(godObjavljivnja));
+				break;
+			}
+			else {
+				System.out.println("Kolicina moze da bude upisana samo brojevima");
+			}
+		}
 
 		boolean petlja = true;
-		Main.cls();
-		System.out.println("Autori: ");
-		System.out.println("Odaberite opciju: ");
+
 		while (petlja) {
+			Main.cls();
+			System.out.println("Autori: ");
+			System.out.println("Odaberite opciju: ");
 			System.out.println("1. Odaberite postojece autore\n2. Novi autor/i");
 			System.out.print("Unos: ");
 			switch (scanner.nextLine()) {
@@ -1097,10 +1365,28 @@ class BookManager {
 				case "2":
 					Autor a = new Autor();
 					a.setId(a.generateUUID());
-					System.out.print("Unesite ime autora: ");
-					a.setIme(scanner.nextLine());
-					System.out.print("Unesite prezime autora: ");
-					a.setPrezime(scanner.nextLine());
+					while (true) {
+						System.out.print("Unesite ime autora: ");
+						String ime = scanner.nextLine();
+						if (ime.matches("[a-zA-Z.]+")) {
+							a.setIme(ime);
+							break;
+						}
+						else {
+							System.out.println("Ime ne sme da sadrzi posebne znakove, osim '.'.");
+						}
+					}
+					while (true) {
+						System.out.print("Unesite prezime autora: ");
+						String prezime = scanner.nextLine();
+						if (prezime.matches("[a-zA-Z.\\s]+")) {
+							a.setPrezime(prezime);
+							break;
+						}
+						else {
+							System.out.println("Prezime ne sme da sadrzi posebne znakove, osim '.'.");
+						}
+					}
 
 					autori.add(a);
 					Main.save(EnumCheckpoints.AUTORI.ordinal());
@@ -1117,6 +1403,7 @@ class BookManager {
 				while (petlja2) {
 					switch (scanner.nextLine().toUpperCase()) {
 						case "Y":
+							petlja2 = false;
 							break;
 						case "N":
 							petlja = false;
@@ -1131,10 +1418,11 @@ class BookManager {
 		}
 
 		petlja = true;
-		Main.cls();
-		System.out.println("Izdavac: ");
-		System.out.println("Odaberite opciju: ");
+
 		while (petlja) {
+			Main.cls();
+			System.out.println("Izdavac: ");
+			System.out.println("Odaberite opciju: ");
 			System.out.println("1. Odaberite postojeceg izvodjaca\n2. Novi izdavac/i");
 			System.out.print("Unos: ");
 			switch (scanner.nextLine()) {
@@ -1164,10 +1452,28 @@ class BookManager {
 
 					Izdavac i = new Izdavac();
 					i.setId(i.generateUUID());
-					System.out.print("Unesite naziv izdavaca: ");
-					i.setImeIzdavaca(scanner.nextLine());
-					System.out.print("Unesite zemlju izdavaca: ");
-					i.setZemljaPorekla(scanner.nextLine());
+					while (true) {
+						System.out.print("Unesite naziv izdavaca: ");
+						String ime = scanner.nextLine();
+						if (ime.matches("[a-zA-Z.\\s]+")) {
+							i.setImeIzdavaca(ime);
+							break;
+						}
+						else {
+							System.out.println("naziv ne sme da sadrzi posebne znakove, osim '.'.");
+						}
+					}
+					while (true) {
+						System.out.print("Unesite zemlju porekla: ");
+						String zemljaPorekla = scanner.nextLine();
+						if (zemljaPorekla.matches("[a-zA-Z.\\s]+")) {
+							i.setZemljaPorekla(zemljaPorekla);
+							break;
+						}
+						else {
+							System.out.println("Prezime ne sme da sadrzi posebne znakove, osim '.'.");
+						}
+					}
 
 					k.setIzdavac(i);
 					izdavaci.add(i);
@@ -1236,16 +1542,20 @@ class BookManager {
 				}
 			}
 		}
-		System.out.println("Odaberite kategoriju");
 		while (true) {
 			Main.cls();
-			System.out.println("Odaberite novu kategoriju");
+			System.out.println("Odaberite kategoriju...");
 			int kategorija;
 			for (EnumKategorija zanr : EnumKategorija.getMap().values()) {
 				System.out.printf("%d. %s%n", zanr.getRedniBroj(), zanr.name());
 			}
 			System.out.print("\nOdaberite kategoriju: ");
-			kategorija = Integer.parseInt(scanner.nextLine());
+			try {
+				kategorija = Integer.parseInt(scanner.nextLine());
+			} catch (NumberFormatException exception) {
+				continue;
+			}
+
 			if (kategorija < 0 || kategorija > EnumKategorija.getMap().size()) {
 				System.out.println("Unesite redni broj postojece kategorije!");
 				try {
@@ -1262,18 +1572,34 @@ class BookManager {
 		Main.save(EnumCheckpoints.KNJIGE.ordinal());
 	}
 
-	//TODO: Testiranje, provera
 	protected static void addAuthor(ArrayList<Autor> autori) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
 		System.out.println("Dodavanje novog autora...");
 		Autor a = new Autor();
-
 		a.setId(a.generateUUID());
-		System.out.print("Unesite ime autora: ");
-		a.setIme(scanner.nextLine());
-		System.out.print("Unesite prezime autora: ");
-		a.setPrezime(scanner.nextLine());
+		while (true) {
+			System.out.print("Unesite ime autora: ");
+			String ime = scanner.nextLine();
+			if (ime.matches("[a-zA-Z.]+")) {
+				a.setIme(ime);
+				break;
+			}
+			else {
+				System.out.println("Ime ne sme da sadrzi posebne znakove, osim '.'.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite prezime autora: ");
+			String prezime = scanner.nextLine();
+			if (prezime.matches("[a-zA-Z.\\s]+")) {
+				a.setPrezime(prezime);
+				break;
+			}
+			else {
+				System.out.println("Prezime ne sme da sadrzi posebne znakove, osim '.'.");
+			}
+		}
 
 		boolean postoji = false;
 		for (Autor autor : autori) {
@@ -1306,18 +1632,34 @@ class BookManager {
 
 	}
 
-	//TODO: Testiranje, provera
 	protected static void addPublisher(ArrayList<Izdavac> izdavaci) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
 		System.out.println("Dodavanje novog autora...");
 		Izdavac i = new Izdavac();
-
 		i.setId(i.generateUUID());
-		System.out.print("Unesite naziv izdavaca: ");
-		i.setImeIzdavaca(scanner.nextLine());
-		System.out.print("Unesite zemlju: ");
-		i.setZemljaPorekla(scanner.nextLine());
+		while (true) {
+			System.out.print("Unesite naziv izdavaca: ");
+			String ime = scanner.nextLine();
+			if (ime.matches("[a-zA-Z.\\s]+")) {
+				i.setImeIzdavaca(ime);
+				break;
+			}
+			else {
+				System.out.println("naziv ne sme da sadrzi posebne znakove, osim '.'.");
+			}
+		}
+		while (true) {
+			System.out.print("Unesite zemlju porekla: ");
+			String zemljaPorekla = scanner.nextLine();
+			if (zemljaPorekla.matches("[a-zA-Z.\\s]+")) {
+				i.setZemljaPorekla(zemljaPorekla);
+				break;
+			}
+			else {
+				System.out.println("Prezime ne sme da sadrzi posebne znakove, osim '.'.");
+			}
+		}
 
 		boolean postoji = false;
 		for (Izdavac izdavac : izdavaci) {
@@ -1349,7 +1691,6 @@ class BookManager {
 		}
 	}
 
-	//TODO: Testiranje, provera
 	protected static void editBook(ArrayList<Knjiga> knjige, ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) {
 		Scanner scanner = new Scanner(System.in);
 
@@ -1370,36 +1711,59 @@ class BookManager {
 				while (petlja) {
 					Main.cls();
 					System.out.println("Podaci o odabranoj knjizi: ");
-					System.out.printf("ID: %s, ISBN: %s, Naziv: %s, Autori: %s, Izdavac: %s, Zanrovi: %s, god. objavljivanja: %d, Izdanje: %d, Broj strana %d, Kategorija: %d, Kolicina: %d",
+					StringBuilder autoriBuilder = new StringBuilder();
+					for (Autor a : knjige.get(Integer.parseInt(unos) -1 ).getAutori()) {
+						autoriBuilder.append(a.getFullName()).append(" ");
+					}
+					System.out.printf("ID: %s, ISBN: %s, Naziv: %s, Autori: %s, Izdavac: %s, Zanrovi: %s, god. objavljivanja: %d, Izdanje: %d, Broj strana %d, Kategorija: %s, Kolicina: %d",
 							knjige.get(Integer.parseInt(unos) - 1).getId(),
 							knjige.get(Integer.parseInt(unos) - 1).getISBN(),
 							knjige.get(Integer.parseInt(unos) - 1).getImeKnjige(),
-							knjige.get(Integer.parseInt(unos) - 1).getAutori(),  //TODO
+							autoriBuilder,
 							knjige.get(Integer.parseInt(unos) - 1).getIzdavac(),
-							knjige.get(Integer.parseInt(unos) - 1).getZanrovi(), //TODO
+							Arrays.toString(knjige.get(Integer.parseInt(unos) - 1).getZanrovi()), //TODO
 							knjige.get(Integer.parseInt(unos) - 1).getGodinaObjavljivanja(),
 							knjige.get(Integer.parseInt(unos) - 1).getIzdanje(),
 							knjige.get(Integer.parseInt(unos) - 1).getBrStrana(),
-							knjige.get(Integer.parseInt(unos) - 1).getKategorija(), //TODO
+							EnumKategorija.getKategorija(knjige.get(Integer.parseInt(unos) - 1).getKategorija()).name(), //TODO
 							knjige.get(Integer.parseInt(unos) - 1).getKolicina());
 					System.out.println("Odaberite sta zelite da izmenite: ");
 					System.out.print("1. ISBN, 2. Naziv, 3. Autori, 4. Izdavac, 5. Zanrovi, 6. Godinu objavljivanja, 7. Izdanje, 8. Broj strana, 9. Kategoruja, 10. Kolicina\n" +
 							"(0 za izlaz): ");
 					switch (scanner.nextLine()) {
 						case "1":
-							System.out.println("Unesite novi ISBN");
-							knjige.get(Integer.parseInt(unos) - 1).setISBN(scanner.nextLine());
+							while (true) {
+								System.out.print("Unesite novi ISBN knjige: ");
+								String ISBN = scanner.nextLine();
+								if (ISBN.matches("[0-9-]+")) {
+									knjige.get(Integer.parseInt(unos) - 1).setISBN(ISBN);
+									break;
+								}
+								else {
+									System.out.println("ISBN moze da sadrzi samo brojeve i crticu '-'");
+								}
+							}
 							break;
 						case "2":
-							System.out.println("Unesite novi naziv");
-							knjige.get(Integer.parseInt(unos) - 1).setISBN(scanner.nextLine());
+							while (true) {
+								System.out.print("Unesite novi naziv knjige: ");
+								String knjiga = scanner.nextLine();
+								if (knjiga.matches("[A-Za-z0-9:;'\"\\s]+")) {
+									knjige.get(Integer.parseInt(unos) - 1).setImeKnjige(knjiga);
+									break;
+								}
+								else {
+									System.out.println("Naziv knjige ne sme da sadrzi znakove osim slova, brojeva i ';' ':' '\"' '''");
+								}
+							}
 							break;
 						case "3":
 							boolean petlja2 = true;
-							Main.cls();
-							System.out.println("Odaberite nove autore");
-							System.out.println("Odaberite opciju: ");
+
 							while (petlja2) {
+								Main.cls();
+								System.out.println("Odaberite nove autore");
+								System.out.println("Odaberite opciju: ");
 								System.out.println("1. Odaberite postojece autore\n2. Novi autor/i");
 								System.out.print("Unos: ");
 								switch (scanner.nextLine()) {
@@ -1426,10 +1790,28 @@ class BookManager {
 									case "2":
 										Autor a = new Autor();
 										a.setId(a.generateUUID());
-										System.out.print("Unesite ime autora: ");
-										a.setIme(scanner.nextLine());
-										System.out.print("Unesite prezime autora: ");
-										a.setPrezime(scanner.nextLine());
+										while (true) {
+											System.out.print("Unesite ime autora: ");
+											String ime = scanner.nextLine();
+											if (ime.matches("[a-zA-Z.]")) {
+												a.setIme(ime);
+												break;
+											}
+											else {
+												System.out.println("Ime ne sme da sadrzi posebne znakove, osim '.'.");
+											}
+										}
+										while (true) {
+											System.out.print("Unesite prezime autora: ");
+											String prezime = scanner.nextLine();
+											if (prezime.matches("[a-zA-Z.]")) {
+												a.setPrezime(prezime);
+												break;
+											}
+											else {
+												System.out.println("Prezime ne sme da sadrzi posebne znakove, osim '.'.");
+											}
+										}
 
 										autori.add(a);
 										Main.save(EnumCheckpoints.AUTORI.ordinal());
@@ -1456,6 +1838,72 @@ class BookManager {
 												break;
 										}
 									}
+								}
+							}
+							break;
+						case "4":
+							petlja = true;
+							while (petlja) {
+								Main.cls();
+								System.out.println("Odaberite izdavaca");
+								System.out.println("Odaberite opciju: ");
+								System.out.println("1. Odaberite postojeceg izvodjaca\n2. Novi izdavac/i");
+								System.out.print("Unos: ");
+								switch (scanner.nextLine()) {
+									case "1":
+										petlja = false;
+										while (true) {
+											for (int i = 0; i < izdavaci.size(); i++) {
+												System.out.printf("%d. %s%n", i + 1, izdavaci.get(i).getId().concat(" " + izdavaci.get(i).getImeIzdavaca()));
+											}
+											System.out.print("Unesite redni broj izdavaca (0 za izlaz): ");
+											String unos3 = scanner.nextLine();
+											if (unos3.equals("0")) {
+												break;
+											} else {
+												if (Integer.parseInt(unos) - 1 > izdavaci.size()) {
+													System.out.println("Uneli ste nepostojeci redni broj");
+												} else {
+													knjige.get(Integer.parseInt(unos) - 1).setIzdavac(izdavaci.get(Integer.parseInt(unos3) - 1));
+													break;
+												}
+											}
+										}
+										break;
+									case "2":
+										petlja = false;
+
+										Izdavac i = new Izdavac();
+										i.setId(i.generateUUID());
+										while (true) {
+											System.out.print("Unesite naziv izdavaca: ");
+											String ime = scanner.nextLine();
+											if (ime.matches("[a-zA-Z.]")) {
+												i.setImeIzdavaca(ime);
+												break;
+											}
+											else {
+												System.out.println("naziv ne sme da sadrzi posebne znakove, osim '.'.");
+											}
+										}
+										while (true) {
+											System.out.print("Unesite zemlju porekla: ");
+											String zemljaPorekla = scanner.nextLine();
+											if (zemljaPorekla.matches("[a-zA-Z.]")) {
+												i.setZemljaPorekla(zemljaPorekla);
+												break;
+											}
+											else {
+												System.out.println("Prezime ne sme da sadrzi posebne znakove, osim '.'.");
+											}
+										}
+
+										knjige.get(Integer.parseInt(unos) - 1).setIzdavac(i);
+										izdavaci.add(i);
+										Main.save(EnumCheckpoints.IZDAVACI.ordinal());
+										break;
+									default:
+										System.out.println("Molimo unesite jednu od dostupnih opcija!");
 								}
 							}
 							break;
@@ -1518,68 +1966,47 @@ class BookManager {
 									}
 								}
 							}
-						case "4":
-							petlja = true;
-							Main.cls();
-							System.out.println("Odaberite izdavaca");
-							System.out.println("Odaberite opciju: ");
-							while (petlja) {
-								System.out.println("1. Odaberite postojeceg izvodjaca\n2. Novi izdavac/i");
-								System.out.print("Unos: ");
-								switch (scanner.nextLine()) {
-									case "1":
-										petlja = false;
-										while (true) {
-											for (int i = 0; i < izdavaci.size(); i++) {
-												System.out.printf("%d. %s%n", i + 1, izdavaci.get(i).getId().concat(" " + izdavaci.get(i).getImeIzdavaca()));
-											}
-											System.out.print("Unesite redni broj izdavaca (0 za izlaz): ");
-											String unos3 = scanner.nextLine();
-											if (unos3.equals("0")) {
-												break;
-											} else {
-												if (Integer.parseInt(unos) - 1 > izdavaci.size()) {
-													System.out.println("Uneli ste nepostojeci redni broj");
-												} else {
-													knjige.get(Integer.parseInt(unos) - 1).setIzdavac(izdavaci.get(Integer.parseInt(unos3) - 1));
-													break;
-												}
-											}
-										}
-										break;
-									case "2":
-										petlja = false;
 
-										Izdavac i = new Izdavac();
-										i.setId(i.generateUUID());
-										System.out.print("Unesite naziv izdavaca: ");
-										i.setImeIzdavaca(scanner.nextLine());
-										System.out.print("Unesite zemlju izdavaca: ");
-										i.setZemljaPorekla(scanner.nextLine());
-
-										knjige.get(Integer.parseInt(unos) - 1).setIzdavac(i);
-										izdavaci.add(i);
-										Main.save(EnumCheckpoints.IZDAVACI.ordinal());
-										break;
-									default:
-										System.out.println("Molimo unesite jednu od dostupnih opcija!");
+						case "6":
+							while (true) {
+								System.out.print("Unesite godinu objavljivanja knjige: ");
+								String godObjavljivnja = scanner.nextLine();
+								if (godObjavljivnja.matches("[0-9]{1,4}")) {
+									knjige.get(Integer.parseInt(unos) - 1).setGodinaObjavljivanja(Integer.parseInt(godObjavljivnja));
+									break;
+								}
+								else {
+									System.out.println("Godina izdanja moze da ima izmedju 1 i 4 broja");
 								}
 							}
 							break;
-						case "6":
-							System.out.println("Unesite godinu objavljivanja");
-							knjige.get(Integer.parseInt(unos) - 1).setGodinaObjavljivanja(Integer.parseInt(scanner.nextLine()));
-							break;
 						case "7":
-							System.out.println("Unesite izdanje");
-							knjige.get(Integer.parseInt(unos) - 1).setIzdanje(Integer.parseInt(scanner.nextLine()));
+							while (true) {
+								System.out.print("Unesite izdanje knjige: ");
+								String izdanje = scanner.nextLine();
+								if (izdanje.matches("[0-9]+")) {
+									knjige.get(Integer.parseInt(unos) - 1).setIzdanje(Integer.parseInt(izdanje));
+									break;
+								}
+								else {
+									System.out.println("Izdanje sme da sadrzi samo brojeve");
+								}
+							}
 							break;
 						case "8":
-							System.out.println("Unesite broj strana");
-							knjige.get(Integer.parseInt(unos) - 1).setBrStrana(Integer.parseInt(scanner.nextLine()));
+							while (true) {
+								System.out.print("Unesite broj strana knjige: ");
+								String brStrana = scanner.nextLine();
+								if (brStrana.matches("[0-9]+")) {
+									knjige.get(Integer.parseInt(unos) - 1).setBrStrana(Integer.parseInt(brStrana));
+									break;
+								}
+								else {
+									System.out.println("Broj strana moze da bude upisan samo brojevima");
+								}
+							}
 							break;
 						case "9":
-							System.out.println("Odaberite kategoriju");
 							while (true) {
 								Main.cls();
 								System.out.println("Odaberite novu kategoriju");
@@ -1603,10 +2030,20 @@ class BookManager {
 							}
 							break;
 						case "10":
-							System.out.println("Unesite kolicinu");
-							knjige.get(Integer.parseInt(unos) - 1).setKolicina(Integer.parseInt(scanner.nextLine()));
+							while (true) {
+								System.out.print("Unesite kolicinu ove knjige koja je na raspolaganju: ");
+								String godObjavljivnja = scanner.nextLine();
+								if (godObjavljivnja.matches("[0-9]+")) {
+									knjige.get(Integer.parseInt(unos) - 1).setKolicina(Integer.parseInt(godObjavljivnja));
+									break;
+								}
+								else {
+									System.out.println("Kolicina moze da bude upisana samo brojevima");
+								}
+							}
 							break;
 						case "0":
+							petlja = false;
 							break;
 						default:
 							System.out.println("Uneli ste nepostojecu opciju.");
@@ -1618,7 +2055,6 @@ class BookManager {
 		Main.save(EnumCheckpoints.KNJIGE.ordinal());
 	}
 
-	//TODO: Testiranje, provera
 	protected static void editAuthor(ArrayList<Autor> autori) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -1640,25 +2076,27 @@ class BookManager {
 				switch (scanner.nextLine()) {
 					case "1":
 						while (true) {
-							System.out.println("Unesite novo ime: ");
-							String tempIme = scanner.nextLine();
-							if (tempIme.length() < 2) {
-								System.out.println("Ime moze da sardzi samo slova.");
-							} else {
-								autori.get(Integer.parseInt(unos) - 1).setIme(tempIme);
+							System.out.print("Unesite novo ime autora: ");
+							String ime = scanner.nextLine();
+							if (ime.matches("[a-zA-Z.]+")) {
+								autori.get(Integer.parseInt(unos) - 1).setIme(ime);
 								break;
+							}
+							else {
+								System.out.println("Ime ne sme da sadrzi posebne znakove, osim '.'.");
 							}
 						}
 						break;
 					case "2":
 						while (true) {
-							System.out.println("Unesite novo prezime: ");
-							String tempPrezime = scanner.nextLine();
-							if (tempPrezime.length() < 2) {
-								System.out.println("Prezime moze da sardzi samo slova.");
-							} else {
-								autori.get(Integer.parseInt(unos) - 1).setPrezime(tempPrezime);
+							System.out.print("Unesite novo prezime autora: ");
+							String prezime = scanner.nextLine();
+							if (prezime.matches("[a-zA-Z.\\s]+")) {
+								autori.get(Integer.parseInt(unos) - 1).setPrezime(prezime);
 								break;
+							}
+							else {
+								System.out.println("Prezime ne sme da sadrzi posebne znakove, osim '.'.");
 							}
 						}
 						break;
@@ -1670,7 +2108,6 @@ class BookManager {
 		}
 	}
 
-	//TODO: Testiranje, provera
 	protected static void editPublisher(ArrayList<Izdavac> izdavaci) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
@@ -1692,25 +2129,27 @@ class BookManager {
 				switch (scanner.nextLine()) {
 					case "1":
 						while (true) {
-							System.out.println("Unesite novo ime izdavaca: ");
-							String tempIme = scanner.nextLine();
-							if (tempIme.length() < 2) {
-								System.out.println("Ime izdavaca moze da sardzi samo slova.");
-							} else {
-								izdavaci.get(Integer.parseInt(unos) - 1).setImeIzdavaca(tempIme);
+							System.out.print("Unesite nov naziv izdavaca: ");
+							String ime = scanner.nextLine();
+							if (ime.matches("[a-zA-Z.\\s]+")) {
+								izdavaci.get(Integer.parseInt(unos) - 1).setImeIzdavaca(ime);
 								break;
+							}
+							else {
+								System.out.println("Naziv ne sme da sadrzi posebne znakove, osim '.'.");
 							}
 						}
 						break;
 					case "2":
 						while (true) {
-							System.out.println("Unesite novu zemlju porekla: ");
-							String tempPrezime = scanner.nextLine();
-							if (tempPrezime.length() < 2) {
-								System.out.println("Zemlja porekla moze da sardzi samo slova.");
-							} else {
-								izdavaci.get(Integer.parseInt(unos) - 1).setZemljaPorekla(tempPrezime);
+							System.out.print("Unesite novu zemlju porekla: ");
+							String zemljaPorekla = scanner.nextLine();
+							if (zemljaPorekla.matches("[a-zA-Z\\s]+")) {
+								izdavaci.get(Integer.parseInt(unos) - 1).setZemljaPorekla(zemljaPorekla);
 								break;
+							}
+							else {
+								System.out.println("Zemlja porekla ne sme da sadrzi posebne znakove.");
 							}
 						}
 						break;
@@ -1722,14 +2161,15 @@ class BookManager {
 		}
 	}
 
-	protected static void deleteBook(ArrayList<Knjiga> knjige) {
+	protected static void deleteBook(ArrayList<Knjiga> knjige, ArrayList<Pozajmljivanje> pozajmljivanja) {
 		Scanner scanner = new Scanner(System.in);
-		Main.cls();
-		System.out.println("Odaberite knjigu koju zelite da obrisete (0 za izlaz):");
-		for (int i = 0; i < knjige.size(); i++) {
-			System.out.printf("%d. %s%n", i + 1, knjige.get(i).getId().concat(" " + knjige.get(i).getImeKnjige() + " " + knjige.get(i).getISBN()));
-		}
+
 		while (true) {
+			Main.cls();
+			System.out.println("Odaberite knjigu koju zelite da obrisete (0 za izlaz):");
+			for (int i = 0; i < knjige.size(); i++) {
+				System.out.printf("%d. %s%n", i + 1, knjige.get(i).getId().concat(" " + knjige.get(i).getImeKnjige() + " " + knjige.get(i).getISBN()));
+			}
 			System.out.println("Unos: ");
 			String unos = scanner.nextLine();
 			if (unos.equals("0")) {
@@ -1738,10 +2178,27 @@ class BookManager {
 				if (Integer.parseInt(unos) - 1 > knjige.size()) {
 					System.out.println("Uneli ste nepostojeci redni broj.");
 				} else {
-					System.out.printf("Odabran clan: %s, %s%n", knjige.get((Integer.parseInt(unos) - 1)).getId(), knjige.get((Integer.parseInt(unos) - 1)).getISBN().concat(" " + knjige.get((Integer.parseInt(unos) - 1)).getImeKnjige()));
-					System.out.println("Da li ste sigurni da zelite da obrisete ovu knjigu? (Y/N)");
+
 					boolean petlja = true;
+					boolean postoji = false;
+					for (Pozajmljivanje p : pozajmljivanja) {
+						if (p.getPozajmljenaKnjiga() == knjige.get(Integer.parseInt(unos) - 1)) {
+							postoji = true;
+							break;
+						}
+					}
+					if (postoji) {
+						petlja = false;
+						System.out.println("Postoji knjiga kojoj je ovaj autor dodeljen. Brisanje blokirano.");
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
 					while (petlja) {
+						System.out.printf("Odabran clan: %s, %s%n", knjige.get((Integer.parseInt(unos) - 1)).getId(), knjige.get((Integer.parseInt(unos) - 1)).getISBN().concat(" " + knjige.get((Integer.parseInt(unos) - 1)).getImeKnjige()));
+						System.out.println("Da li ste sigurni da zelite da obrisete ovu knjigu? (Y/N)");
 						switch (scanner.nextLine().toUpperCase()) {
 							case "Y":
 								petlja = false;
@@ -1768,15 +2225,15 @@ class BookManager {
 		}
 	}
 
-	//TODO: Testiranje, provera
 	protected static void deleteAuthor(ArrayList<Autor> autori, ArrayList<Knjiga> knjige) {
 		Scanner scanner = new Scanner(System.in);
-		Main.cls();
-		System.out.println("Odaberite autora kojeg zelite da obrisete (0 za izlaz):");
-		for (int i = 0; i < autori.size(); i++) {
-			System.out.printf("%d. %s%n", i + 1, autori.get(i).getId().concat(" " + autori.get(i).getFullName()));
-		}
+
 		while (true) {
+			Main.cls();
+			System.out.println("Odaberite autora kojeg zelite da obrisete (0 za izlaz):");
+			for (int i = 0; i < autori.size(); i++) {
+				System.out.printf("%d. %s%n", i + 1, autori.get(i).getId().concat(" " + autori.get(i).getFullName()));
+			}
 			System.out.println("Unos: ");
 			String unos = scanner.nextLine();
 			if (unos.equals("0")) {
@@ -1824,15 +2281,15 @@ class BookManager {
 		}
 	}
 
-	//TODO: Testiranje, provera
 	protected static void deletePublisher(ArrayList<Izdavac> izdavaci, ArrayList<Knjiga> knjige) {
 		Scanner scanner = new Scanner(System.in);
-		Main.cls();
-		System.out.println("Odaberite izdavaca kojeg zelite da obrisete (0 za izlaz):");
-		for (int i = 0; i < izdavaci.size(); i++) {
-			System.out.printf("%d. %s%n", i + 1, izdavaci.get(i).getId().concat(" " + izdavaci.get(i).getImeIzdavaca() + " " + izdavaci.get(i).getZemljaPorekla()));
-		}
+
 		while (true) {
+			Main.cls();
+			System.out.println("Odaberite izdavaca kojeg zelite da obrisete (0 za izlaz):");
+			for (int i = 0; i < izdavaci.size(); i++) {
+				System.out.printf("%d. %s%n", i + 1, izdavaci.get(i).getId().concat(" " + izdavaci.get(i).getImeIzdavaca() + " " + izdavaci.get(i).getZemljaPorekla()));
+			}
 			System.out.println("Unos: ");
 			String unos = scanner.nextLine();
 			if (unos.equals("0")) {
@@ -1843,7 +2300,14 @@ class BookManager {
 				} else {
 
 					boolean petlja = true;
-					if (knjige.stream().findAny().get().getAutori().stream().anyMatch(a -> a.getId().equals(izdavaci.get((Integer.parseInt(unos) - 1)).getId()))) {
+					boolean postoji =false;
+					for (Knjiga k : knjige) {
+						if (k.getIzdavac() == izdavaci.get(Integer.parseInt(unos) - 1)) {
+							postoji = true;
+							break;
+						}
+					}
+					if (postoji) {
 						petlja = false;
 						System.out.println("Postoji knjiga kojoj je ovaj izdavac dodeljen. Brisanje blokirano.");
 						try {

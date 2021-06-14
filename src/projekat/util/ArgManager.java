@@ -5,6 +5,7 @@ import projekat.osoba.Administrator;
 import projekat.osoba.EnumPol;
 import projekat.osoba.Sifra;
 import projekat.sistem.Login;
+import projekat.sistem.SistemManager;
 import projekat.util.serijalizacija.DataManager;
 
 import javax.security.auth.login.CredentialException;
@@ -15,7 +16,7 @@ import java.util.Scanner;
 
 import static projekat.util.EnumArguments.*;
 
-public class ArgManager {
+public class ArgManager extends SistemManager {
 
 	private static final Scanner scanner = new Scanner(System.in);
 	private final String[] args;
@@ -168,7 +169,7 @@ public class ArgManager {
 				}
 
 				try {
-					Main.prijavljenAdmin = Login.login(admini);
+					Main.prijavljenAdmin = Login.login(args[1], args[2], admini);
 				} catch (CredentialException e) {
 					e.printStackTrace();
 				}
