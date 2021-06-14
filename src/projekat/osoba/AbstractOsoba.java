@@ -38,8 +38,8 @@ public abstract class AbstractOsoba implements IUUID, ISerijalizacija {
 		this.setPol(0);
 	}
 
-	public abstract String getPunoIme();
-	public abstract String toPrettyString();
+	// --Commented out by Inspection (14.6.2021. 16:39):public abstract String getPunoIme();
+	// --Commented out by Inspection (14.6.2021. 16:39):public abstract String toPrettyString();
 
 	public String getUUID() {
 		return UUID;
@@ -97,16 +97,6 @@ public abstract class AbstractOsoba implements IUUID, ISerijalizacija {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	/**Vraca string u zavisnosti od brojne vrednosti promenljive 'pol'.
-	 * U koliko vrednost nije 0 ili 1, vraca null*/
-	protected String pretvoriPolUString(int pol) {
-		switch(pol) {
-			case 0: return "Musko";
-			case 1: return "Zensko";
-			default: return null;
-		}
 	}
 
 	@Override

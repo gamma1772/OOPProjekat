@@ -5,7 +5,6 @@ import projekat.osoba.Administrator;
 import projekat.osoba.EnumPol;
 import projekat.osoba.Sifra;
 import projekat.sistem.Login;
-import projekat.sistem.PravilaBiblioteke;
 import projekat.util.serijalizacija.DataManager;
 
 import javax.security.auth.login.CredentialException;
@@ -115,7 +114,7 @@ public class ArgManager {
 					System.out.println("Molimo unesite jednu od dostupnih opcija!");
 			}
 		}
-		masterAdmin.setDozvole(masterAdmin.getDozvole().admin().addAdmins().addBooks().addMembers().deleteAdmins().deleteMembers().deleteBooks().loanBooks().alterRules().masterRule());
+		masterAdmin.setDozvole(masterAdmin.getDozvole().admin().addAdmins().addBooks().addMembers().deleteAdmins().deleteMembers().deleteBooks().loanBooks().alterRules().masterRule().editBooks().editAdmins().editMembers());
 
 		masterAdmin.serialize();
 
@@ -157,8 +156,8 @@ public class ArgManager {
 		}
 		if (args.length > 1) {
 			if (args[0].equals(LOGIN.getArgument())) {
-				ArrayList<Sifra> sifre = null;
-				ArrayList<Administrator.Dozvole> dozvole = null;
+				ArrayList<Sifra> sifre;
+				ArrayList<Administrator.Dozvole> dozvole;
 				ArrayList<Administrator> admini = null;
 				try {
 					sifre = DataManager.deserializeSifre();

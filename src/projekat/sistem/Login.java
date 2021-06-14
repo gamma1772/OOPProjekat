@@ -10,11 +10,8 @@ import java.util.Scanner;
 public class Login {
 	private static final Scanner scannerConsoleInput = new Scanner(System.in);
 
-	private static ArrayList<Administrator> administratoriLocal;
-
 	public static Administrator login(ArrayList<Administrator> administratori) throws CredentialException {
 
-		administratoriLocal = administratori;
 		String korIme, sifra;
 
 		Administrator a = null;

@@ -32,25 +32,27 @@ public class Knjiga implements IUUID, ISerijalizacija {
 		this.setKolicina(kolicina);
 	}
 
-	public Knjiga(String imeKnjige, String ISBN, ArrayList<Autor> autori, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
-		this.setId(generateUUID());
-		this.setImeKnjige(imeKnjige);
-		this.setISBN(ISBN);
-		this.setAutor(autori);
-		this.setIzdavac(izdavac);
-		this.setZanrovi(zanrovi);
-		this.setGodinaObjavljivanja(godinaObjavljivanja);
-		this.setIzdanje(izdanje);
-		this.setBrStrana(brStrana);
-		this.setKategorija(kategorija);
-		this.setKolicina(kolicina);
-	}
+// --Commented out by Inspection START (14.6.2021. 16:42):
+//	public Knjiga(String imeKnjige, String ISBN, ArrayList<Autor> autori, Izdavac izdavac, int[] zanrovi, int godinaObjavljivanja, int izdanje, int brStrana, int kategorija, int kolicina) {
+//		this.setId(generateUUID());
+//		this.setImeKnjige(imeKnjige);
+//		this.setISBN(ISBN);
+//		this.setAutor(autori);
+//		this.setIzdavac(izdavac);
+//		this.setZanrovi(zanrovi);
+//		this.setGodinaObjavljivanja(godinaObjavljivanja);
+//		this.setIzdanje(izdanje);
+//		this.setBrStrana(brStrana);
+//		this.setKategorija(kategorija);
+//		this.setKolicina(kolicina);
+//	}
+// --Commented out by Inspection STOP (14.6.2021. 16:42)
 
 	public Knjiga() {
 		this.setId("");
 		this.setImeKnjige("");
 		this.setISBN("");
-		this.setAutor(new ArrayList<Autor>());
+		this.setAutor(new ArrayList<>());
 		this.setIzdavac(new Izdavac());
 		this.setZanrovi(null);
 		this.setGodinaObjavljivanja(0);
@@ -166,7 +168,7 @@ public class Knjiga implements IUUID, ISerijalizacija {
 		Random random = new Random();
 		int count = 0;
 		for (char c : ISBN.toCharArray()) {
-			count += (int)c;
+			count += c;
 		}
 		return String.format("%07d-%07d", count, random.nextInt());
 	}

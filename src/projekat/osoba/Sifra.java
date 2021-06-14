@@ -6,7 +6,6 @@ import projekat.util.serijalizacija.ISerijalizacija;
 import java.io.CharConversionException;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Sifra implements Serializable, ISerijalizacija {
 	private String korisnickiUUID, sifra;
@@ -75,18 +74,16 @@ public class Sifra implements Serializable, ISerijalizacija {
 
 		StringBuilder tempSifra = new StringBuilder();
 		UUIDSummary();
-		char errorChar = ' ';
 		char[] tempChar = sifra.toCharArray();
 		try {
-			for (int i = 0; i < tempChar.length; i++) {
-				if (Character.isUpperCase(tempChar[i])) {
-					tempSifra.append((char) (((int) tempChar[i] + UUIDSum - 65) % 26 + 65));
-				} else if (Character.isLowerCase(tempChar[i])) {
-					tempSifra.append((char) (((int) tempChar[i] + UUIDSum - 97) % 26 + 97));
-				} else if (Character.isDigit(tempChar[i])) {
-					tempSifra.append((char) (((int) tempChar[i] + UUIDSum - 48) % 10 + 48));
+			for (char c : tempChar) {
+				if (Character.isUpperCase(c)) {
+					tempSifra.append((char) (((int) c + UUIDSum - 65) % 26 + 65));
+				} else if (Character.isLowerCase(c)) {
+					tempSifra.append((char) (((int) c + UUIDSum - 97) % 26 + 97));
+				} else if (Character.isDigit(c)) {
+					tempSifra.append((char) (((int) c + UUIDSum - 48) % 10 + 48));
 				} else {
-					errorChar = tempChar[i];
 					throw new CharConversionException();
 				}
 			}
@@ -104,18 +101,16 @@ public class Sifra implements Serializable, ISerijalizacija {
 
 		StringBuilder tempSifra = new StringBuilder();
 		UUIDSummary(UUID);
-		char errorChar = ' ';
 		char[] tempChar = sifra.toCharArray();
 		try {
-			for (int i = 0; i < tempChar.length; i++) {
-				if (Character.isUpperCase(tempChar[i])) {
-					tempSifra.append((char) (((int) tempChar[i] + UUIDSum - 65) % 26 + 65));
-				} else if (Character.isLowerCase(tempChar[i])) {
-					tempSifra.append((char) (((int) tempChar[i] + UUIDSum - 97) % 26 + 97));
-				} else if (Character.isDigit(tempChar[i])) {
-					tempSifra.append((char) (((int) tempChar[i] + UUIDSum - 48) % 10 + 48));
+			for (char c : tempChar) {
+				if (Character.isUpperCase(c)) {
+					tempSifra.append((char) (((int) c + UUIDSum - 65) % 26 + 65));
+				} else if (Character.isLowerCase(c)) {
+					tempSifra.append((char) (((int) c + UUIDSum - 97) % 26 + 97));
+				} else if (Character.isDigit(c)) {
+					tempSifra.append((char) (((int) c + UUIDSum - 48) % 10 + 48));
 				} else {
-					errorChar = tempChar[i];
 					throw new CharConversionException();
 				}
 			}

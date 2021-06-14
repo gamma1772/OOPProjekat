@@ -45,7 +45,7 @@ public class Main {
         int brPokusaja = 0;
         try {
             deserialization(true);
-        } catch (IOException | TokProgramaException | ParseException exception) {
+        } catch (IOException | TokProgramaException exception) {
             exception.printStackTrace();
         }
 
@@ -63,7 +63,7 @@ public class Main {
          init();
     }
 
-    private static void deserialization(boolean restricted) throws IOException, TokProgramaException, ParseException {
+    private static void deserialization(boolean restricted) throws IOException, TokProgramaException {
         if (restricted) {
             sifre = DataManager.deserializeSifre();
             dozvole = DataManager.deserializeDozvole();
@@ -100,7 +100,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         try {
             deserialization(false);
-        } catch (IOException | TokProgramaException | ParseException exception) {
+        } catch (IOException | TokProgramaException exception) {
             exception.printStackTrace();
         }
 
@@ -244,7 +244,7 @@ public class Main {
         while (petlja) {
             cls();
             System.out.println("==========KNJIGE==========");
-            System.out.println("1. Dodaj novu knjigu\n2. Izmeni knjigu\n3. Obrisi knjigu\n4. Prikazi sve knjige\n5. Nazad\n6. Pocetni meni");
+            System.out.println("1. Dodaj novu knjigu\n2. Izmeni knjigu\n3. Obrisi knjigu\n4. Nazad\n5. Pocetni meni");
             System.out.print("Unos: "); odabir = scanner.nextInt();
 
             switch (odabir) {
@@ -252,11 +252,10 @@ public class Main {
                     SistemManager.initBookManager(odabir, knjige, autori, izdavaci);
                     break;
                 case 4:
-                case 5:
                     petlja = false;
                     prikaziOpcijeBiblioteke(scanner);
                     break;
-                case 6:
+                case 5:
                     petlja = false;
                     pocetniMeni(scanner);
                     break;
@@ -279,21 +278,20 @@ public class Main {
         while (petlja) {
             cls();
             System.out.println("==========AUTORI==========");
-            System.out.println("1. Dodaj novog autora\n2. Izmeni autora\n3. Obrisi autora\n4. Prikazi sve autore\n5. Nazad\n6. Pocetni meni");
+            System.out.println("1. Dodaj novog autora\n2. Izmeni autora\n3. Obrisi autora\n4. Nazad\n5. Pocetni meni");
             System.out.print("Unos: "); odabir = scanner.nextInt();
             scanner.nextLine();
             scanner.nextLine();
 
             switch (odabir) {
                 case 1: case 2: case 3:
-                    SistemManager.initAuthorManager(odabir, autori);
+                    SistemManager.initAuthorManager(odabir, autori, knjige);
                     break;
                 case 4:
-                case 5:
                     petlja = false;
                     prikaziOpcijeBiblioteke(scanner);
                     break;
-                case 6:
+                case 5:
                     petlja = false;
                     pocetniMeni(scanner);
                     break;
@@ -316,19 +314,18 @@ public class Main {
         while (petlja) {
             cls();
             System.out.println("==========IZDAVACI==========");
-            System.out.println("1. Dodaj novog izdavaca\n2. Izmeni izdavaca\n3. Obrisi izdavaca\n4. Prikazi sve izdavace\n5. Nazad\n6. Pocetni meni");
+            System.out.println("1. Dodaj novog izdavaca\n2. Izmeni izdavaca\n3. Obrisi izdavaca\n4. Nazad\n5. Pocetni meni");
             System.out.print("Unos: "); odabir = scanner.nextInt();
             scanner.nextLine();
             switch (odabir) {
                 case 1: case 2: case 3:
-                    SistemManager.initPublisherManager(odabir, izdavaci);
+                    SistemManager.initPublisherManager(odabir, izdavaci, knjige);
                     break;
                 case 4:
-                case 5:
                     petlja = false;
                     prikaziOpcijeBiblioteke(scanner);
                     break;
-                case 6:
+                case 5:
                     petlja = false;
                     pocetniMeni(scanner);
                     break;
@@ -351,7 +348,7 @@ public class Main {
         while (petlja) {
             cls();
             System.out.println("==========CLANOVI==========");
-            System.out.println("1. Dodaj novog clana\n2. Izmeni clana\n3. Obrisi clana\n4. Prikazi sve clanove\n5. Nazad\n6. Pocetni meni");
+            System.out.println("1. Dodaj novog clana\n2. Izmeni clana\n3. Obrisi clana\n4. Nazad\n5. Pocetni meni");
             System.out.print("Unos: "); odabir = scanner.nextInt();
             scanner.nextLine();
             switch (odabir) {
@@ -359,11 +356,10 @@ public class Main {
                     SistemManager.initMemberManager(odabir, clanovi, pozajmljivanja);
                     break;
                 case 4:
-                case 5:
                     petlja = false;
                     prikaziOpcijeBiblioteke(scanner);
                     break;
-                case 6:
+                case 5:
                     petlja = false;
                     pocetniMeni(scanner);
                     break;

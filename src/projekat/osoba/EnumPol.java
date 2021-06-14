@@ -4,7 +4,7 @@ public enum EnumPol {
 	MUSKO(1),
 	ZENSKO(2);
 
-	private int rbr;
+	private final int rbr;
 
 	EnumPol(int rbr) {
 		this.rbr = rbr;

@@ -15,11 +15,13 @@ public enum EnumArguments {
 	private final String[] params;
 	private final String description;
 
-	EnumArguments(String argument) {
-		this.argument = argument;
-		this.params = null;
-		this.description = null;
-	}
+// --Commented out by Inspection START (14.6.2021. 16:41):
+//	EnumArguments(String argument) {
+//		this.argument = argument;
+//		this.params = null;
+//		this.description = null;
+//	}
+// --Commented out by Inspection STOP (14.6.2021. 16:41)
 	EnumArguments(String argument, String description) {
 		this.argument = argument;
 		this.params = null;
@@ -38,7 +40,7 @@ public enum EnumArguments {
 		return this.description;
 	}
 
-	public String[] getParams() {return this.params; }
+	// --Commented out by Inspection (14.6.2021. 16:41):public String[] getParams() {return this.params; }
 
 	private static final Map<String, EnumArguments> mapaArgumenata = new HashMap<>();
 
@@ -48,7 +50,9 @@ public enum EnumArguments {
 		}
 	}
 
-	public static Map<String, EnumArguments> getMap() {
-		return mapaArgumenata;
-	}
+// --Commented out by Inspection START (14.6.2021. 16:41):
+//	public static Map<String, EnumArguments> getMap() {
+//		return mapaArgumenata;
+//	}
+// --Commented out by Inspection STOP (14.6.2021. 16:41)
 }

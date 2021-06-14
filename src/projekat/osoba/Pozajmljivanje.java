@@ -2,7 +2,6 @@ package projekat.osoba;
 
 import projekat.Main;
 import projekat.knjiga.Knjiga;
-import projekat.sistem.PravilaBiblioteke;
 import projekat.util.serijalizacija.DataManager;
 import projekat.util.serijalizacija.ISerijalizacija;
 
@@ -90,11 +89,13 @@ public class Pozajmljivanje implements ISerijalizacija {
 		this.datumVracanja = datumVracanja;
 	}
 
-	public void produziZajam() {
-
-		this.datumVracanja.add(Calendar.DAY_OF_MONTH, Main.pravila.getMaxPeriod());
-		this.produzenoPuta += 1;
-	}
+// --Commented out by Inspection START (14.6.2021. 16:42):
+//	public void produziZajam() {
+//
+//		this.datumVracanja.add(Calendar.DAY_OF_MONTH, Main.pravila.getMaxPeriod());
+//		this.produzenoPuta += 1;
+//	}
+// --Commented out by Inspection STOP (14.6.2021. 16:42)
 
 	public void izracunajDug() {
 		Calendar calendar = Calendar.getInstance();

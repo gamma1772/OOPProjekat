@@ -1,6 +1,5 @@
 package projekat.osoba;
 
-import projekat.util.IUUID;
 import projekat.util.serijalizacija.DataManager;
 
 import java.io.IOException;
@@ -42,14 +41,8 @@ public class Clan extends AbstractOsoba {
 		this.setPozajmljivanje(new ArrayList<>());
 	}
 
-	@Override
 	public String getPunoIme() {
 		return String.format("%s %s", getIme(), getPrezime());
-	}
-
-	@Override
-	public String toPrettyString() {
-		return String.format("Ime: %s, Prezime: %s", getIme(), getPrezime());
 	}
 
 	public ArrayList<Pozajmljivanje> getPozajmljivanje() {

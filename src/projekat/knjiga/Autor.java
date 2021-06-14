@@ -14,10 +14,10 @@ public class Autor implements IUUID, ISerijalizacija {
 	private String id;
 	private String ime, prezime;
 
-	public Autor(String ime, String prezime) {
+	public Autor(String id, String ime, String prezime) {
 		this.setIme(ime);
 		this.setPrezime(prezime);
-		this.id = generateUUID();
+		this.setId(id);
 	}
 
 	public Autor() {

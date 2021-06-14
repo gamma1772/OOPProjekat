@@ -195,21 +195,23 @@ public class DataManager {
 		}
 	}
 
-	/**Vrsi serijalizaciju liste stringova koji sadrze informacije o objektu.
-	 * @param objects Lista stringova
-	 * @param fileName Datoteka u kojoj ce se cuvati podaci
-	 * @param append Da li da obrise sve iz fajla i napise sadrzaj liste, ili da doda sadrzaj liste ispod postojeceg sadrzaja
-	 * @throws IOException u koliko ne moze da se upisu podaci u fajl.*/
-	public static void serializeString(ArrayList<String> objects, String fileName, boolean append) throws IOException {
-		bw = new BufferedWriter(new FileWriter(FOLDER + fileName, append));
-
-		for (String object : objects) {
-			bw.write(object + '\n');
-		}
-
-		bw.flush();
-		bw.close();
-	}
+// --Commented out by Inspection START (14.6.2021. 16:40):
+//	/**Vrsi serijalizaciju liste stringova koji sadrze informacije o objektu.
+//	 * @param objects Lista stringova
+//	 * @param fileName Datoteka u kojoj ce se cuvati podaci
+//	 * @param append Da li da obrise sve iz fajla i napise sadrzaj liste, ili da doda sadrzaj liste ispod postojeceg sadrzaja
+//	 * @throws IOException u koliko ne moze da se upisu podaci u fajl.*/
+//	public static void serializeString(ArrayList<String> objects, String fileName, boolean append) throws IOException {
+//		bw = new BufferedWriter(new FileWriter(FOLDER + fileName, append));
+//
+//		for (String object : objects) {
+//			bw.write(object + '\n');
+//		}
+//
+//		bw.flush();
+//		bw.close();
+//	}
+// --Commented out by Inspection STOP (14.6.2021. 16:40)
 
 	/**Vrsi deserijalizaciju administratora. Zahteva da se pre toga deserijalizuju sifre i dozvole*/
 	public static ArrayList<Administrator> deserializeAdmins(ArrayList<Sifra> passwds, ArrayList<Administrator.Dozvole> dozvole) throws IOException, TokProgramaException {
@@ -353,9 +355,9 @@ public class DataManager {
 
 			autors = lista[2].replace("(", "").replace(")", "").split(";");
 			for (Autor a : autori) {
-				for (int i = 0; i < autors.length; i++) {
-					if (autors[i] != null && !autors[i].equals("")) {
-						if (a.getId().equals(autors[i])) {
+				for (String autor : autors) {
+					if (autor != null && !autor.equals("")) {
+						if (a.getId().equals(autor)) {
 							k.getAutori().add(a);
 						}
 					}
@@ -416,12 +418,9 @@ public class DataManager {
 		br = new BufferedReader(new FileReader(FOLDER + "autor.tdb"));
 
 		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
-			Autor a = new Autor();
 			lista = line.split("~");
 
-			a.setId(lista[0]);
-			a.setIme(lista[1]);
-			a.setPrezime(lista[2]);
+			Autor a = new Autor(lista[0], lista[1], lista[2]);
 
 			autori.add(a);
 		}
@@ -437,12 +436,10 @@ public class DataManager {
 		br = new BufferedReader(new FileReader(FOLDER + "izdavac.tdb"));
 
 		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
-			Izdavac i = new Izdavac();
+
 			lista = line.split("~");
 
-			i.setId(lista[0]);
-			i.setImeIzdavaca(lista[1]);
-			i.setZemljaPorekla(lista[2]);
+			Izdavac i = new Izdavac(lista[0], lista[1], lista[2]);
 
 			izdavaci.add(i);
 		}
@@ -527,10 +524,10 @@ public class DataManager {
 					String temp = fajl.getName();
 					if (!temp.contains("pravila")) {
 						if(fajl.delete()) {
-							System.out.println(String.format("Obrisan fajl '%s'", temp));
+							System.out.printf("Obrisan fajl '%s'%n", temp);
 						}
 						else {
-							System.out.println(String.format("Nemoguce obrisati fajl '%s'", temp));
+							System.out.printf("Nemoguce obrisati fajl '%s'%n", temp);
 						}
 					}
 				}
@@ -550,7 +547,7 @@ public class DataManager {
 
 	public static void createFileEntries() throws IOException {
 		createFolder();
-		ArrayList<String> files = new ArrayList<String>() {{
+		ArrayList<String> files = new ArrayList<>() {{
 			add("administrator.tdb");
 			add("clan.tdb");
 			add("knjiga.tdb");
