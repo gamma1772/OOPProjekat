@@ -1429,7 +1429,7 @@ class BookManager {
 	protected static void editPublisher(ArrayList<Izdavac> izdavaci) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
-		System.out.println("Odaberite autora cije podatke zelite da izmenite (0 za izlaz):");
+		System.out.println("Odaberite izdavaca cije podatke zelite da izmenite (0 za izlaz):");
 		for (int i = 0; i < izdavaci.size(); i++) {
 			System.out.printf("%d. %s%n", i+1, izdavaci.get(i).getId().concat(" " + izdavaci.get(i).getImeIzdavaca() + " " + izdavaci.get(i).getZemljaPorekla()));
 		}
@@ -1441,7 +1441,7 @@ class BookManager {
 			}
 			else {
 				Main.cls();
-				System.out.println("Podaci o odabranom autoru: ");
+				System.out.println("Podaci o odabranom izdavacu: ");
 				System.out.printf("ID: %s%nIme izdavaca: %s%nZemlja porekla: %s%n",izdavaci.get(Integer.parseInt(unos) - 1).getId(), izdavaci.get(Integer.parseInt(unos) - 1).getImeIzdavaca(), izdavaci.get(Integer.parseInt(unos) - 1).getZemljaPorekla());
 				System.out.println("Odaberite sta zelite da izmenite (1. Ime izdavaca, 2. Zemlja porekla). Unesite 0 za izlaz: ");
 				switch (scanner.nextLine()) {
@@ -1472,13 +1472,56 @@ class BookManager {
 					default:
 						break;
 				}
-				Main.save(EnumCheckpoints.AUTORI.ordinal());
+				Main.save(EnumCheckpoints.IZDAVACI.ordinal());
 			}
 		}
 	}
 
 	protected static void deleteBook(ArrayList<Knjiga> knjige, ArrayList<Autor> autori, ArrayList<Izdavac> izdavaci) {
-		//TODO
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("Odaberite knjigu koju zelite da obrisete (0 za izlaz):");
+		for (int i = 0; i < knjige.size(); i++) {
+			System.out.printf("%d. %s%n", i+1, knjige.get(i).getId().concat(" " + knjige.get(i).getImeKnjige() + " " + knjige.get(i).getISBN()));
+		}
+		while (true) {
+			System.out.println("Unos: "); String unos = scanner.nextLine();
+			if (unos.equals("0")) {
+				break;
+			}
+			else {
+				if (Integer.parseInt(unos) - 1 > knjige.size()) {
+					System.out.println("Uneli ste nepostojeci redni broj.");
+				}
+				else {
+					System.out.printf("Odabran clan: %s, %s%n", knjige.get((Integer.parseInt(unos) - 1)).getId(), knjige.get((Integer.parseInt(unos) - 1)).getISBN().concat(" " + knjige.get((Integer.parseInt(unos) - 1)).getImeKnjige()));
+					System.out.println("Da li ste sigurni da zelite da obrisete ovu knjigu? (Y/N)");
+					boolean petlja = true;
+					while (petlja) {
+						switch (scanner.nextLine().toUpperCase()) {
+							case "Y":
+								petlja = false;
+								knjige.remove(Integer.parseInt(unos) - 1);
+								System.out.println("Uspesno obrisano.");
+								Main.save(EnumCheckpoints.KNJIGE.ordinal());
+								break;
+							case "N":
+								petlja = false;
+								System.out.println("Brisanje otkazano.");
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								break;
+							default:
+								System.out.println("Unesite Y ili N");
+								break;
+						}
+					}
+				}
+			}
+		}
 	}
 	//TODO: Testiranje, provera
 	protected static void deleteAuthor(ArrayList<Autor> autori) {
@@ -1511,6 +1554,11 @@ class BookManager {
 							case "N":
 								petlja = false;
 								System.out.println("Brisanje otkazano.");
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
 								break;
 							default:
 								System.out.println("Unesite Y ili N");
@@ -1525,7 +1573,7 @@ class BookManager {
 	protected static void deletePublisher(ArrayList<Izdavac> izdavaci) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
-		System.out.println("Odaberite autora kojeg zelite da obrisete (0 za izlaz):");
+		System.out.println("Odaberite izdavaca kojeg zelite da obrisete (0 za izlaz):");
 		for (int i = 0; i < izdavaci.size(); i++) {
 			System.out.printf("%d. %s%n", i+1, izdavaci.get(i).getId().concat(" " + izdavaci.get(i).getImeIzdavaca() + " " + izdavaci.get(i).getZemljaPorekla()));
 		}
@@ -1539,8 +1587,8 @@ class BookManager {
 					System.out.println("Uneli ste nepostojeci redni broj.");
 				}
 				else {
-					System.out.printf("Odabran clan: %s, %s%n", izdavaci.get((Integer.parseInt(unos) - 1)).getId(), izdavaci.get((Integer.parseInt(unos) - 1)).getImeIzdavaca().concat(" " + izdavaci.get((Integer.parseInt(unos) - 1)).getZemljaPorekla()));
-					System.out.println("Da li ste sigurni da zelite da obrisete ovog autora? (Y/N)");
+					System.out.printf("Odabran izdavac: %s, %s%n", izdavaci.get((Integer.parseInt(unos) - 1)).getId(), izdavaci.get((Integer.parseInt(unos) - 1)).getImeIzdavaca().concat(" " + izdavaci.get((Integer.parseInt(unos) - 1)).getZemljaPorekla()));
+					System.out.println("Da li ste sigurni da zelite da obrisete ovog izdavaca? (Y/N)");
 					boolean petlja = true;
 					while (petlja) {
 						switch (scanner.nextLine().toUpperCase()) {
@@ -1553,6 +1601,11 @@ class BookManager {
 							case "N":
 								petlja = false;
 								System.out.println("Brisanje otkazano.");
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
 								break;
 							default:
 								System.out.println("Unesite Y ili N");
