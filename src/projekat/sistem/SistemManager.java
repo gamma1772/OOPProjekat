@@ -8,25 +8,35 @@ import java.util.*;
 
 public class SistemManager {
 	public static void initPozajmljivanje(ArrayList<Clan> clanovi, ArrayList<Pozajmljivanje> pozajmljivanja, ArrayList<Knjiga> knjige) {
-		PozajmljivanjeManager.showLoans(pozajmljivanja, clanovi, knjige);
-	}
+                if (Main.prijavljenAdmin.getDozvole().canLoanBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+                    	PozajmljivanjeManager.showLoans(pozajmljivanja, clanovi, knjige);
+                }else {
+                        System.out.println("Nemate dozvolu za ovu operaciju.");
+                }
+        }
 
 	public static void initAdminManager(Administrator prijavljenAdmin, int opcija, ArrayList<Administrator> adminList, ArrayList<Administrator.Dozvole> dozvole, ArrayList<Sifra> sifre) {
 		switch (opcija) {
 			case 1:
 				if (prijavljenAdmin.getDozvole().canAddAdmins() || prijavljenAdmin.getDozvole().hasMasterRule()) {
 					AdminManager.addAdmin(adminList, dozvole, sifre);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 2:
 				if (prijavljenAdmin.getDozvole().canEditAdmins() || prijavljenAdmin.getDozvole().hasMasterRule()) {
 					AdminManager.editAdmin(adminList);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 3:
 				if (prijavljenAdmin.getDozvole().canDeleteAdmins() || prijavljenAdmin.getDozvole().hasMasterRule()) {
 					AdminManager.deleteAdmin(adminList, sifre, dozvole);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 		}
 	}
@@ -36,17 +46,23 @@ public class SistemManager {
 			case 1:
 				if (Main.prijavljenAdmin.getDozvole().canAddMembers() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					MemberManager.addMember(clanList);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 2:
 				if (Main.prijavljenAdmin.getDozvole().canEditMembers() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					MemberManager.editMember(clanList);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 3:
 				if (Main.prijavljenAdmin.getDozvole().canDeleteMembers() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					MemberManager.deleteMember(clanList, pozajmljivanja);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 		}
 	}
@@ -56,17 +72,23 @@ public class SistemManager {
 			case 1:
 				if (Main.prijavljenAdmin.getDozvole().canAddBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					BookManager.addBook(knjigaList, autorList, izdavacList);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 2:
 				if (Main.prijavljenAdmin.getDozvole().canEditBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					BookManager.editBook(knjigaList, autorList, izdavacList);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 3:
 				if (Main.prijavljenAdmin.getDozvole().canDeleteBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					BookManager.deleteBook(knjigaList, pozajmljivanja);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			default: {
 
@@ -79,17 +101,23 @@ public class SistemManager {
 			case 1:
 				if (Main.prijavljenAdmin.getDozvole().canAddBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					BookManager.addAuthor(autorList);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 2:
 				if (Main.prijavljenAdmin.getDozvole().canEditBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					BookManager.editAuthor(autorList);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 3:
 				if (Main.prijavljenAdmin.getDozvole().canDeleteBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					BookManager.deleteAuthor(autorList, knjige);
-				}
+				}else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 		}
 	}
@@ -100,22 +128,36 @@ public class SistemManager {
 				if (Main.prijavljenAdmin.getDozvole().canAddBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					BookManager.addPublisher(izdavacList);
 				}
+                                else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 2:
 				if (Main.prijavljenAdmin.getDozvole().canEditBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					BookManager.editPublisher(izdavacList);
 				}
+                                else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 			case 3:
 				if (Main.prijavljenAdmin.getDozvole().canDeleteBooks() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
 					BookManager.deletePublisher(izdavacList, knjige);
 				}
+                                else {
+                                    System.out.println("Nemate dozvolu za ovu operaciju.");
+                                }
 				break;
 		}
 	}
 
 	public static void initPravilaManager(PravilaBiblioteke pravila) {
-		viewRules(pravila);
+            if (Main.prijavljenAdmin.getDozvole().canAlterRules() || Main.prijavljenAdmin.getDozvole().hasMasterRule()) {
+                viewRules(pravila);
+            }
+            else {
+                System.out.println("Nemate dozvolu da menjate pravila biblioteke.");
+            }
 	}
 
 	private static void viewRules(PravilaBiblioteke pravilaBiblioteke) {
