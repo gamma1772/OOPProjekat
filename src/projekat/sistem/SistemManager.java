@@ -4,19 +4,11 @@ import projekat.Main;
 import projekat.knjiga.*;
 import projekat.osoba.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 public class SistemManager {
-	public static void initPozajmljivanje(int odabir, ArrayList<Clan> clanovi, ArrayList<Pozajmljivanje> pozajmljivanja, ArrayList<Knjiga> knjige) {
-		switch (odabir) {
-			case 1:
-
-				break;
-			case 2:
-				break;
-		}
+	public static void initPozajmljivanje(ArrayList<Clan> clanovi, ArrayList<Pozajmljivanje> pozajmljivanja, ArrayList<Knjiga> knjige) {
+		PozajmljivanjeManager.showLoans(pozajmljivanja, clanovi, knjige);
 	}
 
 	public static void initAdminManager(Administrator prijavljenAdmin, int opcija, ArrayList<Administrator> adminList, ArrayList<Administrator.Dozvole> dozvole, ArrayList<Sifra> sifre) {
@@ -223,16 +215,207 @@ public class SistemManager {
 }
 
 class PozajmljivanjeManager {
-	protected static void showLoans(ArrayList<Pozajmljivanje> pozajmljivanja) {
-		for (Pozajmljivanje p : pozajmljivanja) {
-			if (!p.isRazreseno()) {
-				System.out.println(p.toString());
+	protected static void showLoans(ArrayList<Pozajmljivanje> pozajmljivanja, ArrayList<Clan> clanovi, ArrayList<Knjiga> knjige) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("ID                  Knjiga                Datum Pozajmljivanja  Datum isteka   Dug     Razreseno");
+		if (pozajmljivanja != null && pozajmljivanja.size() > 0) {
+			for (Pozajmljivanje p : pozajmljivanja) {
+				if (!p.isRazreseno()) {
+					p.izracunajDug();
+					System.out.println(p.toString());
+				}
+			}
+		} else {
+			System.out.println("Lista pozajmljivanja je prazna.");
+		}
+
+		boolean petlja = true;
+		while (petlja) {
+			System.out.println("1. Pozajmi knjigu, 2. Vrati knjigu, 3. Prikazi sva pozajmljivanja, 4. Pocetni meni");
+			System.out.print("Unos: ");
+			switch (scanner.nextLine()) {
+				case "1":
+					loanBook(pozajmljivanja, clanovi, knjige);
+				case "2":
+					returnBook(pozajmljivanja, clanovi, knjige);
+				case "3":
+					Main.cls();
+					if (pozajmljivanja != null && pozajmljivanja.size() > 0) {
+						for (Pozajmljivanje p : pozajmljivanja) {
+							System.out.println(p.toString());
+						}
+					} else {
+						System.out.println("Lista pozajmljivanja je prazna.");
+					}
+				case "4":
+					petlja = false;
+					break;
+				default:
+					System.out.println("Uneli ste nepostojecu opciju");
 			}
 		}
 	}
 
-	protected static void editLoans(ArrayList<Pozajmljivanje> pozajmljivanja) {
+	protected static void loanBook(ArrayList<Pozajmljivanje> pozajmljivanja, ArrayList<Clan> clanovi,ArrayList<Knjiga> knjige) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+		System.out.println("Odaberite knjigu koju pozajmljujete: ");
+		for (int i = 0; i < knjige.size(); i++) {
+			System.out.printf("%d. %s%n", i+1, knjige.get(i).getId().concat(knjige.get(i).getISBN() + " " + knjige.get(i).getAutori().get(0).getFullName() + " " + knjige.get(i).getIzdavac().getImeIzdavaca()));
+		}
+		Knjiga k;
+		while (true) {
+			System.out.print("Unos (0 za izlaz): "); int unos = Integer.parseInt(scanner.nextLine()) - 1;
+			if (unos >= 0 && unos < knjige.size()) {
+				if (knjige.get(unos).getKolicina() == 0) {
+					System.out.println("Knjiga nije na stanju.");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					continue;
+				} else {
+					k = knjige.get(unos);
+					break;
+				}
+			} else {
+				System.out.println("Unesite jednu od dostupnih opcija!");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			if (unos == -1) {
+				k = null;
+				break;
+			}
+		}
 
+		Clan c;
+		if (k == null) {
+			c = null;
+		}
+		else {
+			Main.cls();
+			System.out.println("Odaberite clana biblioteke koji pozajmljuje knjigu: ");
+			for (int i = 0; i < clanovi.size(); i++) {
+				System.out.printf("%d. %s%n", i+1, clanovi.get(i).getUUID().concat(clanovi.get(i).getPunoIme() + " " + clanovi.get(i).getEmail()));
+			}
+			while (true) {
+				System.out.print("Unos (0 za izlaz): "); int unos = Integer.parseInt(scanner.nextLine()) - 1;
+				if (unos >= 0 && unos < clanovi.size()) {
+
+					if (!Main.pravila.getLoanBeforeReturningPrevious() && clanovi.get(unos).getPozajmljivanje().stream().allMatch(Pozajmljivanje::isRazreseno)) {
+						c = clanovi.get(unos);
+					} else if (Main.pravila.getLoanBeforeReturningPrevious()) {
+						c = clanovi.get(unos);
+					} else {
+						System.out.println("Ovaj clan vec ima pozajmljene knjige, po pravilu ne moze da pozajmi vise knjiga dok ne vrati prethodnu.");
+						continue;
+					}
+					break;
+				} else if (unos == -1) {
+					k = null;
+					c = null;
+					break;
+				} else {
+					System.out.println("Unesite jednu od dostupnih opcija!");
+				}
+			}
+		}
+
+		if (c != null && k != null) {
+			Calendar calendar = Calendar.getInstance();
+			Calendar cal2 = Calendar.getInstance();
+			cal2.add(Calendar.DAY_OF_MONTH, Main.pravila.getMaxPeriod());
+			for (Knjiga knjiga : knjige) {
+				if (knjiga.getISBN().equals(k.getISBN())) {
+					knjiga.setKolicina(knjiga.getKolicina() - 1);
+				}
+			}
+			Pozajmljivanje p = new Pozajmljivanje(c.getUUID(), 0.00D, k, calendar, cal2, 0, false);
+			c.getPozajmljivanje().add(p);
+			pozajmljivanja.add(p);
+			Main.save(EnumCheckpoints.KNJIGE.ordinal());
+			Main.save(EnumCheckpoints.POZAJMLJIVANJE.ordinal());
+		}
+
+	}
+	protected static void returnBook(ArrayList<Pozajmljivanje> pozajmljivanja, ArrayList<Clan> clanovi,ArrayList<Knjiga> knjige) {
+		Scanner scanner = new Scanner(System.in);
+		Main.cls();
+
+		while (true) {
+			System.out.println("Odaberite clana: ");
+			for (int i = 0; i < clanovi.size(); i++) {
+				int finalI = i;
+				if (pozajmljivanja.stream().anyMatch(p -> p.getClanUUID().equals(clanovi.get(finalI).getUUID()))) {
+					System.out.printf("%d. %s%n", i+1, clanovi.get(i).getUUID().concat(" " + clanovi.get(i).getPunoIme()));
+				}
+			}
+			System.out.print("Unos (0 za izlaz): "); int unos = Integer.parseInt(scanner.nextLine()) - 1;
+
+			if (unos >= 0 && unos < clanovi.size()) {
+				Clan c =  clanovi.get(unos);
+				Pozajmljivanje p;
+
+				while (true) {
+					System.out.println("Odaberite pozajmljivanje za razresenje:");
+					for (int i = 0; i < c.getPozajmljivanje().size(); i++) {
+						if (!c.getPozajmljivanje().get(i).isRazreseno()) {
+							System.out.printf("%d. %s%n", i+1, c.getPozajmljivanje().get(i).getPozajmljenaKnjiga().getImeKnjige().concat(" " + c.getPozajmljivanje().get(i).getDug()));
+						}
+						else {
+							System.out.println("Lista pozajmljivanja ovog clana je prazna, ili su sva pozajmljivanja razresena.");
+						}
+					}
+					System.out.print("Unos (0 za izlaz): "); unos = Integer.parseInt(scanner.nextLine()) - 1;
+					if (unos >= 0 && unos < c.getPozajmljivanje().size()) {
+						p = c.getPozajmljivanje().get(unos);
+						break;
+					}
+					else if (unos == -1) {
+						p = null;
+						break;
+					}
+					else {
+						System.out.println("Unesite jednu od dostupnih opcija");
+					}
+				}
+				if (p != null) {
+					if (!p.isRazreseno()) {
+						System.out.printf("%nDug: %.2f%n", p.getDug());
+						boolean petlja = true;
+						while (petlja) {
+							System.out.print("Razresi pozajmljivanje? (Y/N): ");
+							switch (scanner.nextLine()) {
+								case "Y":
+									petlja = false;
+									p.vratiKnjigu();
+									Main.save(EnumCheckpoints.POZAJMLJIVANJE.ordinal());
+									break;
+								case "N":
+									petlja = false;
+									break;
+								default:
+									System.out.println("Unesite Y ili N!");
+									break;
+							}
+						}
+					}
+					else {
+						System.out.println("Pozajmljivanje ne postoji ili je razreseno.");
+						break;
+					}
+				}
+
+			} else if (unos == -1) {
+				break;
+			}
+		}
 	}
 }
 
@@ -776,11 +959,11 @@ class MemberManager {
 	protected static void deleteMember(ArrayList<Clan> clanovi, ArrayList<Pozajmljivanje> pozajmljivanja) {
 		Scanner scanner = new Scanner(System.in);
 		Main.cls();
-		System.out.println("Odaberite clana kojeg zelite da obrisete (0 za izlaz):");
-		for (int i = 0; i < clanovi.size(); i++) {
-			System.out.printf("%d. %s%n", i+1, clanovi.get(i).getUUID().concat(" " + clanovi.get(i).getPunoIme()));
-		}
 		while (true) {
+			System.out.println("Odaberite clana kojeg zelite da obrisete (0 za izlaz):");
+			for (int i = 0; i < clanovi.size(); i++) {
+				System.out.printf("%d. %s%n", i+1, clanovi.get(i).getUUID().concat(" " + clanovi.get(i).getPunoIme()));
+			}
 			System.out.println("Unos: "); String unos = scanner.nextLine();
 			if (unos.equals("0")) {
 				break;
@@ -792,25 +975,35 @@ class MemberManager {
 				else {
 					System.out.printf("Odabran clan: %s, %s%n", clanovi.get((Integer.parseInt(unos) - 1)).getUUID(), clanovi.get((Integer.parseInt(unos) - 1)).getPunoIme());
 					System.out.println("Da li ste sigurni da zelite da obrisete ovog clana? (Y/N)");
-					boolean petlja = true;
-					while (petlja) {
-						switch (scanner.nextLine().toUpperCase()) {
-							case "Y":
-								petlja = false;
-								pozajmljivanja.removeIf(p -> p.getClanUUID().equals(clanovi.get(Integer.parseInt(unos) - 1).getUUID()));
-								clanovi.remove(Integer.parseInt(unos) - 1);
-								System.out.println("Uspesno obrisano.");
+					if (clanovi.get((Integer.parseInt(unos) - 1)).getPozajmljivanje().size() == 0 || clanovi.get((Integer.parseInt(unos) - 1)).getPozajmljivanje().stream().anyMatch(Pozajmljivanje::isRazreseno)) {
+						boolean petlja = true;
+						while (petlja) {
+							switch (scanner.nextLine().toUpperCase()) {
+								case "Y":
+									petlja = false;
+									pozajmljivanja.removeIf(p -> p.getClanUUID().equals(clanovi.get(Integer.parseInt(unos) - 1).getUUID()));
+									clanovi.remove(Integer.parseInt(unos) - 1);
+									System.out.println("Uspesno obrisano.");
 
-								Main.save(EnumCheckpoints.POZAJMLJIVANJE.ordinal());
-								Main.save(EnumCheckpoints.CLANOVI.ordinal());
-								break;
-							case "N":
-								petlja = false;
-								System.out.println("Brisanje otkazano.");
-								break;
-							default:
-								System.out.println("Unesite Y ili N");
-								break;
+									Main.save(EnumCheckpoints.POZAJMLJIVANJE.ordinal());
+									Main.save(EnumCheckpoints.CLANOVI.ordinal());
+									break;
+								case "N":
+									petlja = false;
+									System.out.println("Brisanje otkazano.");
+									break;
+								default:
+									System.out.println("Unesite Y ili N");
+									break;
+							}
+						}
+					}
+					else {
+						System.out.println("clan ima neresena pozajmljivanja. Nemoguce brisanje.");
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
 					}
 				}

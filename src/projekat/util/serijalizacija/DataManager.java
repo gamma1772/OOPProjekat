@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 /**Staticka klasa koja sadrzi metode za serijalizaciju i deserijalizcaju objekata.*/
 public class DataManager {
@@ -256,7 +257,7 @@ public class DataManager {
 
 	/**Vrsi deserijalizaciju clanova. Zahteva da se pre toga deserijalizuje lista pozajmljivanja*/
 	public static ArrayList<Clan> deserializeClanovi(ArrayList<Pozajmljivanje> pozajmljivanja) throws IOException, TokProgramaException {
-		if (pozajmljivanja == null || pozajmljivanja.size() == 0) {
+		if (pozajmljivanja == null) {
 			throw new TokProgramaException("Lista pozajmljivanja mora biti deserijalizovana pre clanova biblioteke!");
 		}
 
@@ -459,29 +460,33 @@ public class DataManager {
 		String line;
 		String[] lista;
 		ArrayList<Pozajmljivanje> pozajmljivanjaArrayList = new ArrayList<>();
-		Calendar cal = Calendar.getInstance();
+
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-		br = new BufferedReader(new FileReader(FOLDER + "pozajmljivanja.tdb"));
+		br = new BufferedReader(new FileReader(FOLDER + "pozajmljivanje.tdb"));
 
 		while((line = br.readLine()) != null  && !line.equals("") && !line.equals("\n")) {
 			Pozajmljivanje p = new Pozajmljivanje();
 			lista = line.split("~");
 
 			p.setClanUUID(lista[0]);
-			p.setDug(Double.parseDouble(lista[1]));
+			p.setDug(Double.parseDouble(lista[1].replace(',', '.')));
 
 			for (Knjiga k : knjige) {
 				if (k.getId().equals(lista[2])) {
 					p.setPozajmljenaKnjiga(k);
 				}
 			}
-
-			cal.setTime(dateFormat.parse(lista[3]));
+			Calendar cal = Calendar.getInstance();
+			Calendar cal2 = Calendar.getInstance();
+			Date date;
+			date = dateFormat.parse(lista[3]);
+			cal.setTime(date);
 			p.setDatumPozajmljivanja(cal);
 
-			cal.setTime(dateFormat.parse(lista[4]));
-			p.setDatumVracanja(cal);
+			date = dateFormat.parse(lista[4]);
+			cal2.setTime(date);
+			p.setDatumVracanja(cal2);
 
 			p.setRazreseno(Boolean.parseBoolean(lista[5]));
 			p.setProduzenoPuta(Integer.parseInt(lista[6]));

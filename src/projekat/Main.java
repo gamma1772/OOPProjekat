@@ -84,9 +84,14 @@ public class Main {
             if (autori.size() > 0 && izdavaci.size() > 0)
             knjige = DataManager.deserializeKnjige(autori, izdavaci);
 
-            if (knjige.size() > 0)
-            pozajmljivanja = DataManager.deserializePozajmljivanje(knjige);
-            if (pozajmljivanja.size() > 0)
+            if (knjige.size() > 0) {
+                try {
+                    pozajmljivanja = DataManager.deserializePozajmljivanje(knjige);
+                } catch (IOException | ParseException | TokProgramaException exception) {
+                    exception.printStackTrace();
+                }
+            }
+
             clanovi = DataManager.deserializeClanovi(pozajmljivanja);
         }
     }
@@ -110,7 +115,7 @@ public class Main {
             cls();
             System.out.println("==========POCETNI MENI==========");
             System.out.println("Odaberite opciju:\n");
-            System.out.println("1. Dodaj novog clana biblioteke\n2. Pozajmi knjigu\n3. Opcije biblioteke\n4. Odjava\n5. Izlaz\n");
+            System.out.println("1. Dodaj novog clana biblioteke\n2. Pozajmljivanje knjiga\n3. Opcije biblioteke\n4. Odjava\n5. Izlaz\n");
             System.out.print("Unos: "); odabir = scanner.nextInt();
             scanner.nextLine();
             switch (odabir) {
@@ -118,7 +123,7 @@ public class Main {
                     SistemManager.initMemberManager(odabir, clanovi, pozajmljivanja);
                     break;
                 case 2:
-                    SistemManager.initPozajmljivanje(2, clanovi, pozajmljivanja, knjige);
+                    SistemManager.initPozajmljivanje(clanovi, pozajmljivanja, knjige);
                     break;
                 case 3:
                     petlja = false;

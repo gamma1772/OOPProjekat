@@ -35,8 +35,8 @@ public class Pozajmljivanje implements ISerijalizacija {
 	public Pozajmljivanje() {
 		this.setClanUUID("");
 		this.setDug(0);
-		this.setDatumPozajmljivanja(Calendar.getInstance());
-		this.setDatumVracanja(Calendar.getInstance());
+		this.setDatumPozajmljivanja(null);
+		this.setDatumVracanja(null);
 		this.setPozajmljenaKnjiga(new Knjiga());
 		this.setRazreseno(false);
 		this.setProduzenoPuta(0);
@@ -91,19 +91,18 @@ public class Pozajmljivanje implements ISerijalizacija {
 	}
 
 	public void produziZajam() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		calendar.add(Calendar.DATE, Main.pravila.getMaxPeriod());
-		this.datumVracanja = calendar;
+
+		this.datumVracanja.add(Calendar.DAY_OF_MONTH, Main.pravila.getMaxPeriod());
+		this.produzenoPuta += 1;
 	}
 
 	public void izracunajDug() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
-		if (calendar.get(Calendar.DATE) > datumVracanja.get(Calendar.DATE)) {
+		if (calendar.get(Calendar.DAY_OF_YEAR) > datumVracanja.get(Calendar.DAY_OF_YEAR)) {
 			this.dug = 1;
-			for (int i = 0; i < Math.abs(ChronoUnit.DAYS.between(calendar.toInstant(), datumPozajmljivanja.toInstant())); i++) {
-				this.dug *= MNOZILAC;
+			for (int i = 0; i < Math.abs(ChronoUnit.DAYS.between(calendar.toInstant(), datumVracanja.toInstant())); i++) {
+				this.dug *= MNOZILAC + 1.125;
 			}
 			//this.dug = Math.abs(ChronoUnit.DAYS.between(calendar.toInstant(), datumVracanja.toInstant()) * MNOZILAC); //Koristi se ChronoUnit klasa da se odredi raznak izmedju danasnjeg dana i datuma vracanja
 		}
@@ -114,8 +113,9 @@ public class Pozajmljivanje implements ISerijalizacija {
 	public void produziKnjigu() {
 		if (this.getProduzenoPuta() < Main.pravila.getMaxReloan()) {
 			Calendar calendar = Calendar.getInstance();
-			calendar.set(Calendar.DATE, Calendar.DATE + Main.pravila.getMaxPeriod());
+			calendar.add(Calendar.DAY_OF_MONTH, Main.pravila.getMaxPeriod());
 			setDatumVracanja(calendar);
+			setProduzenoPuta(+1);
 		}
 		else {
 			System.out.println("Produzeno previse puta! Neuspesna operacija.");
@@ -132,14 +132,14 @@ public class Pozajmljivanje implements ISerijalizacija {
 
 	public String toStringSerializable() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		return String.format("%s~%.2f~%s~%s~%s~%b~%d", getClanUUID(), getDug(), getPozajmljenaKnjiga().getId(), dateFormat.format(getDatumPozajmljivanja()), dateFormat.format(getDatumVracanja()), isRazreseno(), getProduzenoPuta());
+		return String.format("%s~%.2f~%s~%s~%s~%b~%d", getClanUUID(), getDug(), getPozajmljenaKnjiga().getId(), dateFormat.format(getDatumPozajmljivanja().getTime()), dateFormat.format(getDatumVracanja().getTime()), isRazreseno(), getProduzenoPuta());
 	}
 
 	@Override
 	public String toString() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		return String.format("ID Clana: %s, Knjiga: %s, Datum pozajmljivanja: %s, Datum isteka: %s, Dug: %.2f, Razreseno: %b",
-				getClanUUID(), getPozajmljenaKnjiga().getImeKnjige(), dateFormat.format(getDatumPozajmljivanja()), dateFormat.format(getDatumVracanja()), getDug(), isRazreseno());
+		return String.format("%-19s %-21s %-21s %-14s %-7.2f %b",
+				getClanUUID(), getPozajmljenaKnjiga().getImeKnjige(), dateFormat.format(getDatumPozajmljivanja().getTime()), dateFormat.format(getDatumVracanja().getTime()), getDug(), isRazreseno());
 	}
 
 	@Override
@@ -150,7 +150,6 @@ public class Pozajmljivanje implements ISerijalizacija {
 	@Override
 	public void serialize() {
 		try {
-			pozajmljenaKnjiga.serialize();
 			DataManager.serializeString(toStringSerializable(), serializedFileName(), true);
 		} catch (IOException exception) {
 			exception.printStackTrace();
