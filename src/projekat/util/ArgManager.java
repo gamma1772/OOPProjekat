@@ -118,6 +118,8 @@ public class ArgManager extends SistemManager {
 		masterAdmin.setDozvole(masterAdmin.getDozvole().admin().addAdmins().addBooks().addMembers().deleteAdmins().deleteMembers().deleteBooks().loanBooks().alterRules().masterRule().editBooks().editAdmins().editMembers());
 
 		masterAdmin.serialize();
+		masterAdmin.getPassword().serialize();
+		masterAdmin.getDozvole().serialize();
 
 		System.out.println("Master administrator nalog kreiran. Da li zelite da pokrenete sistem? (Y/N): ");
 		boolean cycle = true;
